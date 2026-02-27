@@ -1,0 +1,7 @@
+version: "2.0.0"
+name: OrbCode
+shorthand: orbc
+description: Semantic mapping of codebases for agent-operated development
+
+folders:
+  - Mesh/OrbCode/

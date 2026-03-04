@@ -9,7 +9,7 @@ id: [generate-uuid4]
 tags:
   - "#orbc/architecture"
 status: [draft|active|deprecated]
-template: tmp-orbc-architecture
+template: "[[tmp-orbc-architecture-v0.1]]"
 ---
 
 # (Architecture) [Name]
@@ -67,7 +67,7 @@ template: tmp-orbc-architecture
 
 /* Conceptual diagram showing how major components relate */
 
-```mermaid
+~~~mermaid
 graph TD
     subgraph [Layer Name]
         A[Component A] --> B[Component B]
@@ -79,7 +79,7 @@ graph TD
     end
 
     C --> D
-```
+~~~
 
 /* Or use flowchart, C4, or other diagram style as appropriate */
 

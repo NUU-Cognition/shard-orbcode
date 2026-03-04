@@ -2,13 +2,15 @@
 
 /* An external interface — REST, GraphQL, CLI, SDK. */
 /* APIs answer: "What can callers invoke?" */
-/* Only for external interfaces, not internal function calls */
+/* Only for external interfaces, not internal function calls. */
+/* Use sequenceDiagram for complex interaction flows. */
 
 ```markdown
 ---
 id: [generate-uuid4]
 tags:
   - "#orbc/api"
+mode: [live|planned|altered]
 status: [draft|active|deprecated]
 version: "[1.0]"
 code-refs:
@@ -18,7 +20,7 @@ code-refs:
 artifact-refs:
   - "[[(Data) Schema]]"
   - (continue)
-template: tmp-orbc-api
+template: "[[tmp-orbc-api-v0.1]]"
 ---
 
 [One sentence: what this API exposes and who uses it]
@@ -30,6 +32,22 @@ template: tmp-orbc-api
 | Base | `[/api/v1/resource]` |
 | Auth | [Bearer|API Key|None] |
 | Format | [JSON] |
+
+## Interaction Flow
+
+/* Optional — use for APIs with complex interaction patterns */
+
+~~~mermaid
+sequenceDiagram
+    participant Client
+    participant API
+    participant Service
+
+    Client->>API: [request]
+    API->>Service: [internal call]
+    Service-->>API: [response]
+    API-->>Client: [response]
+~~~
 
 ## Endpoints
 
@@ -65,7 +83,7 @@ template: tmp-orbc-api
 
 ## Errors
 
-/* Standard error format — keep consistent */
+/* Standard error format */
 
 ~~~json
 {
@@ -85,6 +103,6 @@ template: tmp-orbc-api
 ## Notes
 
 - Version field tracks API version, not doc version
-- Error format should be consistent across endpoints
-- References flow toward Data (schemas) — not back to parent System or handler Feature
-- Group endpoints logically (by resource or action)
+- `mode: live` = current API. `planned` = proposed API. `altered` = API changes incoming.
+- References flow toward Data (schemas) — not back to parent System
+- Use sequenceDiagram for complex multi-step API interactions

@@ -9,7 +9,7 @@ id: [generate-uuid4]
 tags:
   - "#orbc/reference"
 status: [draft|active|deprecated]
-template: tmp-orbc-reference
+template: "[[tmp-orbc-reference-v0.1]]"
 ---
 
 # (OrbCode Reference) [Topic]
@@ -45,4 +45,4 @@ template: tmp-orbc-reference
 - One Reference per topic area — don't create one per concept note
 - Concept notes (untyped `.md` files) live alongside this file in Notes/
 - Reference files are the structured gateway; concept notes are freeform
-- This is informal — no UoW required, no stability impact
+- Notes/ is informal — update freely, no task required

@@ -19,7 +19,7 @@ artifact-refs:
   - "[[(System) Affected System]]"
   - "[[(Feature) Affected Feature]]"
   - (continue)
-template: tmp-orbc-decision
+template: "[[tmp-orbc-decision-v0.1]]"
 ---
 
 # (Decision) [Title]

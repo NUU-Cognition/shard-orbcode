@@ -96,7 +96,7 @@ Apply approved changes.
 4. **Relationships last** — depends on understanding the other context
 
 **For each artifact:**
-- If creating: use the appropriate template (`tmp-orbc-context`, `tmp-orbc-architecture`, `tmp-orbc-environment`, `tmp-orbc-relationships`)
+- If creating: use the appropriate template (`tmp-orbc-context-v0.1`, `tmp-orbc-architecture-v0.1`, `tmp-orbc-environment-v0.1`, `tmp-orbc-relationships-v0.1`)
 - If updating: read current content, apply changes, preserve what's still accurate
 - Update `code-refs` to point to current files
 - Update `artifact-refs` on Relationships to reflect current dependencies
@@ -144,5 +144,5 @@ Ensure context layer is internally consistent.
 
 - This workflow complements `wkfl-orbc-refactor` — Refactor handles Map/Test evolution, Update Context handles Context layer evolution
 - Relationships is the most change-sensitive context artifact — update it whenever the project landscape shifts
-- For new projects, the Greenfield workflow (`wkfl-orbc-greenfield`) creates initial context — this workflow is for ongoing maintenance
+- For new projects, the Map Codebase workflow (`wkfl-orbc-map`) creates initial context — this workflow is for ongoing maintenance
 - When updating Relationships across multiple projects, work from the changed project outward

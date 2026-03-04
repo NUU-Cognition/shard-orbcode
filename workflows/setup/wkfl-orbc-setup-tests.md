@@ -2,7 +2,7 @@ This workflow belongs to the OrbCode shard. Ensure you have @init-orbc.md in con
 
 # Workflow: Setup Tests
 
-One-time setup of test infrastructure for an OrbCode project. Creates Test Runner, Test Environment, and folder structure. References Knowledge docs for language-specific setup.
+One-time setup of test infrastructure for an OrbCode project. Creates Test Architecture, Test Runner, and folder structure. References Knowledge docs for language-specific setup.
 
 # Input
 
@@ -65,14 +65,14 @@ Understand what needs testing.
 
 Create in `(OrbCode Project) [Name]/Tests/`:
 
-1. **Test Runner** — Use `@tmp-orbc-test-runner.md`
+1. **Test Architecture** — Use `@tmp-orbc-test-architecture-v0.1.md`
+   - Name: `(Test Architecture) [Project Name].md`
+   - Describes how testing works, what's covered, how to run tests
+
+2. **Test Runner** — Use `@tmp-orbc-test-runner-v0.1.md`
    - Name: `(Test Runner) Unit Tests.md`
    - Reference the knowledge doc
    - Include commands for this specific project
-
-2. **Test Environment** (if needed) — Use `@tmp-orbc-test-environment.md`
-   - Name: `(Test Environment) [Name].md`
-   - Only if project needs DB/services/special setup
 
 ### 3b. Setup Codebase (with user permission)
 
@@ -119,8 +119,8 @@ tests/
 ## Setup Complete
 
 **Created:**
+- (Test Architecture) [Project Name].md
 - (Test Runner) Unit Tests.md
-- (Test Environment) [if created]
 
 **Codebase:**
 - Installed: [dependencies]
@@ -129,12 +129,12 @@ tests/
 
 **Verify:** Run `[test command]` to confirm setup works.
 
-**Next:** Use `wkfl-orbc-change-verification` (action: create-tests) to add tests for Map artifacts.
+**Next:** Create OrbCode Tasks to add tests for Map artifacts.
 ```
 
 # Output
 
-- `Tests/` folder in OrbCode project with Test Runner
+- `Tests/` folder in OrbCode project with Test Architecture and Test Runner
 - Test framework configured in codebase
 - Ready to create actual tests
 

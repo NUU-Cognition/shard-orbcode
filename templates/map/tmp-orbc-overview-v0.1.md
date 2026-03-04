@@ -2,13 +2,14 @@
 
 /* High-level diagram-first view of a domain, system, or feature area. */
 /* Overview answers: "How do these pieces fit together visually?" */
-/* Use for: system landscapes, feature relationships, data flows, integration maps */
+/* The diagram IS the documentation. Everything else supplements it. */
 
 ```markdown
 ---
 id: [generate-uuid4]
 tags:
   - "#orbc/overview"
+mode: [live|planned|altered]
 status: [draft|active|deprecated]
 scope: [system|feature|data|integration]
 code-refs:
@@ -17,7 +18,7 @@ artifact-refs:
   - "[[(System) Related System]]"
   - "[[(Feature) Related Feature]]"
   - (continue)
-template: tmp-orbc-overview
+template: "[[tmp-orbc-overview-v0.1]]"
 ---
 
 # (Overview) [Name]
@@ -26,9 +27,9 @@ template: tmp-orbc-overview
 
 ## Diagram
 
-/* The main visual — this is the core of an Overview artifact */
+/* The main visual — this IS the core of an Overview artifact */
 
-```mermaid
+~~~mermaid
 graph TD
     subgraph [Domain/System A]
         A1[Component] --> A2[Component]
@@ -39,19 +40,16 @@ graph TD
     end
 
     A2 -->|[relationship]| B1
-```
+~~~
 
 /* Choose diagram type based on what you're showing:
    - graph TD/LR: component relationships, dependencies
    - flowchart: data/control flow
    - sequenceDiagram: interactions over time
    - erDiagram: data relationships
-   - C4Context/C4Container: architectural context
 */
 
 ## Legend
-
-/* Explain what the diagram elements mean */
 
 | Symbol | Meaning |
 |--------|---------|
@@ -61,20 +59,9 @@ graph TD
 
 ## Components
 
-/* Brief description of each major element in the diagram */
-
 | Component | Purpose | Key Files |
 |-----------|---------|-----------|
 | [Name from diagram] | [What it does] | `path/to/code` |
-| (continue) | | |
-
-## Relationships
-
-/* Explain the connections shown */
-
-| From | To | Relationship |
-|------|-----|-------------|
-| [Component A] | [Component B] | [How they interact] |
 | (continue) | | |
 
 ## Scope
@@ -86,13 +73,6 @@ graph TD
 **What this overview does NOT cover:**
 - [Excluded area] (→ see [[(Overview) Other Overview]])
 - (continue)
-
-## Related
-
-- [[(System) Detailed System]] — implementation details
-- [[(Feature) Key Feature]] — specific capability
-- [[(Overview) Adjacent Overview]] — neighboring domain
-- (continue)
 ```
 
 ## Notes
@@ -101,12 +81,4 @@ graph TD
 - Use for birds-eye views that don't fit in a single System or Feature
 - Great for: onboarding, cross-cutting concerns, integration points
 - Keep diagrams simple — 5-10 components max, link to details
-- Update diagram when structure changes
-
-## When to Use Overview vs Other Types
-
-| Use Overview When | Use System When | Use Process When |
-|-------------------|-----------------|------------------|
-| Showing multiple systems together | Documenting one bounded context | Showing sequential flow |
-| Explaining integration points | Detailing internal components | Documenting a workflow |
-| Providing birds-eye orientation | Defining boundaries | Explaining how data moves |
+- `mode: live` = current architecture. `planned` = proposed. `altered` = changes incoming.

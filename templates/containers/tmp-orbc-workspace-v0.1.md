@@ -9,7 +9,7 @@ id: [generate-uuid4]
 tags:
   - "#orbc/workspace"
 status: [active|archived]
-template: tmp-orbc-workspace
+template: "[[tmp-orbc-workspace-v0.1]]"
 ---
 
 # (OrbCode Workspace) [Name]
@@ -22,20 +22,20 @@ template: tmp-orbc-workspace
 
 | Project | Type | Location | Purpose |
 |---------|------|----------|---------|
-| [[(OrbCode Project) Name]] | [product|verification|cognitive] | `path/to/package` | [What it does] |
+| [[(OrbCode Project) Name]] | [library|application|service|cli|shard|etc] | `path/to/package` | [What it does] |
 | (continue) | | | |
 
 ## Package Graph
 
 /* How packages/projects depend on each other */
 
-```mermaid
+~~~mermaid
 graph TD
     A[Package A] --> B[Package B]
     A --> C[Package C]
     B --> D[Shared Utils]
     C --> D
-```
+~~~
 
 /* Or as a table: */
 
@@ -57,7 +57,6 @@ graph TD
 
 - [[(Context) Workspace Overview]] — what this workspace is
 - [[(Architecture) Tech Stack]] — shared technologies
-- [[(Architecture) Package Graph]] — dependency structure
 - [[(Environment) Development]] — dev setup
 - (continue)
 
@@ -75,3 +74,4 @@ graph TD
 - Projects link to individual OrbCode Projects
 - Context folder contains Architecture/Environment artifacts
 - Package Graph shows inter-project dependencies
+- Project Type column uses the same values as the project template's Type field

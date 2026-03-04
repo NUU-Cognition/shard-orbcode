@@ -13,7 +13,7 @@ status: [active|deprecated]
 code-refs:
   - path/to/test/config.ts
   - (continue)
-template: tmp-orbc-test-runner
+template: "[[tmp-orbc-test-runner-v0.1]]"
 ---
 
 [Description: what tests this runner executes and when to use it]

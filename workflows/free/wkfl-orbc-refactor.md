@@ -4,8 +4,6 @@ This workflow belongs to the OrbCode shard. Ensure you have @init-orbc.md in con
 
 Reorganize the semantic layer of an existing OrbCode project. Merge, split, move, rename, or delete Map artifacts without changing their meaning. This is structural housekeeping — it changes how artifacts are organized, not what they say.
 
-**No UoW required** — semantic refactoring doesn't break layer agreement because it doesn't change meaning.
-
 # Input
 
 - **Project/workspace name**: Name of project
@@ -23,12 +21,11 @@ Reorganize the semantic layer of an existing OrbCode project. Merge, split, move
 
 # When NOT to Use
 
-- Adding new capabilities or updating behavior — use **Change Semantic** workflow (requires UoW)
-- Updating status fields (planned → implemented) — use **Change Semantic** workflow
-- Reorganizing tests — use **Change Verification** workflow (requires UoW)
+- Adding new capabilities or updating behavior — create an OrbCode Task instead
 - Updating Context/Architecture/Environment — use **Update Context** workflow
+- Syncing Map artifacts to code changes — use **Update Map** workflow
 
-> **Key distinction:** If a change alters the meaning of an artifact (what it describes, its behavior, its edge cases), that's a semantic change, not a refactor. Use Change Semantic instead.
+> **Key distinction:** If a change alters the meaning of an artifact (what it describes, its behavior, its edge cases), that's a content change — create an OrbCode Task. Refactor is for reorganization only.
 
 # Actions
 
@@ -41,7 +38,7 @@ Read the existing semantic layer to understand what exists.
 3. **Check artifact health**:
    - Are `code-refs` still valid? (files exist)
    - Are `artifact-refs` still valid? (linked artifacts exist)
-   - Do references flow in the correct direction? (see [[(Overview) Artifact Reference Model]])
+   - Do references flow in the correct direction? (no back-references)
 4. **Identify staleness**: Note any artifacts that feel outdated
 
 **Output a brief inventory:**
@@ -157,8 +154,7 @@ Ensure semantic layer is internally consistent.
 
 # Notes
 
-- This workflow is for **reorganization**, not meaning changes — use Change Semantic for adding/updating behavior
-- No UoW needed — reorganization preserves layer agreement
+- This workflow is for **reorganization**, not content changes — create OrbCode Tasks for adding/updating behavior
 - Small, frequent refactors beat large, infrequent ones
 - When in doubt about whether a change alters meaning, ask the human
 - The semantic layer should always reflect current reality

@@ -14,7 +14,7 @@ date: [YYYY-MM-DD]
 artifact-refs:
   - "[[(Feature) New Feature]]"
   - (continue)
-template: tmp-orbc-release
+template: "[[tmp-orbc-release-v0.1]]"
 ---
 
 # (Release) [Version]
@@ -87,5 +87,5 @@ template: tmp-orbc-release
 
 - Follow [Keep a Changelog](https://keepachangelog.com/) format
 - One Release per version
-- References flow toward Features changed — not back to Release Prep (Prep already refs Release)
+- References flow toward Features changed
 - Breaking Changes section is critical for major versions

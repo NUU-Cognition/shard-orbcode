@@ -89,16 +89,17 @@ Create the approved Map artifacts.
 1. **Create project folder**: `Mesh/OrbCode/(OrbCode Project) [Project Name]/`
 2. **Create layer folders**: `Context/`, `Map/`, `Docs/`, `Log/`, `Tests/` (start flat — add subfolders within layers later as complexity warrants grouping)
 3. **For each approved artifact:**
-   - Use the appropriate template (@tmp-orbc-system.md, @tmp-orbc-feature.md, etc.)
+   - Use the appropriate template (@tmp-orbc-system-v0.1.md, @tmp-orbc-feature-v0.1.md, etc.)
    - Fill in based on codebase understanding from Stage 1
    - Include accurate `code-refs` pointing to real files
    - Link related artifacts via `artifact-refs`
+   - Set `mode: live` for all artifacts (mapping existing code)
 4. **Create Context artifacts**:
-   - `(Context)` — scope, key concepts, conventions (`@tmp-orbc-context.md`)
-   - `(Architecture)` — tech stack, directory structure, logical architecture (`@tmp-orbc-architecture.md`)
-   - `(Environment)` — setup, run commands, config (`@tmp-orbc-environment.md`)
-   - `(Relationships)` — if in a workspace, how this project relates to others (`@tmp-orbc-relationships.md`)
-5. **Create project index**: `(Project) [Name].md` with overview and links to all artifacts
+   - `(Context)` — scope, key concepts, conventions (`@tmp-orbc-context-v0.1.md`)
+   - `(Architecture)` — tech stack, directory structure, logical architecture (`@tmp-orbc-architecture-v0.1.md`)
+   - `(Environment)` — setup, run commands, config (`@tmp-orbc-environment-v0.1.md`)
+   - `(Relationships)` — if in a workspace, how this project relates to others (`@tmp-orbc-relationships-v0.1.md`)
+5. **Create project index**: `(OrbCode Project) [Name].md` using `@tmp-orbc-project-v0.1.md`, with overview and links to all artifacts
 
 **For each artifact, include:**
 - Accurate frontmatter with real code paths
@@ -107,7 +108,7 @@ Create the approved Map artifacts.
 
 # Output
 
-- `Mesh/OrbCode/[Project Name]/` folder structure
+- `Mesh/OrbCode/(OrbCode Project) [Project Name]/` folder structure
 - All approved Map artifacts created
 - Project index file linking everything
 - Artifacts ready for agent use in development
@@ -118,4 +119,4 @@ Create the approved Map artifacts.
 - For new projects, design artifacts first, then implement
 - Maps will evolve — this is the starting point, not the final state
 - When in doubt about resolution, ask the human
-- After mapping, run `wkfl-orbc-setup-tests` then `wkfl-orbc-stabilize` to establish the first stable baseline. The UoW protocol begins after stabilization.
+- After mapping, run `wkfl-orbc-setup-tests` to set up test infrastructure.

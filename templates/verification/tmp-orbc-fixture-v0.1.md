@@ -16,7 +16,7 @@ code-refs:
 artifact-refs:
   - "[[(Data) Related Data Structure]]"
   - (continue)
-template: tmp-orbc-fixture
+template: "[[tmp-orbc-fixture-v0.1]]"
 ---
 
 [Description: what test scenarios this fixture supports]

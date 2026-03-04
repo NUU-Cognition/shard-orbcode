@@ -9,7 +9,7 @@ id: [generate-uuid4]
 tags:
   - "#orbc/context"
 status: [draft|active|deprecated]
-template: tmp-orbc-context
+template: "[[tmp-orbc-context-v0.1]]"
 ---
 
 # (Context) [Name]

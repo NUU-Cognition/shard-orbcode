@@ -11,7 +11,7 @@ tags:
 status: [draft|active|deprecated]
 artifact-refs:
   - "[[(OrbCode Project) Dependency Project]]"
-template: tmp-orbc-relationships
+template: "[[tmp-orbc-relationships-v0.1]]"
 ---
 
 # (Relationships) [Name]
@@ -26,7 +26,7 @@ template: tmp-orbc-relationships
 
 **Workspace:** [[(OrbCode Workspace) Parent Workspace]]
 
-```mermaid
+~~~mermaid
 graph TD
     THIS["[This Project]"]
     DEP1["[Dependency]"]
@@ -34,7 +34,7 @@ graph TD
 
     DEP1 -->|provides| THIS
     THIS -->|provides| CON1
-```
+~~~
 
 /* Diagram showing this project's position relative to others */
 

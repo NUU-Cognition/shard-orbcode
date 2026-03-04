@@ -9,7 +9,7 @@ id: [generate-uuid4]
 tags:
   - "#orbc/environment"
 status: [draft|active|deprecated]
-template: tmp-orbc-environment
+template: "[[tmp-orbc-environment-v0.1]]"
 ---
 
 # (Environment) [Name]

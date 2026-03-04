@@ -35,7 +35,7 @@ fixture-refs:
   - "[[(Fixture) Required Fixtures]]"
   - (continue)
 test-runner: "[[(Test Runner) Runner Name]]"
-template: tmp-orbc-test
+template: "[[tmp-orbc-test-v0.1]]"
 ---
 
 [Description: what aspect of the artifact this test verifies]

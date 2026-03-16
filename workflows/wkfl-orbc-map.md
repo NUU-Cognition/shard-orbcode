@@ -2,13 +2,13 @@ This workflow belongs to the OrbCode shard. Ensure you have @init-orbc.md in con
 
 # Workflow: Map Codebase
 
-Create a semantic map of an existing codebase. Explores the code, proposes artifacts at the right resolution, and creates them with human approval.
+Create a semantic map of an existing post-MVP codebase. Explores the code, proposes artifacts at the right resolution, and creates them with human approval.
 
 # Input
 
 - **Codebase path**: Path to the codebase root (or current directory if already there)
 - **Project name**: Name for the OrbCode project
-- (Optional) **Focus areas**: Specific systems or features to prioritize
+- (Optional) **Focus areas**: Specific systems or features to prioritise
 
 # Actions
 
@@ -28,7 +28,7 @@ Understand the codebase structure, patterns, and architecture.
 
 **Output a brief summary:**
 - Tech stack
-- Folder organization
+- Folder organisation
 - Major subsystems identified
 - Core data entities spotted
 - External interfaces found
@@ -43,7 +43,7 @@ This is the critical stage. Propose Map artifacts at the right resolution.
 
 **The Resolution Problem:**
 - Too granular → hundreds of artifacts, maintenance nightmare, no one reads them
-- Too abstract → artifacts don't help agents understand the code
+- Too abstract → artifacts don't help anyone understand the code
 - Right resolution → 5-20 artifacts that answer real questions
 
 **Guidelines:**
@@ -84,39 +84,43 @@ Once the user approves the artifact set, progress to Stage 3.
 
 ## Stage 3: Create Artifacts
 
-Create the approved Map artifacts.
+Create the approved artifacts using dot notation naming.
 
 1. **Create project folder**: `Mesh/OrbCode/(OrbCode Project) [Project Name]/`
-2. **Create layer folders**: `Context/`, `Map/`, `Docs/`, `Log/`, `Tests/` (start flat — add subfolders within layers later as complexity warrants grouping)
-3. **For each approved artifact:**
-   - Use the appropriate template (@tmp-orbc-system-v0.1.md, @tmp-orbc-feature-v0.1.md, etc.)
+2. **Create layer folders**: `Context/`, `Map/`, `Verification/`, `Notes/` (start flat — add subfolders within Map/ later as complexity warrants)
+3. **Create Context artifacts**:
+   - `(OrbCode Project) [Name] . (Context).md` — scope, key concepts, conventions
+   - `(OrbCode Project) [Name] . (Architecture).md` — tech stack, directory structure
+   - `(OrbCode Project) [Name] . (Environment) [Env].md` — setup, run commands
+   - `(OrbCode Project) [Name] . (Relationships).md` — if in a workspace
+4. **Create Map artifacts** for each approved item:
+   - Use the appropriate template (`tmp-orbc-system`, `tmp-orbc-feature`, etc.)
+   - Use dot notation: `(OrbCode Project) [Name] . (Type) [Artifact Name].md`
    - Fill in based on codebase understanding from Stage 1
    - Include accurate `code-refs` pointing to real files
    - Link related artifacts via `artifact-refs`
    - Set `mode: live` for all artifacts (mapping existing code)
-4. **Create Context artifacts**:
-   - `(Context)` — scope, key concepts, conventions (`@tmp-orbc-context-v0.1.md`)
-   - `(Architecture)` — tech stack, directory structure, logical architecture (`@tmp-orbc-architecture-v0.1.md`)
-   - `(Environment)` — setup, run commands, config (`@tmp-orbc-environment-v0.1.md`)
-   - `(Relationships)` — if in a workspace, how this project relates to others (`@tmp-orbc-relationships-v0.1.md`)
-5. **Create project index**: `(OrbCode Project) [Name].md` using `@tmp-orbc-project-v0.1.md`, with overview and links to all artifacts
+5. **Create Verification artifacts** (if application project-type):
+   - `(OrbCode Project) [Name] . (Test Architecture).md`
+   - Fixture and Test artifacts as appropriate
+6. **Create project index**: `(OrbCode Project) [Name].md` using `tmp-orbc-project`, with overview and links to all artifacts
+7. **Create Overview**: `(OrbCode Project) [Name] . (Overview).md` — visual entry point with mermaid diagrams
 
 **For each artifact, include:**
 - Accurate frontmatter with real code paths
 - Meaningful content (not just placeholders)
 - Cross-references to related artifacts
+- Mermaid diagrams where appropriate
 
 # Output
 
-- `Mesh/OrbCode/(OrbCode Project) [Project Name]/` folder structure
-- All approved Map artifacts created
+- `Mesh/OrbCode/(OrbCode Project) [Project Name]/` folder structure with Context/, Map/, Verification/ subfolders
+- All approved artifacts created with dot notation naming
 - Project index file linking everything
-- Artifacts ready for agent use in development
+- Artifacts ready for use
 
 # Notes
 
-- This workflow is for **existing codebases** (brownfield)
-- For new projects, design artifacts first, then implement
+- This workflow is for **existing codebases** (post-MVP)
 - Maps will evolve — this is the starting point, not the final state
 - When in doubt about resolution, ask the human
-- After mapping, run `wkfl-orbc-setup-tests` to set up test infrastructure.

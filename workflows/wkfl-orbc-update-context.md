@@ -142,7 +142,6 @@ Ensure context layer is internally consistent.
 
 # Notes
 
-- This workflow complements `wkfl-orbc-refactor` — Refactor handles Map/Test evolution, Update Context handles Context layer evolution
 - Relationships is the most change-sensitive context artifact — update it whenever the project landscape shifts
 - For new projects, the Map Codebase workflow (`wkfl-orbc-map`) creates initial context — this workflow is for ongoing maintenance
 - When updating Relationships across multiple projects, work from the changed project outward

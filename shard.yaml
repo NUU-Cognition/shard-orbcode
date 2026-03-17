@@ -5,7 +5,6 @@ shorthand: orbc
 description: Codebase understanding layer for mature production codebases
 depends:
   - NUU-Cognition/shard-flint
-  - NUU-Cognition/shard-specifications
 
 folders:
   - Mesh/OrbCode/

@@ -9,7 +9,7 @@ id: [generate-uuid4]
 tags:
   - "#orbc/workspace"
 status: [active|archived]
-template: "[[tmp-orbc-workspace-v0.1]]"
+template: "[[tmp-orbc-workspace-v0.2]]"
 ---
 
 # (OrbCode Workspace) [Name]
@@ -37,13 +37,6 @@ graph TD
     C --> D
 ~~~
 
-/* Or as a table: */
-
-| Package | Depends On |
-|---------|------------|
-| [Package] | [Dependencies] |
-| (continue) | |
-
 ## Shared Concerns
 
 /* Cross-cutting things that apply to all projects */
@@ -53,10 +46,9 @@ graph TD
 
 ## Context
 
-/* Links to context-layer artifacts */
+/* Free-form context docs — no required types. Environment artifacts are typed. */
 
-- [[(Context) Workspace Overview]] — what this workspace is
-- [[(Architecture) Tech Stack]] — shared technologies
+- Architecture — [notes on shared tech stack]
 - [[(Environment) Development]] — dev setup
 - (continue)
 
@@ -72,6 +64,4 @@ graph TD
 
 - One Workspace per monorepo or multi-project setup
 - Projects link to individual OrbCode Projects
-- Context folder contains Architecture/Environment artifacts
-- Package Graph shows inter-project dependencies
-- Project Type column uses the same values as the project template's Type field
+- Context/ contains free-form docs + typed Environment artifacts

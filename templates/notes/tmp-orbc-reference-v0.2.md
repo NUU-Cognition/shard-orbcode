@@ -9,7 +9,7 @@ id: [generate-uuid4]
 tags:
   - "#orbc/reference"
 status: [draft|active|deprecated]
-template: "[[tmp-orbc-reference-v0.1]]"
+template: "[[tmp-orbc-reference-v0.2]]"
 ---
 
 # (OrbCode Reference) [Topic]
@@ -32,8 +32,6 @@ template: "[[tmp-orbc-reference-v0.1]]"
 
 ## External References
 
-/* URLs, documentation, media, websites */
-
 | Resource | URL | Notes |
 |----------|-----|-------|
 | [Name] | [URL] | [Why it's relevant] |
@@ -45,4 +43,3 @@ template: "[[tmp-orbc-reference-v0.1]]"
 - One Reference per topic area — don't create one per concept note
 - Concept notes (untyped `.md` files) live alongside this file in Notes/
 - Reference files are the structured gateway; concept notes are freeform
-- Notes/ is informal — update freely, no task required

@@ -12,7 +12,7 @@ status: [active|archived]
 project-type: [application|cognitive]
 codebase: [path/to/codebase/root]
 workspace: "[[(OrbCode Workspace) Parent Workspace]]"
-template: "[[tmp-orbc-project-v0.1]]"
+template: "[[tmp-orbc-project-v0.2]]"
 ---
 
 # (OrbCode Project) [Name]
@@ -38,13 +38,6 @@ template: "[[tmp-orbc-project-v0.1]]"
 
 ## Map
 
-### Overviews
-
-/* Optional — high-level diagrams */
-
-- [[(Overview) Architecture Overview]] — [brief description]
-- (continue)
-
 ### Systems
 
 - [[(System) Main System]] — [brief description]
@@ -55,45 +48,53 @@ template: "[[tmp-orbc-project-v0.1]]"
 - [[(Feature) Core Feature]] — [brief description]
 - (continue)
 
-### Processes
-
-- [[(Process) Main Flow]] — [brief description]
-- (continue)
-
 ### Data
 
 - [[(Data) Core Entity]] — [brief description]
 - (continue)
 
-### APIs
+### UIs
 
-- [[(API) Public API]] — [brief description]
+- [[(UI) Main View]] — [brief description]
 - (continue)
 
-## Verification
+### Dependencies
 
-- [[(Test Architecture) Project Name]] — how testing works
-- [[(Test Runner) Name]] — how to run tests
+- [[(Dependency) Library Name]] — [brief description]
+- (continue)
+
+### Consumers
+
+- [[(Consumer) Client Name]] — [brief description]
+- (continue)
+
+## Testing
+
+- [[(Test Suite) Suite Name]] — [what it covers]
+- [[(E2E) Flow Name]] — [what it verifies]
 - (continue)
 
 ## Context
 
-/* Optional — only if project needs its own context beyond workspace */
+/* Untyped project knowledge — namespaced with dot notation but no type parentheses.
+   Standard documents: Overview, Context, Architecture, Tech Stack, Relationships.
+   Additional topic-specific docs can be added.
+   Environment artifacts are the one typed Context document — they appear on the map. */
 
-- [[(Relationships) Project Name]] — how this project relates to others
-- [[(Context) Project Context]] — project-specific knowledge
+- [[(OrbCode Project) [Name] . Overview]] — visual architecture overview
+- [[(OrbCode Project) [Name] . Context]] — scope, concepts, conventions
+- [[(OrbCode Project) [Name] . Architecture]] — structure, patterns, constraints
+- [[(OrbCode Project) [Name] . Tech Stack]] — language, build, dependencies
+- [[(OrbCode Project) [Name] . Relationships]] — inter-project connections
+- [[(OrbCode Project) [Name] . (Environment) Dev]] — dev environment
 - (continue)
 
 ## Notes
 
-/* Optional — project-specific concepts and references */
+/* Optional — project-specific concepts, references, and general notes */
 
 - [[(OrbCode Reference) Topic]] — [what it covers]
-- (continue)
-
-## Docs
-
-- [[(Docs) Technology Name]] — [what docs this covers]
+- [[(OrbCode Project) [Name] . [Topic]]] — [general note description]
 - (continue)
 
 ## Entry Points
@@ -115,4 +116,7 @@ template: "[[tmp-orbc-project-v0.1]]"
 
 - One Project per distinct codebase/package
 - `codebase` field points to the root directory for code-refs
-- Layer folders (Map/, Context/, Log/, Tasks/, Tests/) support arbitrary subfolders
+- Context/ contains Overview + standard docs + typed Environment artifacts
+- Testing/ contains Test Suite, Test, and E2E artifacts
+- Map/ contains System, Feature, Data, UI, Dependency, Consumer
+- Notes/ contains References and general notes

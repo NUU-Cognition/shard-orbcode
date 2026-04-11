@@ -1,27 +1,31 @@
-# (Overview) [Name]
+# Overview
 
-/* High-level diagram-first view of a domain, system, or feature area. */
-/* Overview answers: "How do these pieces fit together visually?" */
+/* High-level diagram-first view of a project's architecture. */
 /* The diagram IS the documentation. Everything else supplements it. */
+/* This is an untyped Context document — no (Type) prefix in the filename. */
+/* Lives in the project's Context/ folder. */
+
+# Filename: Context/(OrbCode Project) [Name] . Overview.md
 
 ```markdown
 ---
 id: [generate-uuid4]
 tags:
   - "#orbc/overview"
-mode: [live|planned|altered]
-status: [draft|active|deprecated]
+status: [draft|active|stale|deprecated]
 scope: [system|feature|data|integration]
-code-refs:
-  - [relevant/paths/]
 artifact-refs:
-  - "[[(System) Related System]]"
-  - "[[(Feature) Related Feature]]"
+  /* Overview references Systems only — see Reference Model in init-orbc.md */
+  - "[[(OrbCode Project) [Name] . (System) Related System]]"
   - (continue)
-template: "[[tmp-orbc-overview-v0.1]]"
+template: "[[tmp-orbc-overview-v0.2]]"
+orbh-sessions:
+  - "[[agent-session-uuid]]"
+authors:
+  - "[[@author]]"
 ---
 
-# (Overview) [Name]
+# Overview
 
 [One sentence: what this overview shows and why it matters]
 
@@ -42,20 +46,12 @@ graph TD
     A2 -->|[relationship]| B1
 ~~~
 
-/* Choose diagram type based on what you're showing:
-   - graph TD/LR: component relationships, dependencies
-   - flowchart: data/control flow
-   - sequenceDiagram: interactions over time
-   - erDiagram: data relationships
-*/
-
 ## Legend
 
 | Symbol | Meaning |
 |--------|---------|
 | [Box] | [What boxes represent] |
 | [Arrow] | [What arrows mean] |
-| [Color/Style] | [If using colors or styles] |
 
 ## Components
 
@@ -71,14 +67,13 @@ graph TD
 - (continue)
 
 **What this overview does NOT cover:**
-- [Excluded area] (→ see [[(Overview) Other Overview]])
+- [Excluded area] (-> see other Overview or System)
 - (continue)
 ```
 
 ## Notes
 
 - **Diagram-first**: The mermaid diagram IS the documentation
-- Use for birds-eye views that don't fit in a single System or Feature
-- Great for: onboarding, cross-cutting concerns, integration points
-- Keep diagrams simple — 5-10 components max, link to details
-- `mode: live` = current architecture. `planned` = proposed. `altered` = changes incoming.
+- Use for birds-eye views that don't fit in a single System
+- One per project — the visual entry point for understanding the codebase
+- Status: `draft` = planned. `active` = reflects current architecture. `stale` = out of date. `deprecated` = no longer relevant.

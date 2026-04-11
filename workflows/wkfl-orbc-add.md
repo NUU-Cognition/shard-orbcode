@@ -8,7 +8,7 @@ Create a new Map artifact after adding a feature, system, data structure, or oth
 
 - **What was added**: Description of the new capability
 - **Project**: Which OrbCode project this belongs to
-- (Optional) **Artifact type**: Feature, System, Data, Process, API, etc.
+- (Optional) **Artifact type**: Feature, System, Data, UI, Dependency, Consumer, etc.
 
 # Actions
 
@@ -19,8 +19,9 @@ Create a new Map artifact after adding a feature, system, data structure, or oth
    - New capability → `(Feature)`
    - New bounded context or subsystem → `(System)`
    - New data structure or schema → `(Data)`
-   - New multi-step flow → `(Process)`
-   - New external interface → `(API)`
+   - New user-facing surface (page, view, CLI, REST endpoint) → `(UI)`
+   - New external library or service consumed → `(Dependency)`
+   - New downstream client or integration → `(Consumer)`
 3. Identify which existing artifacts it connects to (Systems, Data, other Features)
 
 ## Stage 2: Create Artifact
@@ -33,10 +34,10 @@ Create a new Map artifact after adding a feature, system, data structure, or oth
    - Mermaid diagrams where helpful
    - `code-refs` pointing to actual files
    - `artifact-refs` linking to related artifacts
-   - `mode: live`
-5. If the addition has tests, create a Test derivative:
-   - `(OrbCode Project) [Name] . (Feature) [X] . (Test) [Type].md`
-   - Place in `Verification/`
+5. If the addition has tests, create a Test artifact:
+   - `(OrbCode Project) [Name] . (Test) [Descriptive Name].md`
+   - Link the feature being tested via `artifact-refs`
+   - Place in `Testing/`
 
 ## Stage 3: Update Connections
 
@@ -54,4 +55,4 @@ Create a new Map artifact after adding a feature, system, data structure, or oth
 # Notes
 
 - If you're adding multiple related artifacts at once, batch them — create all, then do connections.
-- For sub-features, use derivative naming: `... . (Feature) X . (Sub) Part.md`
+- For sub-features, parent features reference children via `artifact-refs`

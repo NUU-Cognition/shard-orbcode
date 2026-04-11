@@ -27,15 +27,14 @@ For each artifact that needs updating:
 3. Update inputs/outputs if the interface changed
 4. Update `code-refs` if files moved or were renamed
 5. Update `artifact-refs` if connections to other artifacts changed
-6. Keep `mode: live`
-7. If a Map artifact's subject no longer exists in code, flag it for removal
+6. If a Map artifact's subject no longer exists in code, flag it for removal
 
 ## Stage 3: Check Connections
 
 1. Did changes to this artifact affect connected artifacts?
    - If a Feature's data structures changed, does the linked Data artifact need updating?
    - If a System's boundaries shifted, do its child Features need updating?
-   - If the API changed, does the API artifact reflect it?
+   - If a UI surface changed, does the UI artifact reflect it?
 2. Update connected artifacts if the changes cascade
 3. Update the Overview if the system picture changed
 

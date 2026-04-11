@@ -49,9 +49,10 @@ This is the critical stage. Propose Map artifacts at the right resolution.
 **Guidelines:**
 - Start with **1-3 Systems** (bounded contexts, major subsystems)
 - Add **Features** for key capabilities (not every function, just important ones)
-- Add **Processes** only for complex multi-step flows
 - Add **Data** for core entities (not every type, just important ones)
-- Add **API** for external interfaces
+- Add **UI** for user-facing surfaces (pages, views, CLI commands, REST endpoints)
+- Add **Dependency** for external libraries or services consumed
+- Add **Consumer** for external clients or integrations that depend on this project
 
 **Propose to the user:**
 
@@ -88,23 +89,24 @@ Create the approved artifacts using dot notation naming.
 
 1. **Create project folder**: `Mesh/OrbCode/(OrbCode Project) [Project Name]/`
 2. **Create layer folders**: `Context/`, `Map/`, `Verification/`, `Notes/` (start flat — add subfolders within Map/ later as complexity warrants)
-3. **Create Context artifacts**:
-   - `(OrbCode Project) [Name] . (Context).md` — scope, key concepts, conventions
-   - `(OrbCode Project) [Name] . (Architecture).md` — tech stack, directory structure
-   - `(OrbCode Project) [Name] . (Environment) [Env].md` — setup, run commands
-   - `(OrbCode Project) [Name] . (Relationships).md` — if in a workspace
+3. **Create Context documents** (namespaced with dot notation, no type parentheses):
+   - `(OrbCode Project) [Name] . Context.md` — scope, concepts, conventions (uses `tmp-orbc-context-v0.2`)
+   - `(OrbCode Project) [Name] . Architecture.md` — structure, patterns, constraints (uses `tmp-orbc-architecture-v0.2`)
+   - `(OrbCode Project) [Name] . Tech Stack.md` — language, build, dependencies (uses `tmp-orbc-tech_stack-v0.2`)
+   - `(OrbCode Project) [Name] . Relationships.md` — inter-project connections (uses `tmp-orbc-relationships-v0.2`)
+   - `(OrbCode Project) [Name] . (Environment) [Env].md` — typed, uses `tmp-orbc-environment-v0.2`
 4. **Create Map artifacts** for each approved item:
    - Use the appropriate template (`tmp-orbc-system`, `tmp-orbc-feature`, etc.)
    - Use dot notation: `(OrbCode Project) [Name] . (Type) [Artifact Name].md`
    - Fill in based on codebase understanding from Stage 1
    - Include accurate `code-refs` pointing to real files
    - Link related artifacts via `artifact-refs`
-   - Set `mode: live` for all artifacts (mapping existing code)
-5. **Create Verification artifacts** (if application project-type):
-   - `(OrbCode Project) [Name] . (Test Architecture).md`
-   - Fixture and Test artifacts as appropriate
-6. **Create project index**: `(OrbCode Project) [Name].md` using `tmp-orbc-project`, with overview and links to all artifacts
-7. **Create Overview**: `(OrbCode Project) [Name] . (Overview).md` — visual entry point with mermaid diagrams
+   - Set status to `active` for structural types, `untested` for features/UIs (mapping existing code)
+5. **Create Testing artifacts** (if application project-type):
+   - `(OrbCode Project) [Name] . (Test Suite) [Name].md` for test groupings
+   - Test and E2E artifacts as appropriate
+6. **Create project index**: `(OrbCode Project) [Name].md` using `tmp-orbc-project`, with links to all artifacts
+7. **Create Overview**: `(OrbCode Project) [Name] . Overview.md` in `Context/` using `tmp-orbc-overview` — visual entry point with mermaid diagrams
 
 **For each artifact, include:**
 - Accurate frontmatter with real code paths
@@ -114,7 +116,7 @@ Create the approved artifacts using dot notation naming.
 
 # Output
 
-- `Mesh/OrbCode/(OrbCode Project) [Project Name]/` folder structure with Context/, Map/, Verification/ subfolders
+- `Mesh/OrbCode/(OrbCode Project) [Project Name]/` folder structure with Context/, Map/, Testing/ subfolders
 - All approved artifacts created with dot notation naming
 - Project index file linking everything
 - Artifacts ready for use

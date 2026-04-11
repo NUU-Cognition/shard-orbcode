@@ -9,17 +9,20 @@
 id: [generate-uuid4]
 tags:
   - "#orbc/system"
-mode: [live|planned|altered]
-status: [draft|active|deprecated]
+status: [draft|active|stale|deprecated]
 code-refs:
   - [main/directory/path/]
   - (continue)
 artifact-refs:
+  /* Systems reference Systems, Features, Data, UI, Dependency, Consumer — see Reference Model */
+  - "[[(System) Sub System]]"
   - "[[(Feature) Key Feature]]"
-  - "[[(Process) Main Flow]]"
   - "[[(Data) Core Entity]]"
+  - "[[(UI) View]]"
+  - "[[(Dependency) Library]]"
+  - "[[(Consumer) Client]]"
   - (continue)
-template: "[[tmp-orbc-system-v0.1]]"
+template: "[[tmp-orbc-system-v0.2]]"
 ---
 
 # (System) [Name]
@@ -41,8 +44,6 @@ graph TD
     C -.->|calls| OUT[External Service]
 ~~~
 
-/* Show the major components and how they connect. Keep it to 5-10 nodes max. */
-
 ## Boundaries
 
 **Owns:**
@@ -50,12 +51,10 @@ graph TD
 - (continue)
 
 **Does not own:**
-- [What belongs elsewhere] (→ [Other System])
+- [What belongs elsewhere] (-> [Other System])
 - (continue)
 
 ## Key Concepts
-
-/* Domain concepts specific to this system that agents need to know */
 
 | Concept | Meaning |
 |---------|---------|
@@ -73,9 +72,7 @@ graph TD
 
 ## Interfaces
 
-/* How this system communicates */
-
-**Inbound:** [APIs, events consumed, entry points]
+**Inbound:** [Events consumed, entry points]
 
 **Outbound:** [Services called, events published]
 
@@ -90,5 +87,4 @@ graph TD
 
 - Start mapping here — every codebase has 1-3 systems
 - The Architecture diagram is the most important section
-- Boundaries section defines what's in vs out
-- `mode: live` = current code. `planned` = proposed system. `altered` = changes incoming.
+- Status: `draft` = planned. `active` = reflects current code. `stale` = out of date. `deprecated` = no longer relevant.

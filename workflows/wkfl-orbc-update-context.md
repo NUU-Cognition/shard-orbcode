@@ -2,22 +2,22 @@ This workflow belongs to the OrbCode shard. Ensure you have @init-orbc.md in con
 
 # Workflow: Update Context
 
-Refresh the Context layer of an OrbCode project. Update Context, Architecture, Environment, and Relationships artifacts to reflect the current state of the project and its position in the workspace.
+Refresh the Context layer of an OrbCode project. Context documents are free-form (untyped) except for Environment artifacts which are typed and appear on the map.
 
 # Input
 
 - **Project name**: Name of the OrbCode project to update
-- (Optional) **Scope**: Limit to specific context types (e.g., "just Relationships" or "Architecture + Environment")
-- (Optional) **Trigger**: What changed (new project added, tech stack update, boundary shift, etc.)
+- (Optional) **Scope**: Limit to specific areas (e.g., "just architecture" or "environments")
+- (Optional) **Trigger**: What changed (tech stack update, new dependency, boundary shift, etc.)
 
 # When to Use
 
-- New project added to workspace (Relationships need updating across projects)
-- Project boundaries or responsibilities changed
 - Tech stack or directory structure changed significantly
-- Test boundaries shifted between projects
+- Project boundaries or responsibilities changed
+- New project added to workspace (relationships need updating)
 - Dependencies added or removed
-- After a significant refactor that affects how projects relate
+- Test boundaries shifted between projects
+- After a significant refactor
 - Context feels stale or doesn't match reality
 
 # Actions
@@ -28,23 +28,22 @@ Read the existing Context layer to understand what exists and what's stale.
 
 1. **Read project index**: `(OrbCode Project) Name.md`
 2. **Read workspace index**: `(OrbCode Workspace) Name.md` (if in a workspace)
-3. **List context artifacts**: Scan the project's `Context/` folder
+3. **Scan Context/ folder**: List all documents (both free-form and typed Environments)
 4. **Check freshness**:
-   - Do `code-refs` still point to existing files?
-   - Does the tech stack match `package.json` / `pyproject.toml` / etc.?
+   - Do architecture notes match current tech stack?
+   - Do relationship notes reflect actual project dependencies?
+   - Are Environment artifacts current with CI/deployment config?
    - Are directory structures current?
-   - Do Relationships reflect actual project dependencies?
-   - Are test boundaries accurate?
 
 **Output a brief audit:**
 ```markdown
 ## Context Audit: [Project Name]
 
-**Existing artifacts:**
-- (Context): [exists/missing] — [fresh/stale]
-- (Architecture): [exists/missing] — [fresh/stale]
-- (Environment): [exists/missing] — [fresh/stale]
-- (Relationships): [exists/missing] — [fresh/stale]
+**Existing documents:**
+- Architecture notes: [exists/missing] — [fresh/stale]
+- Relationship notes: [exists/missing] — [fresh/stale]
+- (Environment) Dev: [exists/missing] — [fresh/stale]
+- (Environment) CI: [exists/missing] — [fresh/stale]
 
 **Trigger:** [What changed]
 
@@ -57,28 +56,19 @@ Read the existing Context layer to understand what exists and what's stale.
 
 Propose specific changes based on the audit.
 
-**For each stale artifact, determine:**
-
-| Artifact | Action | What Changed |
+| Document | Action | What Changed |
 |----------|--------|-------------|
-| (Context) | [update/create/skip] | [Key concepts changed, scope shifted, etc.] |
-| (Architecture) | [update/create/skip] | [Tech stack, directory, patterns changed] |
-| (Environment) | [update/create/skip] | [Setup steps, config, infra changed] |
-| (Relationships) | [update/create/skip] | [Dependencies, boundaries, consumers changed] |
+| Architecture notes | [update/create/skip] | [Tech stack, directory, patterns changed] |
+| Relationship notes | [update/create/skip] | [Dependencies, boundaries, consumers changed] |
+| (Environment) Dev | [update/create/skip] | [Setup steps, config changed] |
+| (Environment) CI | [update/create/skip] | [CI config, runners changed] |
 
 **Cross-project impact:**
 
-If Relationships changed, identify other projects that may need their Relationships updated too:
-```markdown
-## Cross-Project Impact
-
-| Project | Why It's Affected |
-|---------|-------------------|
-| [Project Name] | [New dependency on this project / boundary shifted / etc.] |
-```
+If relationships changed, identify other projects that may need their context updated too.
 
 **Ask the user:**
-> "Here's what I'd update. Should I proceed? Any other projects to include?"
+> "Here's what I'd update. Should I proceed?"
 
 Wait for approval before proceeding.
 
@@ -88,60 +78,30 @@ Wait for approval before proceeding.
 
 Apply approved changes.
 
-**Order of operations:**
-
-1. **Context first** — domain knowledge anchors everything else
-2. **Architecture** — tech stack and structure inform relationships
-3. **Environment** — runtime setup may affect test boundaries
-4. **Relationships last** — depends on understanding the other context
-
-**For each artifact:**
-- If creating: use the appropriate template (`tmp-orbc-context-v0.1`, `tmp-orbc-architecture-v0.1`, `tmp-orbc-environment-v0.1`, `tmp-orbc-relationships-v0.1`)
-- If updating: read current content, apply changes, preserve what's still accurate
-- Update `code-refs` to point to current files
-- Update `artifact-refs` on Relationships to reflect current dependencies
-- Update project index if new context artifacts were created
+1. **Free-form docs** — update in place. No template needed. Write what's useful.
+2. **Environment artifacts** — use `tmp-orbc-environment-v0.2` if creating new ones. Update in place if refreshing.
+3. **Update project index** if new documents were created.
 
 **Cross-project updates (if approved):**
-- Update Relationships on affected sibling projects
-- Don't touch other projects' Context/Architecture/Environment unless specifically asked
+- Update relationship notes on affected sibling projects
+- Don't touch other projects' documents unless specifically asked
 
 ---
 
 ## Stage 4: Verify
 
-Ensure context layer is internally consistent.
-
-1. **Check all `code-refs`**: Every path points to an existing file
-2. **Check `artifact-refs`** on Relationships: Every referenced project exists
-3. **Check project index**: All context artifacts are listed
-4. **Cross-reference with workspace**: Project list is current, relationships are symmetric where expected
-
-**Report to user:**
-```markdown
-## Context Update Complete
-
-**Updated:**
-- [List of artifacts updated with brief summary of changes]
-
-**Created:**
-- [List of new artifacts]
-
-**Cross-project updates:**
-- [List of sibling projects updated, or "None"]
-
-**Remaining issues:** [Any unresolved items]
-```
+1. **Check Environment `code-refs`**: Every path points to an existing file
+2. **Check project index**: All context documents are listed
+3. **Cross-reference with workspace**: Project list is current
 
 # Output
 
 - Updated Context layer reflecting current project state
-- Relationships artifact describing inter-project connections
-- Project index updated with any new context artifacts
-- Sibling project Relationships updated (if cross-project changes were approved)
+- Environment artifacts current with infrastructure
+- Project index updated with any new context documents
 
 # Notes
 
-- Relationships is the most change-sensitive context artifact — update it whenever the project landscape shifts
-- For new projects, the Map Codebase workflow (`wkfl-orbc-map`) creates initial context — this workflow is for ongoing maintenance
-- When updating Relationships across multiple projects, work from the changed project outward
+- Context documents are free-form — write what's useful, don't force structure
+- Environment is the only typed Context artifact (appears on the map)
+- For new projects, the Map Codebase workflow creates initial context — this workflow is for ongoing maintenance

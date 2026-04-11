@@ -10,16 +10,21 @@
 id: [generate-uuid4]
 tags:
   - "#orbc/feature"
-mode: [live|planned|altered]
-status: [draft|active|deprecated]
+status: [draft|untested|stale|verified]
 code-refs:
   - path/to/implementation.ts
   - (continue)
 artifact-refs:
+  /* Features reference Features, Data, UI, Dependency — see Reference Model */
+  - "[[(Feature) Sub Feature]]"
   - "[[(Data) Related Data]]"
-  - "[[(API) Exposed Via]]"
+  - "[[(UI) Rendered In]]"
+  - "[[(Dependency) Relies On]]"
   - (continue)
-template: "[[tmp-orbc-feature-v0.1]]"
+tasks:
+  - "[[(Task) NNN Implementation Task]]"
+  - (continue)
+template: "[[tmp-orbc-feature-v0.2]]"
 ---
 
 [Description: what capability this provides and why it matters. Write for a human who doesn't read code.]
@@ -73,8 +78,7 @@ stateDiagram-v2
 ## Notes
 
 - One feature = one capability (not one file)
-- `mode: live` = reflects current code. `planned` = doesn't exist yet. `altered` = changes incoming (use `[ALTERED]` labels).
-- Status uses same vocabulary as other Map types: `draft|active|deprecated`
-- Keep it conceptual and visual — mermaid diagrams, state machines, decision trees
-- References flow toward what the feature uses (Data, API) — not back to parent System
+- Status lifecycle: `draft` -> `untested` -> `verified` (all transitions are manual)
+- `draft` = planned, no code yet. `untested` = implemented but not verified. `stale` = out of date with code. `verified` = human confirmed.
+- Features reference Features (hierarchy), Data, UI, and Dependency — never Systems. See Reference Model.
 - No `test-refs` — Tests reference Features, not vice versa. Use backlinks to find tests.

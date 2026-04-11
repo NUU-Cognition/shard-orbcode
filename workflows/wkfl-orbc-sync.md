@@ -46,7 +46,7 @@ For each stale artifact:
 2. Update the artifact content to reflect current reality
 3. Update mermaid diagrams if structure changed
 4. Update `code-refs` if files moved
-5. Keep `mode: live`
+5. Update status: set `stale` artifacts back to `active`/`untested` after updating
 
 For each orphaned artifact:
 1. Flag for human decision — remove or redirect?

@@ -14,7 +14,7 @@ tags:
 status: [active|stale]
 artifact-refs:
   - "[[related OrbCode Project(s)]]"
-template: "[[tmp-orbc-relationships-v0.2]]"
+template: "[[dev-tmp-orbc-relationships-v0.2]]"
 orbh-sessions:
   - "[[agent-session-uuid]]"
 authors:

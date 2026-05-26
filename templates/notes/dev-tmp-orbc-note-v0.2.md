@@ -12,7 +12,7 @@ id: [generate-uuid4]
 tags:
   - "#orbc/note"
 status: [active|stale|deprecated]
-template: "[[tmp-orbc-note-v0.2]]"
+template: "[[dev-tmp-orbc-note-v0.2]]"
 orbh-sessions:
   - "[[agent-session-uuid]]"
 authors:

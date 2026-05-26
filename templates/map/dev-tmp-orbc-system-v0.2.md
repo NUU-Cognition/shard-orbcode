@@ -10,11 +10,23 @@ id: [generate-uuid4]
 tags:
   - "#orbc/system"
 status: [draft|active|stale|deprecated]
+parent:
+  /* Always rendered. Leave empty for a root system.
+     A System's parents MUST all be other Systems.
+     Scalar (single parent) or list (multiple parents) both accepted:
+       parent: "[[(System) Parent]]"
+       parent:
+         - "[[(System) Parent A]]"
+         - "[[(System) Parent B]]"
+     The first-listed parent drives the sidebar tree; additional parents
+     contribute DAG edges and same-type layout signal. */
 code-refs:
   - [main/directory/path/]
   - (continue)
 artifact-refs:
-  /* Systems reference Systems, Features, Data, UI, Dependency, Consumer — see Reference Model */
+  /* Free-form "related to" links — used for graph edges, NOT hierarchy.
+     Hierarchy is determined exclusively by the `parent:` field above.
+     Systems reference Systems, Features, Data, UI, Dependency, Consumer — see Reference Model */
   - "[[(System) Sub System]]"
   - "[[(Feature) Key Feature]]"
   - "[[(Data) Core Entity]]"
@@ -22,7 +34,7 @@ artifact-refs:
   - "[[(Dependency) Library]]"
   - "[[(Consumer) Client]]"
   - (continue)
-template: "[[tmp-orbc-system-v0.2]]"
+template: "[[dev-tmp-orbc-system-v0.2]]"
 ---
 
 # (System) [Name]

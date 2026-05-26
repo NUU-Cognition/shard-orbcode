@@ -14,7 +14,7 @@ artifact-refs:
   /* E2E tests reference Features, Systems, and Environments — see Reference Model */
   - "[[referenced features, systems, and environments]]"
   - (continue)
-template: "[[tmp-orbc-e2e-v0.2]]"
+template: "[[dev-tmp-orbc-e2e-v0.2]]"
 ---
 
 [Description: what end-to-end flow this test exercises and what it validates]

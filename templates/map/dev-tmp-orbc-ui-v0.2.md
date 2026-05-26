@@ -10,17 +10,28 @@ id: [generate-uuid4]
 tags:
   - "#orbc/ui"
 status: [draft|untested|stale|verified]
+parent:
+  /* Always rendered. Leave empty for a root UI (e.g. a top-level page).
+     A UI's parents MUST all be other UIs.
+     Scalar (single parent) or list (multiple parents) both accepted:
+       parent: "[[(UI) Parent Page]]"
+       parent:
+         - "[[(UI) Parent Page]]"
+         - "[[(UI) Shared Panel]]"
+     The first-listed parent drives the sidebar tree. */
 code-refs:
   - path/to/component.tsx
   - (continue)
 artifact-refs:
-  /* UIs reference UIs only (hierarchy) — see Reference Model */
+  /* Free-form "related to" links — used for graph edges, NOT hierarchy.
+     Hierarchy is determined exclusively by the `parent:` field above.
+     UIs reference UIs only — see Reference Model */
   - "[[(UI) Sub View]]"
   - (continue)
 tasks:
   - "[[(Task) NNN Task Name]]"
   - (continue)
-template: "[[tmp-orbc-ui-v0.2]]"
+template: "[[dev-tmp-orbc-ui-v0.2]]"
 ---
 
 # (UI) [Name]
@@ -68,5 +79,5 @@ template: "[[tmp-orbc-ui-v0.2]]"
 - Covers visual surfaces (pages, panels, dialogs) AND programmatic surfaces (REST endpoints, CLI commands, GraphQL)
 - Naming convention: `(UI) Dashboard Page`, `(UI) REST API`, `(UI) CLI Surface`
 - Status lifecycle: `draft` -> `untested` -> `verified` (all transitions are manual)
-- UIs form a hierarchy — a page UI references panel/section sub-UIs. But UIs never reference Features, Systems, or Data.
+- UIs form a hierarchy via the `parent:` field — a sub-UI sets `parent: [[(UI) Page]]`. UIs never reference Features, Systems, or Data.
 - Features and Systems reference UIs via artifact-refs — use backlinks to find them.

@@ -18,7 +18,7 @@ artifact-refs:
   /* Overview references Systems only — see Reference Model in init-orbc.md */
   - "[[(OrbCode Project) [Name] . (System) Related System]]"
   - (continue)
-template: "[[tmp-orbc-overview-v0.2]]"
+template: "[[dev-tmp-orbc-overview-v0.2]]"
 orbh-sessions:
   - "[[agent-session-uuid]]"
 authors:

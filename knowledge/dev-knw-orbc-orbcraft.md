@@ -36,7 +36,7 @@ The OrbCode Map Plate sets the `orbcraft-artifacts` field in session metadata wh
 Agents update the `orbcraft-focus` interface key during their session:
 
 ```bash
-flint orb set <session-id> orbcraft-focus "<comma-separated artifact UUIDs>"
+flint orbh session <session-id> set orbcraft-focus "<comma-separated artifact UUIDs>"
 ```
 
 The effective orbit set is: **metadata presets + runtime additions**. Both sources are polled every 3 seconds and merged. New artifacts trigger an orbit path recalculation.

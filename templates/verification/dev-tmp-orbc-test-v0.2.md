@@ -23,16 +23,22 @@ tags:
   - "#orbc/test"
   - "#orbc/test/[unit|integration]"
 status: [draft|pass|fail|stale|deprecated]
+parent:
+  /* Optional — the sole hierarchy signal. Omit (or leave empty) for a Test not grouped into a Suite.
+     A Test's parent, if any, MUST be a Test Suite.
+     A single wikilink, e.g. "[[(Test Suite) Owning Suite]]". */
 code-refs:
   - path/to/test/file.test.ts
   - (continue)
 artifact-refs:
-  /* Tests reference the Feature(s) they verify — see Reference Model */
+  /* Free-form "related to" links — used for graph edges, NOT hierarchy.
+     Hierarchy (Test → Test Suite) is set via the `parent:` field above.
+     Tests reference the Feature(s) they verify — see Reference Model */
   - "[[(Feature) Artifact Being Tested]]"
   - (continue)
   /* Tests reference their testing environment */
   - "[[(OrbCode Project) [Name] . (Environment) [Testing Environment]]]"
-template: "[[tmp-orbc-test-v0.2]]"
+template: "[[dev-tmp-orbc-test-v0.2]]"
 ---
 
 [Description: what aspect of the artifact this test verifies]

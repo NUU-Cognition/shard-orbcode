@@ -9,7 +9,7 @@ id: [generate-uuid4]
 tags:
   - "#orbc/reference"
 status: [draft|active|deprecated]
-template: "[[tmp-orbc-reference-v0.2]]"
+template: "[[dev-tmp-orbc-reference-v0.2]]"
 ---
 
 # (OrbCode Reference) [Topic]

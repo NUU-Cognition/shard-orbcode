@@ -10,11 +10,22 @@ id: [generate-uuid4]
 tags:
   - "#orbc/test-suite"
 status: [draft|pass|fail|stale|deprecated]
+parent:
+  /* Always rendered. Leave empty for a root Test Suite.
+     A Test Suite's parents MUST all be other Test Suites (nested grouping).
+     Scalar (single parent) or list (multiple parents) both accepted:
+       parent: "[[(Test Suite) Parent Suite]]"
+       parent:
+         - "[[(Test Suite) Parent Suite]]"
+         - "[[(Test Suite) Sibling Grouping]]"
+     The first-listed parent drives the sidebar tree. */
 artifact-refs:
-  /* Test Suites reference Tests, Features, Systems, Environment — see Reference Model */
+  /* Free-form "related to" links — used for graph edges, NOT hierarchy.
+     Hierarchy is determined exclusively by the `parent:` field above.
+     Test Suites reference Tests, Features, Systems, Environment — see Reference Model */
   - "[[referenced tests, features, systems, and environments]]"
   - (continue)
-template: "[[tmp-orbc-test-suite-v0.2]]"
+template: "[[dev-tmp-orbc-test-suite-v0.2]]"
 ---
 
 [Description: what this test suite covers and why these tests are grouped together]

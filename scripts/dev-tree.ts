@@ -23,6 +23,7 @@ interface ArtifactMeta {
   projectType?: string;
   codeRefs: string[];
   artifactRefs: string[];
+  parent?: string;
 }
 
 interface Container {
@@ -147,6 +148,9 @@ async function loadArtifact(filePath: string): Promise<ArtifactMeta | null> {
       artifactRefs: Array.isArray(fm['artifact-refs'])
         ? fm['artifact-refs'].map(extractWikilink)
         : [],
+      parent: typeof fm.parent === 'string'
+        ? extractWikilink(fm.parent)
+        : (Array.isArray(fm.parent) && typeof fm.parent[0] === 'string' ? extractWikilink(fm.parent[0]) : undefined),
     };
   } catch {
     return null;
@@ -182,6 +186,19 @@ async function loadProject(container: Container): Promise<Map<string, ArtifactMe
     if (meta) map.set(meta.name, meta);
   }
   return map;
+}
+
+// Build childrenByParent from the `parent:` field — the single hierarchy signal.
+function buildChildrenIndex(artifacts: Map<string, ArtifactMeta>): Map<string, string[]> {
+  const children = new Map<string, string[]>();
+  for (const [name, meta] of artifacts) {
+    if (!meta.parent) continue;
+    if (!artifacts.has(meta.parent)) continue;
+    if (!children.has(meta.parent)) children.set(meta.parent, []);
+    children.get(meta.parent)!.push(name);
+  }
+  for (const list of children.values()) list.sort();
+  return children;
 }
 
 function findContainer(containers: Container[], target: string): Container | undefined {
@@ -251,6 +268,7 @@ async function showTree(target: string, depth: number, verbose: boolean, json: b
     }
 
     const artifacts = await loadProject(container);
+    const childrenByParent = buildChildrenIndex(artifacts);
     const targetMeta = artifacts.get(target);
     if (!targetMeta) {
       console.error(`Error: Artifact "${target}" not found in ${container.name}.`);
@@ -260,12 +278,12 @@ async function showTree(target: string, depth: number, verbose: boolean, json: b
     if (json) {
       const visited = new Set<string>();
       visited.add(target);
-      const node = buildJsonNode(target, artifacts, depth, visited);
+      const node = buildJsonNode(target, artifacts, childrenByParent, depth, visited);
       console.log(JSON.stringify(node, null, 2));
     } else {
       const lines: string[] = [];
       const visited = new Set<string>();
-      renderSubtreeRoot(targetMeta, artifacts, depth, verbose, visited, lines);
+      renderSubtreeRoot(targetMeta, artifacts, childrenByParent, depth, verbose, visited, lines);
       console.log(lines.join('\n'));
     }
     return;
@@ -279,30 +297,31 @@ async function showTree(target: string, depth: number, verbose: boolean, json: b
   }
 
   const artifacts = await loadProject(container);
+  const childrenByParent = buildChildrenIndex(artifacts);
   const projectMeta = artifacts.get(container.name);
   const projectType = projectMeta?.projectType || '';
   const totalCount = artifacts.size;
 
-  // Categorize artifacts
-  const systems: ArtifactMeta[] = [];
+  // Root systems = systems with no parent
+  const rootSystems: ArtifactMeta[] = [];
   const contextArtifacts: ArtifactMeta[] = [];
 
   for (const [, meta] of artifacts) {
-    if (meta.tags.some(t => t === '#orbc/system')) {
-      systems.push(meta);
+    if (meta.tags.some(t => t === '#orbc/system') && !meta.parent) {
+      rootSystems.push(meta);
     } else if (meta.tags.some(t => CONTEXT_TAGS.has(t))) {
       contextArtifacts.push(meta);
     }
   }
 
-  systems.sort((a, b) => a.name.localeCompare(b.name));
+  rootSystems.sort((a, b) => a.name.localeCompare(b.name));
   contextArtifacts.sort((a, b) => a.name.localeCompare(b.name));
 
   if (json) {
     const visited = new Set<string>();
-    const sysNodes = systems.map(s => {
+    const sysNodes = rootSystems.map(s => {
       visited.add(s.name);
-      return buildJsonNode(s.name, artifacts, depth - 1, visited);
+      return buildJsonNode(s.name, artifacts, childrenByParent, depth - 1, visited);
     });
     const result: any = {
       name: container.name,
@@ -328,9 +347,9 @@ async function showTree(target: string, depth: number, verbose: boolean, json: b
 
   const visited = new Set<string>();
 
-  for (let i = 0; i < systems.length; i++) {
-    const sys = systems[i];
-    const isLast = i === systems.length - 1 && contextArtifacts.length === 0;
+  for (let i = 0; i < rootSystems.length; i++) {
+    const sys = rootSystems[i];
+    const isLast = i === rootSystems.length - 1 && contextArtifacts.length === 0;
     visited.add(sys.name);
 
     const statusSuffix = verbose && sys.status ? ` (${sys.status})` : '';
@@ -343,7 +362,7 @@ async function showTree(target: string, depth: number, verbose: boolean, json: b
 
     if (depth > 1) {
       const childPrefix = isLast ? '    ' : '│   ';
-      renderChildren(sys, artifacts, depth - 1, visited, verbose, childPrefix, lines);
+      renderChildren(sys, artifacts, childrenByParent, depth - 1, visited, verbose, childPrefix, lines);
     }
   }
 
@@ -362,6 +381,7 @@ async function showTree(target: string, depth: number, verbose: boolean, json: b
 function renderChildren(
   parent: ArtifactMeta,
   artifacts: Map<string, ArtifactMeta>,
+  childrenByParent: Map<string, string[]>,
   remaining: number,
   visited: Set<string>,
   verbose: boolean,
@@ -370,26 +390,26 @@ function renderChildren(
 ) {
   if (remaining <= 0) return;
 
-  const refs = parent.artifactRefs;
-  for (let i = 0; i < refs.length; i++) {
-    const refName = refs[i];
-    const isLast = i === refs.length - 1;
+  const children = childrenByParent.get(parent.name) ?? [];
+  for (let i = 0; i < children.length; i++) {
+    const childName = children[i];
+    const isLast = i === children.length - 1;
     const connector = isLast ? '└── ' : '├── ';
     const childPrefix = prefix + (isLast ? '    ' : '│   ');
 
-    const meta = artifacts.get(refName);
+    const meta = artifacts.get(childName);
     const statusSuffix = verbose && meta?.status ? ` (${meta.status})` : '';
     const notFoundSuffix = !meta ? ' [not found]' : '';
 
-    lines.push(`${prefix}${connector}${refName}${statusSuffix}${notFoundSuffix}`);
+    lines.push(`${prefix}${connector}${childName}${statusSuffix}${notFoundSuffix}`);
 
     if (verbose && meta?.codeRefs && meta.codeRefs.length > 0) {
       lines.push(`${childPrefix}refs: ${meta.codeRefs.join(', ')}`);
     }
 
-    if (meta && remaining > 1 && meta.artifactRefs.length > 0 && !visited.has(refName)) {
-      visited.add(refName);
-      renderChildren(meta, artifacts, remaining - 1, visited, verbose, childPrefix, lines);
+    if (meta && remaining > 1 && !visited.has(childName)) {
+      visited.add(childName);
+      renderChildren(meta, artifacts, childrenByParent, remaining - 1, visited, verbose, childPrefix, lines);
     }
   }
 }
@@ -399,6 +419,7 @@ function renderChildren(
 function renderSubtreeRoot(
   root: ArtifactMeta,
   artifacts: Map<string, ArtifactMeta>,
+  childrenByParent: Map<string, string[]>,
   depth: number,
   verbose: boolean,
   visited: Set<string>,
@@ -412,7 +433,7 @@ function renderSubtreeRoot(
   }
 
   visited.add(root.name);
-  renderChildren(root, artifacts, depth, visited, verbose, '', lines);
+  renderChildren(root, artifacts, childrenByParent, depth, verbose, '', lines);
 }
 
 // --- JSON Rendering ---
@@ -420,6 +441,7 @@ function renderSubtreeRoot(
 function buildJsonNode(
   name: string,
   artifacts: Map<string, ArtifactMeta>,
+  childrenByParent: Map<string, string[]>,
   remaining: number,
   visited: Set<string>,
 ): any {
@@ -431,12 +453,13 @@ function buildJsonNode(
   if (meta?.status) node.status = meta.status;
   if (meta?.codeRefs && meta.codeRefs.length > 0) node.codeRefs = meta.codeRefs;
 
-  if (remaining > 0 && meta?.artifactRefs && meta.artifactRefs.length > 0) {
+  const childNames = childrenByParent.get(name) ?? [];
+  if (remaining > 0 && childNames.length > 0) {
     const children: any[] = [];
-    for (const ref of meta.artifactRefs) {
-      if (visited.has(ref)) continue;
-      visited.add(ref);
-      children.push(buildJsonNode(ref, artifacts, remaining - 1, visited));
+    for (const childName of childNames) {
+      if (visited.has(childName)) continue;
+      visited.add(childName);
+      children.push(buildJsonNode(childName, artifacts, childrenByParent, remaining - 1, visited));
     }
     if (children.length > 0) node.children = children;
   }

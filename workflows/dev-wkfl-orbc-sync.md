@@ -1,3 +1,5 @@
+> [!important] THIS FILE IS AN INSTRUCTION. WHEN REFERENCED IT IS MEANT TO BE TAKEN AS AN ACTION.
+
 This workflow belongs to the OrbCode shard. Ensure you have @init-orbc.md in context before continuing.
 
 # Workflow: Sync Map
@@ -82,5 +84,5 @@ For each orphaned artifact:
 # Notes
 
 - Run this before starting a major development effort to ensure agents have accurate context.
-- This is a **full scan**. For updating specific artifacts after known changes, use `wkfl-orbc-update`.
+- This is a **full scan**. For updating specific artifacts after known changes, use `dev-wkfl-orbc-update`.
 - Don't create new artifacts for missing coverage unless the human asks — just report the gaps.

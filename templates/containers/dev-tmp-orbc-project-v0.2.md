@@ -12,7 +12,7 @@ status: [active|archived]
 project-type: [application|cognitive]
 codebase: [path/to/codebase/root]
 workspace: "[[(OrbCode Workspace) Parent Workspace]]"
-template: "[[tmp-orbc-project-v0.2]]"
+template: "[[dev-tmp-orbc-project-v0.2]]"
 ---
 
 # (OrbCode Project) [Name]

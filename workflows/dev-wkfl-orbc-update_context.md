@@ -1,3 +1,5 @@
+> [!important] THIS FILE IS AN INSTRUCTION. WHEN REFERENCED IT IS MEANT TO BE TAKEN AS AN ACTION.
+
 This workflow belongs to the OrbCode shard. Ensure you have @init-orbc.md in context before continuing.
 
 # Workflow: Update Context
@@ -79,7 +81,7 @@ Wait for approval before proceeding.
 Apply approved changes.
 
 1. **Free-form docs** — update in place. No template needed. Write what's useful.
-2. **Environment artifacts** — use `tmp-orbc-environment-v0.2` if creating new ones. Update in place if refreshing.
+2. **Environment artifacts** — use `dev-tmp-orbc-environment-v0.2` if creating new ones. Update in place if refreshing.
 3. **Update project index** if new documents were created.
 
 **Cross-project updates (if approved):**

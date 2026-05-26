@@ -11,7 +11,7 @@ id: [generate-uuid4]
 tags:
   - "#orbc/environment"
 status: [draft|active|stale|deprecated]
-template: "[[tmp-orbc-environment-v0.2]]"
+template: "[[dev-tmp-orbc-environment-v0.2]]"
 ---
 
 [Description: what this environment provides and when it's used]

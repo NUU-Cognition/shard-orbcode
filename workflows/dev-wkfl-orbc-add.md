@@ -1,3 +1,5 @@
+> [!important] THIS FILE IS AN INSTRUCTION. WHEN REFERENCED IT IS MEANT TO BE TAKEN AS AN ACTION.
+
 This workflow belongs to the OrbCode shard. Ensure you have @init-orbc.md in context before continuing.
 
 # Workflow: Add Artifact
@@ -26,7 +28,7 @@ Create a new Map artifact after adding a feature, system, data structure, or oth
 
 ## Stage 2: Create Artifact
 
-1. Use the appropriate template (`tmp-orbc-feature`, `tmp-orbc-system`, etc.)
+1. Use the appropriate template (`dev-tmp-orbc-feature`, `dev-tmp-orbc-system`, etc.)
 2. Name with dot notation: `(OrbCode Project) [Name] . (Type) [Artifact Name].md`
 3. Place in the project's `Map/` folder (or appropriate subfolder)
 4. Fill in:

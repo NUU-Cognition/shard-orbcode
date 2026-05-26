@@ -69,8 +69,8 @@ Mesh/OrbCode/
 
 ## Usage
 
-1. Load `init-orbc.md` — it contains the complete shard reference
-2. Run a workflow (typically `wkfl-orbc-map.md` for first-time setup)
+1. Load `dev-init-orbc.md` — it contains the complete shard reference
+2. Run a workflow (typically `dev-wkfl-orbc-map.md` for first-time setup)
 3. Keep the Map current with `update`, `add`, and `sync` workflows
 4. Plan changes by creating draft artifacts and linking tasks
 

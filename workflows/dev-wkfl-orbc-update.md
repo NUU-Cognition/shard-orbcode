@@ -1,3 +1,5 @@
+> [!important] THIS FILE IS AN INSTRUCTION. WHEN REFERENCED IT IS MEANT TO BE TAKEN AS AN ACTION.
+
 This workflow belongs to the OrbCode shard. Ensure you have @init-orbc.md in context before continuing.
 
 # Workflow: Update Artifact
@@ -46,5 +48,5 @@ For each artifact that needs updating:
 
 # Notes
 
-- This is for **specific, known changes**. For a full health check across all artifacts, use `wkfl-orbc-sync`.
+- This is for **specific, known changes**. For a full health check across all artifacts, use `dev-wkfl-orbc-sync`.
 - Keep artifacts conceptual — update the human-readable understanding, not just the code-refs.

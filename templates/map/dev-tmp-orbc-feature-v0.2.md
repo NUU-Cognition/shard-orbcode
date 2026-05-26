@@ -11,11 +11,24 @@ id: [generate-uuid4]
 tags:
   - "#orbc/feature"
 status: [draft|untested|stale|verified]
+parent:
+  /* Always rendered. Leave empty for an orphan feature.
+     A Feature's parents MUST each be either a System (most common) or
+     another Feature (sub-feature).
+     Scalar (single parent) or list (multiple parents) both accepted:
+       parent: "[[(System) Owning System]]"
+       parent:
+         - "[[(System) Owning System]]"
+         - "[[(Feature) Also Parent]]"
+     The first-listed parent drives the sidebar tree and owning-system
+     resolution; additional parents contribute DAG edges. */
 code-refs:
   - path/to/implementation.ts
   - (continue)
 artifact-refs:
-  /* Features reference Features, Data, UI, Dependency — see Reference Model */
+  /* Free-form "related to" links — used for graph edges, NOT hierarchy.
+     Hierarchy is determined exclusively by the `parent:` field above.
+     Features reference Features, Data, UI, Dependency — see Reference Model */
   - "[[(Feature) Sub Feature]]"
   - "[[(Data) Related Data]]"
   - "[[(UI) Rendered In]]"
@@ -24,7 +37,7 @@ artifact-refs:
 tasks:
   - "[[(Task) NNN Implementation Task]]"
   - (continue)
-template: "[[tmp-orbc-feature-v0.2]]"
+template: "[[dev-tmp-orbc-feature-v0.2]]"
 ---
 
 [Description: what capability this provides and why it matters. Write for a human who doesn't read code.]
@@ -80,5 +93,5 @@ stateDiagram-v2
 - One feature = one capability (not one file)
 - Status lifecycle: `draft` -> `untested` -> `verified` (all transitions are manual)
 - `draft` = planned, no code yet. `untested` = implemented but not verified. `stale` = out of date with code. `verified` = human confirmed.
-- Features reference Features (hierarchy), Data, UI, and Dependency — never Systems. See Reference Model.
+- Hierarchy is set via the `parent:` field (parent = System or Feature). Features reference Data, UI, and Dependency via `artifact-refs` — never Systems.
 - No `test-refs` — Tests reference Features, not vice versa. Use backlinks to find tests.

@@ -84,11 +84,11 @@ Project-level knowledge. Free-form documents namespaced under the project using 
 
 | Document | Naming | Template | Purpose |
 |----------|--------|----------|---------|
-| Overview | `... . Overview.md` | `tmp-orbc-overview-v0.2` | High-level diagram-first visual architecture |
-| Context | `... . Context.md` | `tmp-orbc-context-v0.2` | Scope, key concepts, conventions, important files |
-| Architecture | `... . Architecture.md` | `tmp-orbc-architecture-v0.2` | Directory structure, logical architecture, patterns, constraints |
-| Tech Stack | `... . Tech Stack.md` | `tmp-orbc-tech_stack-v0.2` | Language, runtime, build, test, key dependencies |
-| Relationships | `... . Relationships.md` | `tmp-orbc-relationships-v0.2` | Inter-project dependencies, consumers, test boundaries, contracts |
+| Overview | `... . Overview.md` | `dev-tmp-orbc-overview-v0.2` | High-level diagram-first visual architecture |
+| Context | `... . Context.md` | `dev-tmp-orbc-context-v0.2` | Scope, key concepts, conventions, important files |
+| Architecture | `... . Architecture.md` | `dev-tmp-orbc-architecture-v0.2` | Directory structure, logical architecture, patterns, constraints |
+| Tech Stack | `... . Tech Stack.md` | `dev-tmp-orbc-tech_stack-v0.2` | Language, runtime, build, test, key dependencies |
+| Relationships | `... . Relationships.md` | `dev-tmp-orbc-relationships-v0.2` | Inter-project dependencies, consumers, test boundaries, contracts |
 
 These are untyped — no `(Type)` prefix in the filename, but they do have templates and frontmatter.
 
@@ -280,6 +280,22 @@ OrbCode enforces a **type-constrained reference graph**. Each type has defined v
 
 **Reference direction:** All `artifact-refs` flow in one direction. Never link both ways. Use backlinks for reverse lookups.
 
+### Hierarchy vs. References
+
+`artifact-refs` and `parent` have **separate jobs**. Do not conflate them.
+
+| Field | Purpose | Shape | Used By |
+|-------|---------|-------|---------|
+| `parent:` | The single hierarchy signal — who owns this artifact in the tree | A single wikilink, or omit for a root | Sidebar tree, depth layout, parent-system label |
+| `artifact-refs:` | Free-form "related to" links | List of wikilinks | Graph edges on the map canvas |
+
+The rules:
+
+- **Hierarchy is exclusively `parent:`.** The renderer does not infer parent-child from `artifact-refs`.
+- **Types that can have a parent:** System (parent = System), Feature (parent = System or Feature), UI (parent = UI), Test Suite (parent = Test Suite), Test (parent = Test Suite). Leaf types (Data, Dependency, Consumer, Environment, E2E) do not have `parent:`.
+- **Roots omit `parent:`** (or leave it empty). A System with no parent is a root System.
+- **`artifact-refs:` is orthogonal to hierarchy.** A System listing a Feature in `artifact-refs` produces a graph edge but **not** a parent-child relationship. To make that Feature a child of the System, set `parent: "[[(System) ...]]"` on the Feature.
+
 ---
 
 ## Spatial Model (Plate Rendering)
@@ -349,11 +365,11 @@ Map artifacts can reference Specs via `artifact-refs` for critical interfaces.
 
 | Workflow | File | Purpose |
 |----------|------|---------|
-| Map Codebase | `wkfl-orbc-map.md` | Initial mapping of a post-MVP codebase |
-| Add Artifact | `wkfl-orbc-add.md` | Create a new Map artifact |
-| Update Artifact | `wkfl-orbc-update.md` | Update an existing Map artifact after code changes |
-| Sync Map | `wkfl-orbc-sync.md` | Verify all artifacts are current, fix drift |
-| Update Context | `wkfl-orbc-update-context.md` | Refresh Context layer documents |
+| Map Codebase | `dev-wkfl-orbc-map.md` | Initial mapping of a post-MVP codebase |
+| Add Artifact | `dev-wkfl-orbc-add.md` | Create a new Map artifact |
+| Update Artifact | `dev-wkfl-orbc-update.md` | Update an existing Map artifact after code changes |
+| Sync Map | `dev-wkfl-orbc-sync.md` | Verify all artifacts are current, fix drift |
+| Update Context | `dev-wkfl-orbc-update-context.md` | Refresh Context layer documents |
 
 ---
 
@@ -363,45 +379,45 @@ Map artifacts can reference Specs via `artifact-refs` for critical interfaces.
 
 | Template | File | Creates |
 |----------|------|---------|
-| Workspace | `tmp-orbc-workspace-v0.2.md` | `(OrbCode Workspace) Name.md` |
-| Project | `tmp-orbc-project-v0.2.md` | `(OrbCode Project) Name.md` |
+| Workspace | `dev-tmp-orbc-workspace-v0.2.md` | `(OrbCode Workspace) Name.md` |
+| Project | `dev-tmp-orbc-project-v0.2.md` | `(OrbCode Project) Name.md` |
 
 **Context:** (`templates/context/`)
 
 | Template | File | Creates |
 |----------|------|---------|
-| Context | `tmp-orbc-context-v0.2.md` | `... . Context.md` |
-| Architecture | `tmp-orbc-architecture-v0.2.md` | `... . Architecture.md` |
-| Tech Stack | `tmp-orbc-tech_stack-v0.2.md` | `... . Tech Stack.md` |
-| Relationships | `tmp-orbc-relationships-v0.2.md` | `... . Relationships.md` |
-| Overview | `tmp-orbc-overview-v0.2.md` | `... . Overview.md` |
-| Environment | `tmp-orbc-environment-v0.2.md` | `... . (Environment) Name.md` |
+| Context | `dev-tmp-orbc-context-v0.2.md` | `... . Context.md` |
+| Architecture | `dev-tmp-orbc-architecture-v0.2.md` | `... . Architecture.md` |
+| Tech Stack | `dev-tmp-orbc-tech_stack-v0.2.md` | `... . Tech Stack.md` |
+| Relationships | `dev-tmp-orbc-relationships-v0.2.md` | `... . Relationships.md` |
+| Overview | `dev-tmp-orbc-overview-v0.2.md` | `... . Overview.md` |
+| Environment | `dev-tmp-orbc-environment-v0.2.md` | `... . (Environment) Name.md` |
 
 **Map:** (`templates/map/`)
 
 | Template | File | Creates |
 |----------|------|---------|
-| System | `tmp-orbc-system-v0.2.md` | `... . (System) Name.md` |
-| Feature | `tmp-orbc-feature-v0.2.md` | `... . (Feature) Name.md` |
-| Data | `tmp-orbc-data-v0.2.md` | `... . (Data) Name.md` |
-| UI | `tmp-orbc-ui-v0.2.md` | `... . (UI) Name.md` |
-| Dependency | `tmp-orbc-dependency-v0.2.md` | `... . (Dependency) Name.md` |
-| Consumer | `tmp-orbc-consumer-v0.2.md` | `... . (Consumer) Name.md` |
-| Test Suite | `tmp-orbc-test-suite-v0.2.md` | `... . (Test Suite) Name.md` |
-| E2E | `tmp-orbc-e2e-v0.2.md` | `... . (E2E) Name.md` |
+| System | `dev-tmp-orbc-system-v0.2.md` | `... . (System) Name.md` |
+| Feature | `dev-tmp-orbc-feature-v0.2.md` | `... . (Feature) Name.md` |
+| Data | `dev-tmp-orbc-data-v0.2.md` | `... . (Data) Name.md` |
+| UI | `dev-tmp-orbc-ui-v0.2.md` | `... . (UI) Name.md` |
+| Dependency | `dev-tmp-orbc-dependency-v0.2.md` | `... . (Dependency) Name.md` |
+| Consumer | `dev-tmp-orbc-consumer-v0.2.md` | `... . (Consumer) Name.md` |
+| Test Suite | `dev-tmp-orbc-test-suite-v0.2.md` | `... . (Test Suite) Name.md` |
+| E2E | `dev-tmp-orbc-e2e-v0.2.md` | `... . (E2E) Name.md` |
 
 **Testing:** (`templates/verification/`)
 
 | Template | File | Creates |
 |----------|------|---------|
-| Test | `tmp-orbc-test-v0.2.md` | `... . (Test) Name.md` |
+| Test | `dev-tmp-orbc-test-v0.2.md` | `... . (Test) Name.md` |
 
 **Notes:** (`templates/notes/`)
 
 | Template | File | Creates |
 |----------|------|---------|
-| Reference | `tmp-orbc-reference-v0.2.md` | `(OrbCode Reference) Topic.md` |
-| Note | `tmp-orbc-note-v0.2.md` | `... . [Topic].md` |
+| Reference | `dev-tmp-orbc-reference-v0.2.md` | `(OrbCode Reference) Topic.md` |
+| Note | `dev-tmp-orbc-note-v0.2.md` | `... . [Topic].md` |
 
 ---
 
@@ -425,9 +441,9 @@ flint shard orbcode tree "(OrbCode Project) Flint" --json    # Machine-readable
 
 | File | Purpose |
 |------|---------|
-| `knw-orbc-orbcraft.md` | OrbCraft visualization system — agent presence on the OrbCode Map Plate |
-| `knw-orbc-vitest.md` | Vitest setup for TypeScript projects |
-| `knw-orbc-pytest.md` | pytest setup for Python projects |
+| `dev-knw-orbc-orbcraft.md` | OrbCraft visualization system — agent presence on the OrbCode Map Plate |
+| `dev-knw-orbc-vitest.md` | Vitest setup for TypeScript projects |
+| `dev-knw-orbc-pytest.md` | pytest setup for Python projects |
 
 ---
 

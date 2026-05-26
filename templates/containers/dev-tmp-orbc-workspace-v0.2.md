@@ -9,7 +9,7 @@ id: [generate-uuid4]
 tags:
   - "#orbc/workspace"
 status: [active|archived]
-template: "[[tmp-orbc-workspace-v0.2]]"
+template: "[[dev-tmp-orbc-workspace-v0.2]]"
 ---
 
 # (OrbCode Workspace) [Name]

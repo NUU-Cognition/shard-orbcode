@@ -1,3 +1,5 @@
+> [!important] THIS FILE IS AN INSTRUCTION. WHEN REFERENCED IT IS MEANT TO BE TAKEN AS AN ACTION.
+
 This workflow belongs to the OrbCode shard. Ensure you have @init-orbc.md in context before continuing.
 
 # Workflow: Map Codebase
@@ -90,13 +92,13 @@ Create the approved artifacts using dot notation naming.
 1. **Create project folder**: `Mesh/OrbCode/(OrbCode Project) [Project Name]/`
 2. **Create layer folders**: `Context/`, `Map/`, `Verification/`, `Notes/` (start flat — add subfolders within Map/ later as complexity warrants)
 3. **Create Context documents** (namespaced with dot notation, no type parentheses):
-   - `(OrbCode Project) [Name] . Context.md` — scope, concepts, conventions (uses `tmp-orbc-context-v0.2`)
-   - `(OrbCode Project) [Name] . Architecture.md` — structure, patterns, constraints (uses `tmp-orbc-architecture-v0.2`)
-   - `(OrbCode Project) [Name] . Tech Stack.md` — language, build, dependencies (uses `tmp-orbc-tech_stack-v0.2`)
-   - `(OrbCode Project) [Name] . Relationships.md` — inter-project connections (uses `tmp-orbc-relationships-v0.2`)
-   - `(OrbCode Project) [Name] . (Environment) [Env].md` — typed, uses `tmp-orbc-environment-v0.2`
+   - `(OrbCode Project) [Name] . Context.md` — scope, concepts, conventions (uses `dev-tmp-orbc-context-v0.2`)
+   - `(OrbCode Project) [Name] . Architecture.md` — structure, patterns, constraints (uses `dev-tmp-orbc-architecture-v0.2`)
+   - `(OrbCode Project) [Name] . Tech Stack.md` — language, build, dependencies (uses `dev-tmp-orbc-tech_stack-v0.2`)
+   - `(OrbCode Project) [Name] . Relationships.md` — inter-project connections (uses `dev-tmp-orbc-relationships-v0.2`)
+   - `(OrbCode Project) [Name] . (Environment) [Env].md` — typed, uses `dev-tmp-orbc-environment-v0.2`
 4. **Create Map artifacts** for each approved item:
-   - Use the appropriate template (`tmp-orbc-system`, `tmp-orbc-feature`, etc.)
+   - Use the appropriate template (`dev-tmp-orbc-system`, `dev-tmp-orbc-feature`, etc.)
    - Use dot notation: `(OrbCode Project) [Name] . (Type) [Artifact Name].md`
    - Fill in based on codebase understanding from Stage 1
    - Include accurate `code-refs` pointing to real files
@@ -105,8 +107,8 @@ Create the approved artifacts using dot notation naming.
 5. **Create Testing artifacts** (if application project-type):
    - `(OrbCode Project) [Name] . (Test Suite) [Name].md` for test groupings
    - Test and E2E artifacts as appropriate
-6. **Create project index**: `(OrbCode Project) [Name].md` using `tmp-orbc-project`, with links to all artifacts
-7. **Create Overview**: `(OrbCode Project) [Name] . Overview.md` in `Context/` using `tmp-orbc-overview` — visual entry point with mermaid diagrams
+6. **Create project index**: `(OrbCode Project) [Name].md` using `dev-tmp-orbc-project`, with links to all artifacts
+7. **Create Overview**: `(OrbCode Project) [Name] . Overview.md` in `Context/` using `dev-tmp-orbc-overview` — visual entry point with mermaid diagrams
 
 **For each artifact, include:**
 - Accurate frontmatter with real code paths

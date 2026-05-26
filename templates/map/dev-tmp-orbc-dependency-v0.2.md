@@ -10,7 +10,7 @@ id: [generate-uuid4]
 tags:
   - "#orbc/dependency"
 status: [draft|active|stale|deprecated]
-template: "[[tmp-orbc-dependency-v0.2]]"
+template: "[[dev-tmp-orbc-dependency-v0.2]]"
 ---
 
 [Description: what this dependency provides and why we rely on it]

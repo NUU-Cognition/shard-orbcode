@@ -14,7 +14,7 @@ code-refs:
   - path/to/types.ts
   - path/to/schema.sql
   - (continue)
-template: "[[tmp-orbc-data-v0.2]]"
+template: "[[dev-tmp-orbc-data-v0.2]]"
 ---
 
 [Description: what this data represents and why it matters]

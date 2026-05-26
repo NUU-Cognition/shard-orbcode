@@ -12,7 +12,7 @@ id: [generate-uuid4]
 tags:
   - "#orbc/context"
 status: [active|stale]
-template: "[[tmp-orbc-context-v0.2]]"
+template: "[[dev-tmp-orbc-context-v0.2]]"
 orbh-sessions:
   - "[[agent-session-uuid]]"
 authors:

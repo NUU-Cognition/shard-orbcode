@@ -10,7 +10,7 @@ id: [generate-uuid4]
 tags:
   - "#orbc/consumer"
 status: [draft|active|stale|deprecated]
-template: "[[tmp-orbc-consumer-v0.2]]"
+template: "[[dev-tmp-orbc-consumer-v0.2]]"
 ---
 
 [Description: what this consumer does and how it uses this project]

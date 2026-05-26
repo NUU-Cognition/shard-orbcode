@@ -13,7 +13,7 @@ id: [generate-uuid4]
 tags:
   - "#orbc/tech-stack"
 status: [active|stale]
-template: "[[tmp-orbc-tech_stack-v0.2]]"
+template: "[[dev-tmp-orbc-tech_stack-v0.2]]"
 orbh-sessions:
   - "[[agent-session-uuid]]"
 authors:

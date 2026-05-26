@@ -13,7 +13,7 @@ id: [generate-uuid4]
 tags:
   - "#orbc/architecture"
 status: [active|stale]
-template: "[[tmp-orbc-architecture-v0.2]]"
+template: "[[dev-tmp-orbc-architecture-v0.2]]"
 orbh-sessions:
   - "[[agent-session-uuid]]"
 authors:

@@ -104,7 +104,7 @@ The Map is the heart of OrbCode. Each artifact answers one human question about 
 |------|------------------|------------|----------------|
 | `(System)` | What are the major parts and boundaries? | Systems, Features, Data, UI, Dependency, Consumer | Bounded contexts, subsystems (1-3 typical) |
 | `(Feature)` | What capabilities exist? | Features, Data, UI, Dependency | Key capabilities (5-15 typical) |
-| `(Data)` | What shape is the core state? | — (leaf node) | Core entities, schemas |
+| `(Data)` | What shape is the core state? | Data (hierarchy) | Core entities, schemas |
 | `(UI)` | What does the user see or invoke? | UIs (hierarchy) | Pages, views, CLI surfaces, REST endpoints |
 | `(Dependency)` | What does this project depend on? | — (leaf node) | External libraries, services, APIs consumed |
 | `(Consumer)` | What depends on this project? | Systems, Features, Data, UI | Downstream services, clients, integrations |
@@ -256,7 +256,7 @@ OrbCode enforces a **type-constrained reference graph**. Each type has defined v
 |------|--------------------------------|-------------------|
 | **System** | Systems, Features, Data, UI, Dependency, Consumer | Systems |
 | **Feature** | Features, Data, UI, Dependency | Systems, Features, Test Suites, Tests, E2E |
-| **Data** | — (leaf node) | Features, Systems |
+| **Data** | Data (hierarchy only) | Features, Systems, Data |
 | **UI** | UIs (hierarchy only) | Features, Systems |
 | **Dependency** | — (leaf node) | Features, Systems |
 | **Consumer** | Systems, Features, Data, UI | Systems |
@@ -269,7 +269,7 @@ OrbCode enforces a **type-constrained reference graph**. Each type has defined v
 
 1. **Systems are the root.** Entry point of the Map graph. References sub-systems, features, data, UIs, dependencies, consumers.
 2. **Features are capabilities.** References sub-features, data, UIs, dependencies. Never references systems.
-3. **Data is shape.** Leaf node. Entities, schemas, types.
+3. **Data is shape.** References sub-data only (hierarchy). Entities, schemas, types.
 4. **UI is surface.** References sub-UIs only. Covers all surfaces: pages, views, panels, CLI commands, REST endpoints, GraphQL.
 5. **Dependency is upstream.** Leaf node. External libraries, services, APIs consumed.
 6. **Consumer is downstream.** References systems, features, data, UIs it depends on.
@@ -292,7 +292,7 @@ OrbCode enforces a **type-constrained reference graph**. Each type has defined v
 The rules:
 
 - **Hierarchy is exclusively `parent:`.** The renderer does not infer parent-child from `artifact-refs`.
-- **Types that can have a parent:** System (parent = System), Feature (parent = System or Feature), UI (parent = UI), Test Suite (parent = Test Suite), Test (parent = Test Suite). Leaf types (Data, Dependency, Consumer, Environment, E2E) do not have `parent:`.
+- **Types that can have a parent:** System (parent = System), Feature (parent = System or Feature), Data (parent = Data), UI (parent = UI), Test Suite (parent = Test Suite), Test (parent = Test Suite). Leaf types (Dependency, Consumer, Environment, E2E) do not have `parent:`.
 - **Roots omit `parent:`** (or leave it empty). A System with no parent is a root System.
 - **`artifact-refs:` is orthogonal to hierarchy.** A System listing a Feature in `artifact-refs` produces a graph edge but **not** a parent-child relationship. To make that Feature a child of the System, set `parent: "[[(System) ...]]"` on the Feature.
 

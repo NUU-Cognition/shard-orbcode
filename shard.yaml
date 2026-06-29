@@ -1,10 +1,16 @@
 shard-spec: "0.1.0"
-version: "0.6.1"
+version: "0.7.0"
 name: OrbCode
 shorthand: orbc
-description: Codebase understanding layer for mature production codebases
+description: Hand-curated semantic map of a codebase
 depends:
   - NUU-Cognition/shard-flint
+
+types:
+  - System
+  - Module
+  - Feature
+  - Data
 
 folders:
   - Mesh/OrbCode/

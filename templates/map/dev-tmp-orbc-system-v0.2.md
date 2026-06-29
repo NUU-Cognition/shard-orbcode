@@ -1,40 +1,38 @@
 # (System) [Name]
 
-/* Bounded context or major subsystem. Highest level of the Map. */
-/* Systems answer: "What are the major parts and boundaries?" */
-/* Use mermaid to show component relationships and boundaries. */
+/* Bounded context or architectural seam — the root of the Map. */
+/* Systems answer: "What are the major boundaries?" */
+/*
+  FRONTMATTER CONTRACT (the plate + validator enforce this):
+  - All wikilinks are FULLY QUALIFIED: (OrbCode Project) <Project> . (Type) <Name>
+  - parent: exactly ONE wikilink to another System, or "" for a root System. Never a list.
+  - status (structural): draft | active | stale | deprecated
+  - curation: proposed (agent draft) | accepted (human-committed in the plate)
+  - artifact-refs: Map types only — System, Module, Feature, Data
+  - spec-refs: Specifications shard artifacts (optional)
+  - code-refs grammar: "path/", "path/file.ext", "path/file.ext#symbol"
+  Generate VALID YAML — replace the placeholder VALUES, keep the shapes.
+*/
 
 ```markdown
 ---
-id: [generate-uuid4]
+id: "GENERATE-UUID4"
 tags:
   - "#orbc/system"
-status: [draft|active|stale|deprecated]
-parent:
-  /* Always rendered. Leave empty for a root system.
-     A System's parents MUST all be other Systems.
-     Scalar (single parent) or list (multiple parents) both accepted:
-       parent: "[[(System) Parent]]"
-       parent:
-         - "[[(System) Parent A]]"
-         - "[[(System) Parent B]]"
-     The first-listed parent drives the sidebar tree; additional parents
-     contribute DAG edges and same-type layout signal. */
+status: "active"
+curation: "proposed"
+parent: ""
 code-refs:
-  - [main/directory/path/]
-  - (continue)
+  - "src/area/"
 artifact-refs:
-  /* Free-form "related to" links — used for graph edges, NOT hierarchy.
-     Hierarchy is determined exclusively by the `parent:` field above.
-     Systems reference Systems, Features, Data, UI, Dependency, Consumer — see Reference Model */
-  - "[[(System) Sub System]]"
-  - "[[(Feature) Key Feature]]"
-  - "[[(Data) Core Entity]]"
-  - "[[(UI) View]]"
-  - "[[(Dependency) Library]]"
-  - "[[(Consumer) Client]]"
-  - (continue)
+  - "[[(OrbCode Project) PROJECT . (Module) Auth]]"
+  - "[[(OrbCode Project) PROJECT . (Data) Core Entity]]"
+spec-refs: []
 template: "[[dev-tmp-orbc-system-v0.2]]"
+orbh-sessions:
+  - "[[AGENT-SESSION-UUID]]"
+authors:
+  - "[[@author]]"
 ---
 
 # (System) [Name]
@@ -43,60 +41,46 @@ template: "[[dev-tmp-orbc-system-v0.2]]"
 
 ## Architecture
 
-/* Visual overview of this system's internal structure */
-
 ~~~mermaid
 graph TD
-    subgraph [System Name]
+    subgraph SystemName
         A[Component A] --> B[Component B]
         B --> C[Component C]
     end
-
     EXT[External Dependency] -.->|uses| A
-    C -.->|calls| OUT[External Service]
 ~~~
 
 ## Boundaries
 
 **Owns:**
 - [What this system is responsible for]
-- (continue)
 
 **Does not own:**
 - [What belongs elsewhere] (-> [Other System])
-- (continue)
 
 ## Key Concepts
 
 | Concept | Meaning |
 |---------|---------|
 | [Term] | [What it means in this system] |
-| (continue) | |
 
 ## Components
-
-/* Skip for simple systems */
 
 | Component | Purpose | Location |
 |-----------|---------|----------|
 | [Name] | [What it does] | `path/to/code` |
-| (continue) | | |
 
 ## Interfaces
 
 **Inbound:** [Events consumed, entry points]
 
 **Outbound:** [Services called, events published]
-
-## Related
-
-- [[(Feature) Key Feature]] — [relationship]
-- [[(System) Adjacent System]] — [how they interact]
-- (continue)
 ```
 
 ## Notes
 
-- Start mapping here — every codebase has 1-3 systems
-- The Architecture diagram is the most important section
-- Status: `draft` = planned. `active` = reflects current code. `stale` = out of date. `deprecated` = no longer relevant.
+- Most projects start with 1-3 root Systems; very large or multi-domain codebases may have more.
+- A System owns Modules (package-level groupings) and/or Features directly.
+- `parent` is a single owning System (or empty for a root). Secondary relationships go in `artifact-refs`.
+- Status: `draft` = planned, `active` = reflects current code, `stale` = out of date, `deprecated` = retired. All transitions are committed by the human in the plate; `curation: proposed` until the human accepts.
+- Body prose may use aliased links for readability: `[[(OrbCode Project) PROJECT . (Module) Auth|Auth]]`. Frontmatter must stay fully qualified.

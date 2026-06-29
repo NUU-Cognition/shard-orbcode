@@ -29,8 +29,6 @@ authors:
 
 **Role:** [What this project provides to the ecosystem]
 
-**Workspace:** [[(OrbCode Workspace) Parent Workspace]]
-
 /* Mermaid graph showing this project's position relative to dependencies and consumers */
 
 ~~~mermaid

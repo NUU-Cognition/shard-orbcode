@@ -7,9 +7,10 @@ const FLINT_ROOT = process.env.FLINT_ROOT || process.cwd();
 const ORBCODE_DIR = join(FLINT_ROOT, 'Mesh', 'OrbCode');
 
 const CONTEXT_TAGS = new Set([
+  '#orbc/overview',
   '#orbc/context',
   '#orbc/architecture',
-  '#orbc/environment',
+  '#orbc/tech-stack',
   '#orbc/relationships',
 ]);
 
@@ -29,7 +30,7 @@ interface ArtifactMeta {
 interface Container {
   name: string;
   path: string;
-  type: 'project' | 'workspace';
+  type: 'project';
 }
 
 interface CliArgs {
@@ -96,6 +97,10 @@ function parseFrontmatter(content: string): Record<string, any> {
       if (val === '' || val === '[]' || val === 'null') {
         currentKey = key;
         currentArray = [];
+      } else if (/^\[.*\]$/.test(val)) {
+        // inline flow array: ["a", "b"]
+        result[key] = val.slice(1, -1).split(',').map(s => s.trim().replace(/^["'](.*)["']$/, '$1')).filter(s => s !== '');
+        currentKey = null;
       } else {
         result[key] = val.replace(/^["'](.*)["']$/, '$1');
         currentKey = null;
@@ -148,9 +153,10 @@ async function loadArtifact(filePath: string): Promise<ArtifactMeta | null> {
       artifactRefs: Array.isArray(fm['artifact-refs'])
         ? fm['artifact-refs'].map(extractWikilink)
         : [],
-      parent: typeof fm.parent === 'string'
+      // parent is singular by contract — a single fully-qualified wikilink, or empty for a root.
+      parent: typeof fm.parent === 'string' && fm.parent.trim() !== ''
         ? extractWikilink(fm.parent)
-        : (Array.isArray(fm.parent) && typeof fm.parent[0] === 'string' ? extractWikilink(fm.parent[0]) : undefined),
+        : undefined,
     };
   } catch {
     return null;
@@ -165,12 +171,8 @@ async function discoverContainers(): Promise<Container[]> {
     const entries = await readdir(ORBCODE_DIR, { withFileTypes: true });
     for (const e of entries) {
       if (!e.isDirectory()) continue;
-      const type = e.name.startsWith('(OrbCode Project)')
-        ? 'project' as const
-        : e.name.startsWith('(OrbCode Workspace)')
-          ? 'workspace' as const
-          : null;
-      if (type) out.push({ name: e.name, path: join(ORBCODE_DIR, e.name), type });
+      if (!e.name.startsWith('(OrbCode Project)')) continue;
+      out.push({ name: e.name, path: join(ORBCODE_DIR, e.name), type: 'project' });
     }
   } catch {
     return [];
@@ -208,7 +210,7 @@ function findContainer(containers: Container[], target: string): Container | und
 
   // 2. Match on name suffix (e.g. "Flint" → "(OrbCode Project) Flint")
   c = containers.find(x => {
-    const suffix = x.name.replace(/^\(OrbCode (?:Project|Workspace)\)\s*/, '');
+    const suffix = x.name.replace(/^\(OrbCode Project\)\s*/, '');
     return suffix === target;
   });
   if (c) return c;
@@ -222,7 +224,7 @@ function findContainer(containers: Container[], target: string): Container | und
 async function listAll(json: boolean) {
   const containers = await discoverContainers();
   if (containers.length === 0) {
-    console.log('No OrbCode projects or workspaces found in Mesh/OrbCode/.');
+    console.log('No OrbCode projects found in Mesh/OrbCode/.');
     return;
   }
 
@@ -289,10 +291,10 @@ async function showTree(target: string, depth: number, verbose: boolean, json: b
     return;
   }
 
-  // Project/workspace mode
+  // Project mode
   const container = findContainer(containers, target);
   if (!container) {
-    console.error(`Error: No project or workspace matching "${target}".`);
+    console.error(`Error: No project matching "${target}".`);
     process.exit(1);
   }
 

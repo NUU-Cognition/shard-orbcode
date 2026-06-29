@@ -1,97 +1,81 @@
 # (Feature) [Name]
 
 /* A discrete capability the system provides. The workhorse of the Map. */
-/* Features answer: "What can it do?" */
+/* Features answer: "What single capability exists?" */
 /* Make this RICH and CONCEPTUAL — a human should understand the capability without reading code. */
-/* Use mermaid diagrams where they clarify: state machines, decision trees, data flow. */
+/*
+  FRONTMATTER CONTRACT:
+  - All wikilinks FULLY QUALIFIED: (OrbCode Project) <Project> . (Type) <Name>
+  - parent: exactly ONE wikilink — a Module (most common), a System, or another Feature. Never a list.
+  - status (actionable): draft | untested | stale | verified
+  - curation: proposed | accepted
+  - artifact-refs: Feature, Data only
+  - task-refs: implementation Tasks (optional)
+  - spec-refs: Specifications shard artifacts (optional)
+  - code-refs grammar: "path/", "path/file.ext", "path/file.ext#symbol"
+  Generate VALID YAML — replace the placeholder VALUES, keep the shapes.
+*/
 
 ```markdown
 ---
-id: [generate-uuid4]
+id: "GENERATE-UUID4"
 tags:
   - "#orbc/feature"
-status: [draft|untested|stale|verified]
-parent:
-  /* Always rendered. Leave empty for an orphan feature.
-     A Feature's parents MUST each be either a System (most common) or
-     another Feature (sub-feature).
-     Scalar (single parent) or list (multiple parents) both accepted:
-       parent: "[[(System) Owning System]]"
-       parent:
-         - "[[(System) Owning System]]"
-         - "[[(Feature) Also Parent]]"
-     The first-listed parent drives the sidebar tree and owning-system
-     resolution; additional parents contribute DAG edges. */
+status: "untested"
+curation: "proposed"
+parent: "[[(OrbCode Project) PROJECT . (Module) Auth]]"
 code-refs:
-  - path/to/implementation.ts
-  - (continue)
+  - "src/auth/login.ts"
+  - "src/auth/login.ts#login"
 artifact-refs:
-  /* Free-form "related to" links — used for graph edges, NOT hierarchy.
-     Hierarchy is determined exclusively by the `parent:` field above.
-     Features reference Features, Data, UI, Dependency — see Reference Model */
-  - "[[(Feature) Sub Feature]]"
-  - "[[(Data) Related Data]]"
-  - "[[(UI) Rendered In]]"
-  - "[[(Dependency) Relies On]]"
-  - (continue)
-tasks:
-  - "[[(Task) NNN Implementation Task]]"
-  - (continue)
+  - "[[(OrbCode Project) PROJECT . (Data) Session]]"
+task-refs: []
+spec-refs: []
 template: "[[dev-tmp-orbc-feature-v0.2]]"
+orbh-sessions:
+  - "[[AGENT-SESSION-UUID]]"
+authors:
+  - "[[@author]]"
 ---
+
+# (Feature) [Name]
 
 [Description: what capability this provides and why it matters. Write for a human who doesn't read code.]
 
 ## How It Works
 
-/* Explain the capability conceptually. Use a mermaid diagram if it helps. */
-
 ~~~mermaid
 stateDiagram-v2
-    [*] --> [Initial State]
-    [Initial State] --> [Next State]: [trigger]
-    [Next State] --> [Final State]: [trigger]
-    [Final State] --> [*]
+    [*] --> Initial
+    Initial --> Next: trigger
+    Next --> Final: trigger
+    Final --> [*]
 ~~~
 
-/* Or use flowchart, sequence diagram, etc. — whatever best explains the capability. */
-/* Delete the mermaid block if the feature is simple enough to explain in prose. */
-
-[Prose explanation of how the feature works — inputs, processing, outputs. Be conceptual, not implementation-level.]
+[Prose explanation — inputs, processing, outputs. Conceptual, not implementation-level. Delete the diagram if the feature is simple.]
 
 ## Behavior
 
 **Inputs:**
 - `[field]` ([required|optional]): [type, constraints]
-- (continue)
 
 **Outputs:**
 - [What's returned or produced]
-- (continue)
 
 ## Rules & Constraints
 
-/* The non-obvious rules that govern this feature's behavior */
-
-- [Rule or constraint]
-- (continue)
+- [The non-obvious rules that govern this feature's behavior]
 
 ## Edge Cases
-
-/* Only document non-obvious cases */
 
 | Condition | Behavior |
 |-----------|----------|
 | [Invalid input] | [Error or handling] |
-| [Empty/null] | [Behavior] |
-| (continue) | |
-
 ```
 
 ## Notes
 
-- One feature = one capability (not one file)
-- Status lifecycle: `draft` -> `untested` -> `verified` (all transitions are manual)
-- `draft` = planned, no code yet. `untested` = implemented but not verified. `stale` = out of date with code. `verified` = human confirmed.
-- Hierarchy is set via the `parent:` field (parent = System or Feature). Features reference Data, UI, and Dependency via `artifact-refs` — never Systems.
-- No `test-refs` — Tests reference Features, not vice versa. Use backlinks to find tests.
+- One feature = one capability (not one file).
+- `parent` is a single owning Module, System, or Feature. Features reference sub-Features and Data via `artifact-refs` — never Systems or Modules upward.
+- Status lifecycle: `draft` -> `untested` -> `verified` (+ `stale`). All transitions are committed by the human in the plate; `curation: proposed` until accepted.
+- Link implementation work via `task-refs`. When the Testing layer returns, Tests should reference Features (not the other way around) — use backlinks to find them.

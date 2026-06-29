@@ -1,18 +1,31 @@
 # (OrbCode Project) [Name]
 
-/* Entry point for a single codebase/package. */
+/* Entry point for a single codebase. */
 /* Project answers: "What does this codebase do and how is it structured?" */
+/*
+  FRONTMATTER CONTRACT:
+  - codebase: REQUIRED. A codebase-reference marker wikilink — a file in
+    Mesh/Metadata/References/Codebases/ (e.g. [[rf-cb-steel]]). NEVER a raw path;
+    paths are per-machine and live inside the marker. Resolve with `flint resolve codebase <Name>`.
+    All `code-refs` on Map artifacts are paths relative to this codebase root.
+  - project-type: application (code that runs) | cognitive (markdown-as-code: shards, prompt programs)
+  - status: active | archived
+  Generate VALID YAML — replace the placeholder VALUES, keep the shapes.
+*/
 
 ```markdown
 ---
-id: [generate-uuid4]
+id: "GENERATE-UUID4"
 tags:
   - "#orbc/project"
-status: [active|archived]
-project-type: [application|cognitive]
-codebase: [path/to/codebase/root]
-workspace: "[[(OrbCode Workspace) Parent Workspace]]"
+status: "active"
+project-type: "application"
+codebase: "[[rf-cb-steel]]"
 template: "[[dev-tmp-orbc-project-v0.2]]"
+orbh-sessions:
+  - "[[AGENT-SESSION-UUID]]"
+authors:
+  - "[[@author]]"
 ---
 
 # (OrbCode Project) [Name]
@@ -26,7 +39,6 @@ template: "[[dev-tmp-orbc-project-v0.2]]"
    Agents MUST read this section before working on the project. */
 
 - [Describe deviation and why]
-- (continue)
 
 ## Overview
 
@@ -38,85 +50,51 @@ template: "[[dev-tmp-orbc-project-v0.2]]"
 
 ## Map
 
+/* The core spine: System -> Module -> Feature -> Data */
+
 ### Systems
 
-- [[(System) Main System]] — [brief description]
-- (continue)
+- [[(OrbCode Project) [Name] . (System) Main System]] — [brief description]
 
-### Key Features
+### Modules
 
-- [[(Feature) Core Feature]] — [brief description]
-- (continue)
+- [[(OrbCode Project) [Name] . (Module) Area]] — [brief description]
+
+### Features
+
+- [[(OrbCode Project) [Name] . (Feature) Core Feature]] — [brief description]
 
 ### Data
 
-- [[(Data) Core Entity]] — [brief description]
-- (continue)
-
-### UIs
-
-- [[(UI) Main View]] — [brief description]
-- (continue)
-
-### Dependencies
-
-- [[(Dependency) Library Name]] — [brief description]
-- (continue)
-
-### Consumers
-
-- [[(Consumer) Client Name]] — [brief description]
-- (continue)
-
-## Testing
-
-- [[(Test Suite) Suite Name]] — [what it covers]
-- [[(E2E) Flow Name]] — [what it verifies]
-- (continue)
+- [[(OrbCode Project) [Name] . (Data) Core Entity]] — [brief description]
 
 ## Context
-
-/* Untyped project knowledge — namespaced with dot notation but no type parentheses.
-   Standard documents: Overview, Context, Architecture, Tech Stack, Relationships.
-   Additional topic-specific docs can be added.
-   Environment artifacts are the one typed Context document — they appear on the map. */
 
 - [[(OrbCode Project) [Name] . Overview]] — visual architecture overview
 - [[(OrbCode Project) [Name] . Context]] — scope, concepts, conventions
 - [[(OrbCode Project) [Name] . Architecture]] — structure, patterns, constraints
 - [[(OrbCode Project) [Name] . Tech Stack]] — language, build, dependencies
 - [[(OrbCode Project) [Name] . Relationships]] — inter-project connections
-- [[(OrbCode Project) [Name] . (Environment) Dev]] — dev environment
-- (continue)
 
 ## Notes
 
-/* Optional — project-specific concepts, references, and general notes */
-
 - [[(OrbCode Reference) Topic]] — [what it covers]
-- [[(OrbCode Project) [Name] . [Topic]]] — [general note description]
-- (continue)
 
 ## Entry Points
 
 | Entry Point | Purpose |
 |-------------|---------|
 | `path/to/main.ts` | [Application entry] |
-| `path/to/index.ts` | [Library exports] |
-| (continue) | |
 
 ## Related
 
-- [[(OrbCode Workspace) Parent]] — containing workspace
 - [[(OrbCode Project) Sibling]] — related project
-- (continue)
 ```
 
 ## Notes
 
-- One Project per distinct codebase/package
-- `codebase` field points to the root directory for code-refs
-- Context/ contains Overview + standard docs + typed Environment artifacts
-- Testing/ contains Test Suite, Test, and E2E artifacts
-- Map/ contains System, Feature, Data, UI, Dependency, Consumer
-- Notes/ contains References and general notes
+- One Project per distinct codebase.
+- `codebase` is **always** a `[[rf-cb-*]]` codebase-reference marker — never a raw path.
+- `Map/` contains the core spine: System, Module, Feature, Data.
+- `Context/` contains Overview + the standard untyped docs.
+- Frontmatter wikilinks are fully qualified; body prose may use aliases for readability.

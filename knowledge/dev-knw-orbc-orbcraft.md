@@ -56,3 +56,15 @@ Agents should update `orbcraft-focus` when:
 - Path recalculates on layout changes (collapse/expand, drag)
 - Collapsed nodes resolve to their nearest visible ancestor
 - Node dimensions are measured from the DOM for accurate centering
+
+## Motion Discipline
+
+Motion is the most attention-capturing thing on the canvas, so OrbCraft animation must **earn its motion budget**. The plate contract's "agent-presence animation earns its motion budget" rule is encoded here as hard requirements:
+
+- **Honour `prefers-reduced-motion`.** In reduced-motion mode, replace the orbit animation with **static badges/rings** on the focused cards — no movement.
+- **Animate only active sessions.** A session with no current focus does not animate.
+- **No ambient or decorative orbs.** Idle/decorative motion is forbidden — every animating orb must encode live "an agent is working here right now" state.
+- **Pause or dim unfollowed sessions** after a short timeout, so only the followed session animates at full strength.
+- **Status colour always outranks orb colour.** Orb presence must never compete with or override the status signal on a card.
+
+These rules keep agent presence as *useful live feedback* rather than extraneous load that distracts from the map.

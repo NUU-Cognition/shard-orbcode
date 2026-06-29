@@ -1,93 +1,74 @@
 # (Data) [Name]
 
 /* A core data structure, entity, or schema. */
-/* Data answers: "What shape is the data?" */
-/* Use erDiagram for relationships, stateDiagram for entity lifecycle. */
+/* Data answers: "What shape is the core state?" */
+/*
+  FRONTMATTER CONTRACT:
+  - All wikilinks FULLY QUALIFIED: (OrbCode Project) <Project> . (Type) <Name>
+  - parent: exactly ONE wikilink to its owner — a System, Module, Feature, or another Data (for sub-schemas).
+    Never a list. Omit ("") only for a genuinely top-level shared schema.
+  - status (structural): draft | active | stale | deprecated
+  - curation: proposed | accepted
+  - artifact-refs: Data only (non-parent relationships between schemas)
+  - code-refs grammar: "path/", "path/file.ext", "path/file.ext#symbol"
+  Generate VALID YAML — replace the placeholder VALUES, keep the shapes.
+*/
 
 ```markdown
 ---
-id: [generate-uuid4]
+id: "GENERATE-UUID4"
 tags:
   - "#orbc/data"
-status: [draft|active|stale|deprecated]
-parent:
-  /* Always rendered. Leave empty for a root Data artifact (a top-level schema/entity).
-     A Data artifact's parents MUST all be other Data artifacts.
-     Scalar (single parent) or list (multiple parents) both accepted:
-       parent: "[[(Data) Parent Schema]]"
-       parent:
-         - "[[(Data) Parent Schema]]"
-         - "[[(Data) Shared Entity]]"
-     The first-listed parent drives the sidebar tree. */
+status: "active"
+curation: "proposed"
+parent: "[[(OrbCode Project) PROJECT . (Feature) Login]]"
 code-refs:
-  - path/to/types.ts
-  - path/to/schema.sql
-  - (continue)
+  - "src/auth/types.ts#Session"
 artifact-refs:
-  /* Free-form "related to" links — graph edges on the canvas, NOT hierarchy.
-     Hierarchy (sidebar tree) is determined exclusively by the `parent:` field above.
-     Use this only for non-parent relationships between Data (e.g. a related schema).
-     Data references Data only — see Reference Model. Omit if there are none. */
-  - "[[(Data) Related Schema]]"
-  - (continue)
+  - "[[(OrbCode Project) PROJECT . (Data) User]]"
+spec-refs: []
 template: "[[dev-tmp-orbc-data-v0.2]]"
+orbh-sessions:
+  - "[[AGENT-SESSION-UUID]]"
+authors:
+  - "[[@author]]"
 ---
+
+# (Data) [Name]
 
 [Description: what this data represents and why it matters]
 
 ## Schema
 
 ~~~typescript
-interface [Name] {
+interface Name {
   id: string;
-  [field]: [type];
-  // (continue)
+  // (fields)
 }
 ~~~
 
 ## Relationships
 
-/* Use erDiagram for complex relationships */
-
 ~~~mermaid
 erDiagram
-    [Entity A] ||--o{ [Entity B] : "has many"
-    [Entity A] }|--|| [Entity C] : "belongs to"
-~~~
-
-## Lifecycle
-
-/* Optional — use stateDiagram if the entity has meaningful state transitions */
-
-~~~mermaid
-stateDiagram-v2
-    [*] --> [Initial]
-    [Initial] --> [Active]: [event]
-    [Active] --> [Archived]: [event]
-    [Archived] --> [*]
+    EntityA ||--o{ EntityB : "has many"
+    EntityA }|--|| EntityC : "belongs to"
 ~~~
 
 ## Invariants
 
 - [Rule 1 — e.g., "status can only move forward"]
-- (continue)
 
 ## Fields
-
-/* Only document non-obvious fields */
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `id` | string | Yes | [Purpose] |
-| `[field]` | [type] | [Yes|No] | [What it represents] |
-| (continue) | | | |
-
 ```
 
 ## Notes
 
-- Focus on semantics, not just field lists
-- Invariants are the most valuable section
-- Status: `draft` = planned. `active` = reflects current schema. `stale` = out of date. `deprecated` = no longer relevant.
-- Data forms a hierarchy via the `parent:` field — a sub-schema sets `parent: [[(Data) Parent Schema]]`. Data references Data only; it never references Systems, Features, or UIs.
-- Features and Systems reference Data via `artifact-refs` — use backlinks to find them.
+- Focus on semantics and invariants, not just field lists.
+- `parent` is the single conceptual **owner** of this data — the System, Module, or Feature it primarily belongs to (or another Data for a sub-schema). This is what makes Data collapse under its owner on the plate. For shared data, pick the primary owner as `parent` and let every other user link it via `artifact-refs`.
+- Data references Data only via `artifact-refs`; it never references Systems, Modules, or Features upward.
+- Status: `draft` = planned, `active` = reflects current schema, `stale` = out of date, `deprecated` = retired. Committed by the human in the plate; `curation: proposed` until accepted.

@@ -3,12 +3,13 @@ id: 46f3c604-ce3f-4ca8-b851-fc32027ceb41
 org: nuu-cognition
 source:
   id: 11ce0f63-3aff-476b-a3f3-2e8888cb7c80
-version: "0.7.0"
+version: "0.7.1"
 name: OrbCode
 shorthand: orbc
 description: Hand-curated semantic map of a codebase
-depends:
-  - NUU-Cognition/shard-flint
+dependencies:
+  - source: NUU-Cognition/shard-flint
+    version: "0.3.0"
 
 types:
   - System

@@ -1,11 +1,12 @@
 shard-spec: "0.3.0"
 id: 46f3c604-ce3f-4ca8-b851-fc32027ceb41
-version: "0.7.0"
+version: "0.7.1"
 name: OrbCode
 shorthand: orbc
 description: Hand-curated semantic map of a codebase
-depends:
-  - NUU-Cognition/shard-flint
+dependencies:
+  - source: NUU-Cognition/shard-flint
+    version: "0.3.0"
 
 types:
   - System

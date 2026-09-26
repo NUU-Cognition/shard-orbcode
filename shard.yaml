@@ -1,9 +1,9 @@
 shard-spec: "0.3.0"
 id: 46f3c604-ce3f-4ca8-b851-fc32027ceb41
-org: nuu-cognition
+org: nuucognition
 source:
   id: 11ce0f63-3aff-476b-a3f3-2e8888cb7c80
-version: "0.7.1"
+version: "0.7.2"
 name: OrbCode
 shorthand: orbc
 description: Hand-curated semantic map of a codebase

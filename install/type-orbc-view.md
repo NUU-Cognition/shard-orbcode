@@ -18,14 +18,18 @@ A View is one perspective on a software product, made for one question of a pers
 | Naming | `(View) <Name>.md` |
 | Location | `Mesh/OrbCode/(OrbCode Project) <Product>/Views/` |
 | Candidates | `Mesh/OrbCode/(OrbCode Project) <Product>/Candidates/<candidate-id>.md` |
+| History | `Mesh/OrbCode/(OrbCode Project) <Product>/History/<view-slug>-<yyyymmdd-hhmmss>.md`: the newest 5 replaced or removed forms of each view |
+| Ids | A view has its own `id`. A candidate and a history file have their own `id`, and `view_id` names their view. |
 
 ## Lifecycle
 
 ```
 candidate → (apply) → draft → (a person keeps it) → kept
+                        ↑  └── (a person removes a draft) → History/
+         (restore) ← History/ ← (the replaced form, at each apply)
 ```
 
-`curation` is `proposed` after each change by an agent. Only a person sets `accepted`.
+`curation` is `proposed` after each change by an agent. Only a person sets `accepted`. An apply sets an `accepted` view back to `proposed`. The commands are `flint orbcode apply`, `set`, `remove`, `history`, and `restore`.
 
 ## Templates
 

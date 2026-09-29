@@ -48,12 +48,18 @@ A view holds **meaning**: the titles, the prose, the groups, the links between t
 ```
 Mesh/OrbCode/
 └── (OrbCode Project) <Product>/
-    ├── (OrbCode Project) <Product>.md   # The Project file
+    ├── (OrbCode Project) <Product>.md          # The Project file
     ├── Views/
-    │   └── (View) <Name>.md             # One file for each view
-    └── Candidates/
-        └── <candidate-id>.md            # A complete view file that waits for the apply
+    │   └── (View) <Name>.md                    # One file for each view
+    ├── Candidates/
+    │   └── <candidate-id>.md                   # A complete view file that waits for the apply
+    └── History/
+        └── <view-slug>-<yyyymmdd-hhmmss>.md    # A replaced or removed form of a view
 ```
+
+- `Views/` holds the views. `flint orbcode apply` writes a view there. You never write a file in `Views/` yourself.
+- `Candidates/` holds the candidates. A workflow writes its candidate there.
+- `History/` holds the forms of a view that an apply replaced or that `flint orbcode remove` removed. The command keeps the newest 5 forms of each view and removes the older forms. Only `flint orbcode` writes in `History/`. Never write, edit, or move a file there.
 
 A project of OrbCode 0.7 also has the folders `Context/`, `Map/`, `Notes/`, and sometimes `Testing/`. They are the legacy form (see Legacy Form).
 
@@ -63,12 +69,14 @@ One Project file for each product: `Mesh/OrbCode/(OrbCode Project) <Product>/(Or
 
 | Field | Meaning |
 |-------|---------|
-| `codebase` | A wikilink to a codebase reference marker: `"[[rf-cb-<slug>]]"`. Never a raw path. The markers are in `Mesh/Metadata/References/Codebases/`. The frontmatter `name` of the marker is the codebase name, and `flint resolve codebase <name>` gives its path on this machine. Each `code-refs` path of a view is relative to this path. |
+| `codebase` | A wikilink to a codebase reference marker: `"[[rf-cb-<slug>]]"`. Never a raw path. The markers are in `Mesh/Metadata/References/Codebases/`. The frontmatter `name` of the marker is the codebase name. `flint resolve codebase <name>` prints its path on this machine on the first line. Each `code-refs` path of a view is relative to this path. |
 | `product-root` | The Orbtest product root, relative to the codebase: the folder that holds `orbtest/`. The value is `"."` when it is the codebase root. The `--root` of each `flint orbtest` command is the codebase path joined with `product-root`. Omit the field when the product has no `orbtest/` folder. |
 | `project-type` | `application` (code that runs) or `cognitive` (Markdown as code: shards and prompt programs) |
 | `status` | `active` or `archived` |
 
 The Products table of the Orbtest section of `Mesh/(System) Flint Init.md` gives the product root of each product that Orbtest tests.
+
+When the product has no codebase marker, the person adds the reference: `flint reference codebase "<Name>" <path>`, then `flint sync` (the sync writes the marker). When the marker exists but its path is not known on this machine, the person runs `flint fulfill codebase "<Name>" <path>`. `flint reference list` shows each codebase name and its state.
 
 ## The View File
 
@@ -76,25 +84,27 @@ A view is one Markdown file: `Views/(View) <Name>.md`. The file has the form of 
 
 ### The Frontmatter
 
-| Field | Required | Value |
-|-------|----------|-------|
-| `format` | Yes | `orbcode-view/1` |
-| `id` | Yes | A UUID v4. It never changes. A command finds a view by this UUID or by its name. |
-| `project` | Yes | A wikilink to the Project: `"[[(OrbCode Project) <Product>]]"` |
-| `question` | Yes | The question of the person, as one sentence |
-| `shape` | Yes | `flow`, `streams`, `layers`, `tree`, `table`, or `free` |
-| `lifetime` | Yes | `draft` or `kept` |
-| `curation` | Yes | `proposed` or `accepted` |
-| `derived-from` | No | A wikilink to the view that this view came from, or `""` |
-| `base_hash` | Candidate only | The SHA-256 hex of the bytes of the view file when the candidate was made, or `null` for a new view. The apply removes it. |
-| `tags` | Yes | `"#orbc/view"` |
-| `template`, `authors`, `orbh-sessions` | Flint | The Flint conventions |
+| Field | In | Value |
+|-------|----|-------|
+| `format` | Each file | `orbcode-view/1` |
+| `id` | Each file | A UUID v4. In a view, the `id` is the id of the view: it never changes, and a command finds a view by it or by its name. A candidate and a history file have their own new `id`, because each id of the Mesh is unique. |
+| `view_id` | Candidate, history file | The UUID of the view that the file belongs to. For a new view, a new UUID: the apply gives it to the view as its `id`. The apply removes `view_id`. |
+| `base_hash` | Candidate | The SHA-256 hex of the bytes of the view file when the candidate was made, or `null` for a new view. The apply removes it. |
+| `project` | Each file | A wikilink to the Project: `"[[(OrbCode Project) <Product>]]"` |
+| `question` | Each file | The question of the person, as one sentence |
+| `shape` | Each file | `flow`, `streams`, `layers`, `tree`, `table`, or `free` |
+| `lifetime` | Each file | `draft` or `kept`. A history file has `history`. |
+| `curation` | Each file | `proposed` or `accepted` |
+| `derived-from` | Optional | A wikilink to the view that this view came from, or `""` |
+| `replaced-by`, `removed` | History file | The command writes them: the candidate that replaced this form, or `removed: true` |
+| `tags` | Each file | `"#orbc/view"` |
+| `template`, `authors`, `orbh-sessions` | Each file | The Flint conventions |
 
-The frontmatter of a view has no `reviewed` field. A command refuses a name that two views have, so give each view a name that is unique in the Mesh (see The Name of a View).
+The frontmatter of a view has no `reviewed` field. A candidate of the old form has no `view_id`, and its `id` is the id of the view. The check gives it a `format` warning with the repair: set `view_id` to that id, and give `id` a new UUID.
 
 ### The Body
 
-1. **One H1 title.** The H1 is the name of the view. The file name is `(View) <H1 title>.md`.
+1. **One H1 title.** The H1 is the name of the view. The file name is `(View) <H1 title>.md`. Do not use the characters `\ / : * ? " < > | # ^ [ ]` in the H1.
 2. **The answer.** The prose after the H1 answers the question in one to three sentences.
 3. **An explicit id on each heading.** Each H2 to H6 heading ends with a stable id: `### Set up the machine {#setup}`. An id matches `[a-z0-9]+(-[a-z0-9]+)*` and is unique in the view. Two titles can be equal. Two ids cannot.
 4. **Depth is containment.** A section is inside the nearest heading above it that has a lower level. The prose of a section ends at the next heading.
@@ -108,7 +118,7 @@ The hierarchy rules of OrbCode 0.7 (one parent, the parent whitelist, and the ty
 
 ### The Name of a View
 
-The name is the H1 title: short, and in the words of the person ("Onboarding", "Architecture of Flint"). Mesh names are unique. Before you write a new view, search the Mesh for `(View) <Name>.md`. When the name exists, add ` of <Product>` ("Onboarding of Steel").
+The name is the H1 title: short, and in the words of the person ("Onboarding", "Architecture of Flint"). A name of the Mesh is unique, and the apply of a new view refuses a name that the Mesh has. Before you write a new view, search the whole Mesh for a file `(View) <Name>.md`. When the name exists, add ` of <Product>` ("Onboarding of Steel"). `flint orbcode diff` tells you before the apply (see The Candidate and the Apply).
 
 ## The Node Block
 
@@ -134,7 +144,7 @@ criteria: [setup.steps#0, setup.steps#3]
 | Field | Type | Meaning |
 |-------|------|---------|
 | `kind` | word | A word of the vocabulary below. A view can use another word; the surface then draws a plain node. |
-| `code-refs` | list of text | Paths in the grammar below, relative to the codebase of the project |
+| `code-refs` | list of text | Paths in the grammar below |
 | `stories` | list of ids | Orbtest story ids, for example `setup.steps` |
 | `criteria` | list of addresses | Criterion addresses `<story-id>#<index>`, 0-based. Use it only when the node needs some criteria of a story. An explicit list, also an empty list, replaces the criteria of the `stories`. An address gives its story, so the story need not be in `stories`. |
 | `next` | list of ids | The nodes where the process can continue |
@@ -160,16 +170,25 @@ criteria: [setup.steps#0, setup.steps#3]
 
 System, Module, Feature, and Data are the four types of OrbCode 0.7. In 1.0 they are words of `kind`.
 
+A node of the kind `note` that names no story and no criterion has no proof state, and it gets no `no-contract` finding. When it has `code-refs`, the check still checks each path. Use a note for what the view leaves out, and for a remark that helps the person read the view.
+
 ### The Grammar of `code-refs`
 
 ```
-"src/auth/"                            # a directory
+"src/auth/"                            # a folder of the codebase of the project
 "src/auth/session.ts"                  # a file
 "src/auth/session.ts#SessionManager"   # a symbol in a file
 "src/auth/session.ts:L20-L80"          # a line range: a weak anchor, do not use it in a kept view
+"@Steel/apps/steel-cli/src/serve.ts"   # a file of another codebase of the Flint
 ```
 
-Each path is relative to the codebase of the project. Each path must exist. For the match with the `components` of the specs, the command removes the symbol part and the line part.
+- A path with no `@` is relative to the codebase of the project. Each path must exist.
+- `@<Codebase name>/<path>` names a path in another codebase of the Flint. The name after `@` is the `name` of its codebase marker (`flint reference list` shows the names), for example `@Steel/` or `@Plates/`. Use it when one step of the answer is in another repository.
+- A path that leaves the codebase (`../plates/...`, or an absolute path) gives the error `code-ref-missing`. Use `@<Codebase name>/<path>` in its place.
+- For the match with the `components` of the specs, the command removes the symbol part and the line part. Only a path of the codebase of the project gives related cases. A path of another codebase gives none.
+- `flint orbcode review` anchors a node to the HEAD commit of the codebase of the project, and to the HEAD commit of each other codebase that its `code-refs` name.
+
+**Name files, not large folders.** A code-ref matches each spec whose `components` path is equal to it, inside it, or a parent of it. A broad code-ref (a large folder such as `packages/flint/src/`) matches many specs and gives the person hundreds of related cases that tell nothing. After a review, each change of a file in that folder also gives the finding `review-due`. Name the one file or the small folder that holds the claim of the node.
 
 ## The Six Shapes
 
@@ -188,26 +207,32 @@ Select the shape from the question. "Architecture" is not a shape: an architectu
 
 | Field | Values | Rule |
 |-------|--------|------|
-| `lifetime` | `draft`, `kept` | A new view is `draft`. A reshape keeps the value of the view. Only a person sets `kept`. `kept` means that the person wants to keep the view true. |
-| `curation` | `proposed`, `accepted` | An agent always writes `proposed`. Only a person sets `accepted`. The acceptance blocks nothing. Each change by an agent sets the view back to `proposed`. |
+| `lifetime` | `draft`, `kept` | A new view is `draft`. A reshape keeps the value of the view. `kept` means that the person wants to keep the view true. |
+| `curation` | `proposed`, `accepted` | An agent always writes `proposed`. `accepted` means that the person read the view and agrees with it. The acceptance blocks nothing. |
 
-A draft that no person opened for 30 days is a candidate for removal. Only a person removes a view, with `flint helper delete "(View) <Name>"`. An agent never removes a view.
+- **Only a person decides `kept` and `accepted`.** The person sets them with `flint orbcode set <view> --lifetime kept` and `flint orbcode set <view> --curation accepted`, or in Steel. Only these two keys of the file change. An agent runs `flint orbcode set` only when the person asks for it in the session.
+- **An apply is not an acceptance.** When a candidate replaces an `accepted` view, the apply sets the view back to `proposed`, so that the person sees each change that came after the acceptance.
+- **Only a person removes a view.** `flint orbcode remove <view>` removes a `draft` view and its candidates. It writes the view to `History/` first, so `flint orbcode restore` can bring it back. It refuses a `kept` view: the person sets `--lifetime draft` first. An agent never removes a view, and nobody removes a view with `rm` or `flint helper delete`.
+- A draft that no person opened for 30 days is a candidate for removal.
 
 ## The Candidate and the Apply
 
 A workflow never writes a file in `Views/`. It writes a **candidate**: a complete view file in `Candidates/<candidate-id>.md`. Then a person or Steel applies it.
 
 1. **The candidate id** is `<view-slug>-<UTC time as yyyymmdd-hhmmss>`, for example `onboarding-20260929-013000`. The view slug is the H1 title in lower case, with each run of other characters than `a-z` and `0-9` replaced by one `-`. The id is the file stem.
-2. **A new view** gets a new UUID in `id` and `base_hash: null`.
-3. **A reshape** keeps the `id` of the view. Its `base_hash` is the SHA-256 hex of the bytes of the view file. Compute it before you read the view: `shasum -a 256 "<view file>"` (the first word).
-4. **The check:** `flint orbcode check --candidate <candidate-id>` prints the findings of the candidate. Repair each error.
-5. **The difference:** `flint orbcode diff <view> --candidate <candidate-id>` prints the added, the removed, the moved, and the changed nodes by id.
-6. **The apply:** `flint orbcode apply <view> --candidate <candidate-id>` replaces the view only when the hash of the current view file is equal to `base_hash`. `<view>` is the name or the UUID of the view; for a new view, give the UUID of the candidate. The apply removes `base_hash`, writes `Views/(View) <H1 title>.md`, and removes the candidate. A conflict writes nothing and keeps the candidate. Steel does the same with `POST /api/orbcode/views/:id/apply`. The apply is not the acceptance of the curation.
-7. **The discard:** `flint orbcode discard --candidate <candidate-id>` removes a candidate.
+2. **A new view:** `view_id` is a new UUID (the id of the view after the apply). `id` is a second new UUID (the id of the candidate file). `base_hash: null`.
+3. **A reshape:** `view_id` is the `id` of the view. `id` is a new UUID. `base_hash` is the SHA-256 hex of the bytes of the view file. Compute it before you read the view: `shasum -a 256 "<view file>"` (the first word).
+4. **Verify the candidate** with the three commands that write nothing:
+   - `flint orbcode check --candidate <candidate-id>` prints the findings. Repair each error, and run it again until it exits 0.
+   - `flint orbcode view --candidate <candidate-id>` shows the candidate as the view will show it: the proof state, the criteria, and the related cases of each node. Read it: a node with hundreds of related cases has a code-ref that is too broad.
+   - `flint orbcode diff <view_id> --candidate <candidate-id>` prints the added, the removed, the moved, and the changed nodes by id, and says `an apply now writes the view` or `an apply now is a conflict`. For a new view it says `is a new view with <n> node(s)`, and a conflict there means that the name is taken: give the view another H1 title.
+5. **The apply:** `flint orbcode apply <view_id> --candidate <candidate-id>`. For a reshape, the name of the view also works. The apply replaces the view only when the hash of the current view file is equal to `base_hash`. It writes the replaced view to `History/` first. Then it gives the view the `id` of `view_id`, removes `view_id` and `base_hash`, writes `Views/(View) <H1 title>.md`, and removes the candidate. A conflict writes nothing, keeps the candidate, and exits 1. Steel does the same with `POST /api/orbcode/views/:id/apply`. The apply is not the acceptance of the curation.
+6. **The discard:** `flint orbcode discard --candidate <candidate-id>` removes a candidate.
+7. **The undo:** `flint orbcode history <view>` lists the forms of a view in `History/`, the newest first. `flint orbcode restore <view> --from <history-id>` makes a candidate `restore-<history-id>` from one form, with the `base_hash` of the view now. The view does not change until a person applies that candidate.
 
 When the apply gives a conflict, the view changed after the candidate was made. Read the view again, and write a new candidate from the current view.
 
-In an interactive session, apply a candidate only when the person agrees. In a headless session, never apply and never discard: Steel or the person does it.
+In an interactive session, apply a candidate only when the person agrees. In a headless session, never apply: Steel or the person does it.
 
 ### The Result of a Headless Workflow
 
@@ -217,16 +242,16 @@ A headless workflow ends with one JSON value of the schema `orbcode-result/1`, a
 {"schema":"orbcode-result/1","view_id":"<uuid>","candidate_id":"<candidate-id>","base_hash":"<sha256 hex or null>","summary":"<one or two sentences for the person>"}
 ```
 
-When no candidate was written, `candidate_id` is `null`, `view_id` is the UUID of the view or `null`, and the summary says why. See [[dev-hinit-orbc]].
+`view_id` is the `view_id` of the candidate: the UUID of the view, not the `id` of the candidate file. When no candidate was written, `candidate_id` is `null`, `view_id` is the UUID of the view or `null`, and the summary starts with `No candidate:` and says why. See [[dev-hinit-orbc]].
 
 ## The Review Anchor
 
-Each node can store `reviewed: { commit, at, meaning_hash, contract_hash }` in its block.
+Each node can store `reviewed: { commit, at, meaning_hash, contract_hash }` in its block. A node with a code-ref of another codebase also stores `commits`: one commit for each other codebase, by its name.
 
-- `meaning_hash` is the hash of the claim of the node: its prose and its fields that are not references. `contract_hash` is the hash of its references: `code-refs`, `stories`, and `criteria`. The place of the node in the view is in no hash, so a move keeps the anchor.
-- Only `flint orbcode review <view> [--node <id>...]` writes anchors. With no `--node`, it writes the anchor of each node.
+- `meaning_hash` is the hash of the claim of the node: its prose and its fields that are not references. `contract_hash` is the hash of its references: `code-refs`, `stories`, and `criteria`. The place and the title of the node are in no hash, so a move keeps the anchor.
+- Only `flint orbcode review <view> [--node <id>...]` writes anchors. With no `--node`, it writes the anchor of each node that has a node block.
 - In a candidate, copy the `reviewed` mapping of a node unchanged when its claim and its references do not change. When the claim or the references change, remove the `reviewed` mapping of that node. Never write or edit a value of `reviewed`.
-- The check compares the referenced code (also the changes of the working tree) and the content of the referenced stories with the anchor. The finding `review-due` means "a review is necessary". It does not mean "the claim is false".
+- The check compares the referenced code (also the changes of the working tree and the new files) and the content of the referenced stories with the anchor. The finding `review-due` means "a review is necessary". It does not mean "the claim is false".
 
 ## Findings
 
@@ -235,12 +260,14 @@ Each finding is about what a view says. No finding is about what a view leaves o
 | Finding | Level | Meaning |
 |---------|-------|---------|
 | `format` | error | The frontmatter or a `node` block does not parse, an id is missing or used two times, a link names a node that the view does not have, or `inside` is not the parent heading |
-| `code-ref-missing` | error | A `code-refs` path or symbol does not exist |
+| `format` | warning | A candidate has the old form (no `view_id`) |
+| `code-ref-missing` | error | A `code-refs` path or symbol does not exist, a path leaves its codebase, or the codebase after `@` does not resolve |
 | `story-missing` | error | A story id or a criterion address does not exist in Orbtest |
+| `project` | error or warning | The codebase of the Project does not resolve, the product root is outside the codebase or has no Orbtest definitions, or the proof of the project is not complete |
 | `review-due` | warning | The claim, the referenced code, or the referenced stories changed after the `reviewed` anchor |
-| `anchor-unknown` | warning | The commit of an anchor is not in the Git history |
-| `never-reviewed` | warning | A kept view has no `reviewed` anchor |
-| `no-contract` | note | A node names no story and no criterion |
+| `anchor-unknown` | warning | The commit of an anchor is not in the Git history, or the codebase does not resolve |
+| `never-reviewed` | warning | A node of a kept view has no `reviewed` anchor |
+| `no-contract` | note | A node names no story and no criterion, and it is not of the kind `note` |
 
 ## The Proof of a Node
 
@@ -255,24 +282,33 @@ The command computes the proof. Do not write it. The criteria of a node are its 
 | `partial` | Else one criterion or more is `proven` |
 | `unproven` | Else no criterion is `proven` |
 
-A match by code gives **related cases**: the cases of each spec whose `components` path is equal to a `code-refs` path, or inside it, or a parent of it. Related cases never prove the claim of a node. Only the contract link (node, story, criterion, case) gives proof.
+A node of the kind `note` with no story and no criterion has no proof state (`proof: null`).
+
+A match by code gives **related cases**: the cases of each spec whose `components` path is equal to a `code-refs` path, or inside it, or a parent of it. Related cases never prove the claim of a node. Only the contract link (node, story, criterion, case) gives proof. The join gives `related_cases` and `related_cases_total`. Up to 100 related cases, `related_cases` holds each of them. Above 100, it holds only the 20 cases whose spec has the nearest `components` path, and `related_cases_total` gives the count of all.
 
 ## The Commands
 
-`flint orbcode` is a part of the Flint CLI. It is not a shard script.
+`flint orbcode` is a part of the Flint CLI. It is not a shard script. `<view>` is the UUID or the name of a view: the file stem `(View) <Name>`, the stem with no `(View) `, or the H1 title. A command refuses a name that two views have. In a workflow, give the UUID. Each command takes `--project <name>` to limit it to one project, and `--json` for one JSON line.
 
 | Command | Result | Writes |
 |---------|--------|--------|
-| `flint orbcode list [--project <name>] [--json]` | The views: name, question, shape, lifetime, curation, proof counts, findings | No |
-| `flint orbcode view <view> [--json]` | The join of one view, schema `orbcode-view/1` | No |
-| `flint orbcode check [<view>] [--paths <path...>] [--json]` | The findings. Exit 0 with no error, 1 with an error, 2 when nothing loads. | No |
-| `flint orbcode check --candidate <candidate-id> [--json]` | The findings of a candidate, with the same exit codes | No |
-| `flint orbcode diff <view> --candidate <candidate-id> [--json]` | The added, the removed, the moved, and the changed nodes | No |
-| `flint orbcode review <view> [--node <id>...] [--commit <sha>]` | Writes the `reviewed` anchors | Yes |
-| `flint orbcode apply <view> --candidate <candidate-id> [--project <name>]` | Replaces the view when the hash is equal to `base_hash` | Yes |
-| `flint orbcode discard --candidate <candidate-id> [--project <name>]` | Removes the candidate | Yes |
+| `flint orbcode list` | The views with the question, the UUID, the shape, the lifetime, the curation, the proof counts, the finding counts, and the number of candidates. `--json` also lists each candidate with its `view_id`. | Nothing |
+| `flint orbcode view <view>` | The join of one view (schema `orbcode-view/1`): each node with its proof state, its criteria, its cases, its related cases, and its findings | Nothing |
+| `flint orbcode view --candidate <id>` | The join of one candidate, as the view will show it after the apply | Nothing |
+| `flint orbcode check [<view>]` | The findings of one view, or of each view | Nothing |
+| `flint orbcode check --candidate <id>` | The findings of one candidate | Nothing |
+| `flint orbcode check --paths <path...>` | The findings of each view that has a node whose `code-refs` match one of the paths. A path is absolute, or relative to the codebase of the project. When no view matches, it says so and exits 0. | Nothing |
+| `flint orbcode diff <view> --candidate <id>` | The added, the removed, the moved, and the changed nodes, and whether an apply now is a conflict. For a new view, `<view>` is the `view_id` of the candidate. | Nothing |
+| `flint orbcode diff --candidate <id> --against-candidate <id>` | The difference of two candidates of one view | Nothing |
+| `flint orbcode history <view>` | The forms of the view in `History/`, the newest first | Nothing |
+| `flint orbcode review <view> [--node <id>...] [--commit <sha>]` | Writes the `reviewed` anchors | The node blocks of the view |
+| `flint orbcode apply <view> --candidate <id>` | Replaces the view when its hash is equal to `base_hash` | The view, one file of `History/`; it removes the candidate |
+| `flint orbcode discard --candidate <id>` | Removes the candidate | Removes one candidate |
+| `flint orbcode restore <view> --from <history-id>` | Makes a candidate from one form of `History/` | One candidate |
+| `flint orbcode set <view> [--lifetime <draft\|kept>] [--curation <proposed\|accepted>]` | The decision of a person | The two keys of the view |
+| `flint orbcode remove <view>` | Removes a draft view and its candidates. It refuses a kept view. | One file of `History/`; it removes the view and its candidates |
 
-`<view>` is the UUID or the name of a view. In a workflow, give the UUID.
+The exit codes: 0 done; 1 a finding of the level error (`check`), or a conflict of an apply; 2 a refusal (an unknown view or candidate, a name that two views have, a kept view for `remove`, or no view to check), and nothing was written. Each write runs inside one lock of the Flint. Steel uses the same code through the routes `/api/orbcode/*` of the Flint server.
 
 The Orbtest commands that the workflows read (each with `--root <product root>`): `flint orbtest story list`, `flint orbtest story show <id>`, `flint orbtest coverage --json`, and `flint orbtest behaviour list --json`. The `components` of a spec are in the frontmatter of `orbtest/behaviour/specs/<spec-id>.md`.
 
@@ -280,22 +316,24 @@ When `flint orbcode` is not a command of your CLI (an older build), check a cand
 
 ## Quality Rules of a View
 
-These rules are the most important part of OrbCode. A view that breaks them does not help the person.
+These rules are the most important part of OrbCode. The reader of a view is a person who does not read code. A view that breaks these rules does not help that person.
 
-1. **Write for a person who does not read code.** Use the words of the person and of the product, not the names of functions, files, or packages. Code names go in `code-refs` only.
-2. **One idea for each node.** When the prose of a node needs two claims, make two nodes.
-3. **A short title.** Two to six words. A verb phrase for a step ("Set up the machine"). A noun phrase for a part ("The shard lock").
-4. **Prose first.** Each node has one to three sentences of prose before its block. The prose is for the person. The block is for the tools.
-5. **Select, do not dump.** Include only what answers the question. Five to fifteen nodes is a good size. Do not make one node for each file, each story, or each command. When a view needs more than 25 nodes, propose a split into two views.
-6. **Anchor each claim.** Each node that makes a claim about the product has `code-refs` or `stories`, and when you can, both. Only a `kind: note` node and a group have neither.
-7. **Prefer stories to criteria.** Name `criteria` only when the node needs some criteria of a story, not all.
-8. **Answer first.** The prose after the H1 answers the question in one to three sentences.
-9. **Simplified Technical English.** Short sentences, active voice, and one term for one thing.
+1. **Answer first.** The prose after the H1 answers the question in one to three sentences.
+2. **Prose first.** Each node has one to three sentences of prose before its block. The prose is for the person. The block is for the tools. A person must understand the view from the prose alone.
+3. **One idea for each node.** When the prose of a node needs two claims, make two nodes.
+4. **The words of the person, not of the code.** Use the words of the person and of the product. A command that the person types, such as `flint setup`, is a word of the person. A function, a file, a package, a type, or a variable of the code is not: put it in `code-refs` only.
+5. **Explain each product word at its first use.** A product word is a name that the product gives to a thing, such as "Flint", "shard", "lock", or "Orbh". At its first use in the view, say what it is in a few words: "A Flint is one folder for notes and for shards." After that, use the same word each time.
+6. **A short title.** Two to six words. A verb phrase for a step ("Set up the machine"). A noun phrase for a part ("The shard lock").
+7. **Select, do not dump.** Include only what answers the question. Five to fifteen nodes is a good size. Do not make one node for each file, each story, or each command. When a view needs more than 25 nodes, propose a split into two views.
+8. **Anchor each claim.** Each node that makes a claim about the product has `code-refs` or `stories`, and when you can, both. Name files, not large folders. Only a `kind: note` node and a group have neither.
+9. **Prefer stories to criteria.** Name `criteria` only when the node needs some criteria of a story, not all.
 10. **Tell the truth about gaps.** When a part of the answer has no story, say so in the prose of its node. Never invent a story id, a criterion address, or a path.
+11. **End with what the view leaves out.** The last section of a good view is one node of `kind: note`, for example `## What this view leaves out {#left-out}`. Its prose names the parts of the product that the view does not show, and why. The person then knows that the view is not the whole product.
+12. **Simplified Technical English.** Short sentences, active voice, and one term for one thing.
 
 ## The Loop with the Code
 
-1. **A product task.** At the end of a product task, run `flint orbcode check --paths <changed paths>`. Each `review-due` finding names a view. Compare the view with the code. When the view is wrong, change it with the workflow `reshape`. When it is correct, run `flint orbcode review <view> --node <id>` for the nodes that you compared.
+1. **A product task.** At the end of a product task, follow [[dev-sk-orbc-check_after_task]]. It runs `flint orbcode check --paths <changed paths>`. For each `review-due` finding on a kept view, the agent compares the view with the code. When the view is wrong, the agent changes it through a candidate. When the view is correct, the agent runs `flint orbcode review`. The check is an aid: it never blocks a landing or a release.
 2. **A new story.** The Orbtest workflows do not make a view. A view is made when a person asks.
 3. **A release.** `flint orbcode check` is not a part of a release gate. A view is an aid for a person, not a contract of the product.
 
@@ -306,6 +344,14 @@ A 0.7 project is one map of a codebase. Its files are `(OrbCode Project) <Projec
 - Do not make a new 0.7 artifact. Make a view.
 - The rules of 0.7 (one `parent`, the parent whitelist, the typed `artifact-refs`, and the status values `draft`, `active`, `stale`, `deprecated`, `untested`, `verified`) apply only to the 0.7 files and to their migration.
 - The migration [[dev-mig-orbc-0.7.3-to-1.0.0]] makes one view of the shape `tree` from each 0.7 project. It moves and deletes no 0.7 file.
+
+## Skills and Workflows
+
+| File | Use it when |
+|------|-------------|
+| [[dev-wkfl-orbc-view]] | A person asks a question about a product, and no view answers it |
+| [[dev-wkfl-orbc-reshape]] | A person asks for a change of a view in words |
+| [[dev-sk-orbc-check_after_task]] | A product task ends: check the views against the changed code |
 
 ## The Plate and the Decisions
 

@@ -1,10 +1,26 @@
 ---
-description: "Architecture Decision Records for the OrbCode information model (the view model, the spine, Module, the contract)"
+description: "Architecture Decision Records for the OrbCode information model (the candidate and the history, the view model, the spine, Module, the contract)"
 ---
 
 # OrbCode Decisions (ADRs)
 
 Lightweight, append-only records of the architecturally-significant decisions about OrbCode's own information model. Each entry: context, decision, consequences. Newest first.
+
+---
+
+## ADR-005 — The candidate, the history, and the ids (OrbCode 1.0.0)
+
+**Context.** ADR-004 made the candidate and the conditional apply. The first real use of the page Views of Steel and of the first views (Tasks 1089, 1090, and 1092 of the Flint NUU Flint) found three gaps. First, a candidate had the `id` of its view, so two files of the Mesh had one id, and a change by id could change the wrong file. Second, an apply replaced the view with no way back, so a person could not undo a reshape. Third, a person had no command to keep, accept, or remove a view: the person edited the frontmatter by hand or deleted the file. The manager of Task 1086 decided each change as an addition to Design Revision 1.
+
+**Decision.**
+- **Each file has its own id.** A view has its `id`. A candidate and a history file have their own new `id`, and the field `view_id` names the view. For a new view, the candidate has a new `view_id`, and the apply gives it to the view as its `id`. A candidate of the old form (no `view_id`) still loads, with a `format` warning and its repair.
+- **An apply keeps the replaced form.** Before an apply replaces a view, it writes the replaced content to `History/<view-slug>-<UTC yyyymmdd-hhmmss>.md`, with `view_id`, `lifetime: history`, and `replaced-by: <candidate-id>`. The command keeps the newest 5 forms of each view. `flint orbcode history` lists them. `flint orbcode restore --from <history-id>` makes a candidate from one form: an undo is an apply like each other change, with the same check of `base_hash`.
+- **An apply is not an acceptance.** When a candidate replaces an `accepted` view, the apply sets the view back to `proposed`, so that the person sees each change after the acceptance.
+- **The decisions of a person are commands.** `flint orbcode set` changes `lifetime` and `curation`, and only these two keys of the file. `flint orbcode remove` removes a `draft` view and its candidates, and writes the view to `History/` first. It refuses a `kept` view. Steel uses the same code through `POST /api/orbcode/views/:id/fields` and `DELETE /api/orbcode/views/:id`.
+- **A workflow verifies its own candidate.** Before its result, a workflow runs `check --candidate`, `view --candidate`, and `diff`, the three commands that write nothing.
+- **Two additions for a real view.** A code-ref can name another codebase of the Flint with `@<Codebase name>/<path>`. A node of the kind `note` with no story has no proof state and no finding, so a view can end with a note of what it leaves out.
+
+**Consequences.** Two files of the Mesh never share an id, and each change of a view can be undone for its newest 5 forms. The shard text names `view_id` in the template and in the result `orbcode-result/1` (its `view_id` is the `view_id` of the candidate). Only `flint orbcode` writes in `History/`. The migration 0.7.3 → 1.0.0 is not changed: it writes views, not candidates.
 
 ---
 

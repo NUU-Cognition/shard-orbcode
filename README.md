@@ -28,6 +28,7 @@ Shards/(Source Remote) OrbCode/
 ├── knowledge/                  # decisions (ADRs), orbcraft
 ├── migrations/                 # 0.7.3 → 1.0.0: a 0.7 map becomes a view of the shape tree
 ├── workflows/                  # view, reshape, and their headless twins
+├── skills/                     # check_after_task: the views after a product task
 └── templates/
     ├── dev-tmp-orbc-view-v0.1.md   # The View, with one complete example
     ├── containers/             # Project v0.3 (legacy: v0.2)
@@ -43,7 +44,8 @@ Mesh/OrbCode/
 └── (OrbCode Project) <Product>/
     ├── (OrbCode Project) <Product>.md   # codebase: [[rf-cb-*]], product-root
     ├── Views/                           # (View) <Name>.md
-    └── Candidates/                      # <candidate-id>.md, waits for the apply
+    ├── Candidates/                      # <candidate-id>.md, waits for the apply
+    └── History/                         # the newest 5 replaced forms of each view (flint orbcode only)
 ```
 
 ## Usage
@@ -53,5 +55,7 @@ Mesh/OrbCode/
 3. Change a view with the workflow `reshape`: give the view and the change in words.
 4. Read a view with its proof: `flint orbcode view <view>`. Check the views: `flint orbcode check`.
 5. Steel starts the headless workflows from its page Views and applies the candidate when the person agrees.
+6. A person keeps or accepts a view with `flint orbcode set`, undoes a change with `flint orbcode history` and `restore`, and removes a draft with `flint orbcode remove`.
+7. At the end of a product task, the skill `check_after_task` runs `flint orbcode check --paths <changed files>` and keeps each kept view true.
 
 A 0.7 project stays readable. The migration `mig-orbc-0.7.3-to-1.0.0` gives it one view of the shape `tree`.

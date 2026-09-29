@@ -7,12 +7,15 @@ description: "The Project file of a product: the codebase marker, the Orbtest pr
 /*
   One Project for each product. It is the anchor of the views of the product.
   Also make the two empty folders Views/ and Candidates/ beside the Project file.
+  Do not make History/: flint orbcode makes it at the first apply, and only flint orbcode writes there.
 
   FRONTMATTER CONTRACT. Write boringly valid YAML: replace the VALUES, keep the shapes.
   - codebase: REQUIRED. A wikilink to a codebase reference marker in Mesh/Metadata/References/Codebases/,
     for example "[[rf-cb-flint]]". NEVER a raw path. The frontmatter name of the marker is the codebase name:
     flint resolve codebase <name> gives the path. Each code-refs path of a view is relative to it.
-    When no marker exists, ask the person to make one: flint reference codebase fulfill <Name> <path>.
+    When no marker exists, ask the person to add the reference: flint reference codebase "<Name>" <path>,
+    then flint sync (the sync writes the marker). When the marker exists but its path is not known on this
+    machine: flint fulfill codebase "<Name>" <path>.
   - product-root: the Orbtest product root (the folder that holds orbtest/), relative to the codebase.
     "." when it is the codebase root. Omit the field when the product has no orbtest/ folder.
     The Products table of the Orbtest section of Mesh/(System) Flint Init.md gives the product roots.

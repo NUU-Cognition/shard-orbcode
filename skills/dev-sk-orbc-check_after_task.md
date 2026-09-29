@@ -37,16 +37,16 @@ A product task changes code. A view that names that code can then say a thing th
 
    The output is one JSON line of the schema `orbcode-check/1`: each view with its `id`, its `view`, and its `findings`. Each finding has `code`, `level`, `node`, and `detail`. `flint orbcode list` gives the `lifetime` of each view. Exit 0: no error. Exit 1: a finding of the level error. Exit 2: a refusal; read the reason, and stop.
 4. **Check the changed stories.** When the work changed a story file of Orbtest (`orbtest/stories/<area>.yaml`), run `flint orbcode check --project "<Product>" --json` with no `--paths`. Take each `review-due` finding whose `detail` names a changed story (`the story <id> changed after <commit>`). `--paths` does not find them, because a story is not a code-ref.
-5. **Act on each finding.** Only the findings on a kept view need an action. A draft is low cost: name its findings in the result, and do nothing more.
+5. **Act on each finding that the work caused.** The check gives all the findings of each selected view, also the findings that were there before the work. Act only on a finding of a **kept** view that names a file or a story that the work changed: a `review-due` whose `detail` lists a changed file or a changed story (the detail shows at most 5 files, then `...`; with `...`, read the diff of step 6), or a `code-ref-missing` or `story-missing` whose `detail` names a changed path or a changed story. A draft is low cost: name its findings in the result, and do nothing more.
 
-   | Finding on a kept view | Action |
-   |------------------------|--------|
+   | Finding on a kept view, caused by the work | Action |
+   |--------------------------------------------|--------|
    | `review-due` | Compare the node with the code (step 6). Then review it (step 7) or change the view (step 8). |
    | `code-ref-missing` (error) | The work removed, moved, or renamed a file that the node names. Change the view (step 8) with the new path. |
    | `story-missing` (error) | The work removed a story or a criterion that the node names. Change the view (step 8). |
    | `anchor-unknown` | Git does not have the commit of the anchor, for example after a rewrite of the history. Compare the node with the code (step 6), then review it (step 7). |
-   | `never-reviewed` | Compare the node with the code (step 6), then review it (step 7). |
-   | `no-contract`, `format` warning, `project` | No action in this skill. Name it in the result when it is new. |
+
+   No action in this skill for `never-reviewed`, `no-contract`, a `format` warning, a `project` finding, or a finding that was there before the work. A node with no anchor gives no `review-due`, so the first review of a kept view is the work of the person who keeps it, not of a product task. Name the count of these findings in the result.
 
 6. **Compare the node with the code.** Read the prose and the fields of the node in the view file. Read the diff of the code under its code-refs after the anchor: `git -C "<codebase path>" diff <reviewed.commit> -- <code-ref path>`. For a code-ref of another codebase (`@<Codebase name>/<path>`), use that codebase and its commit in `reviewed.commits`. Read each changed story with `flint orbtest story show <id> --root <product root>`. Answer one question: does the prose of the node still say what the code and the stories do? The claim is the prose, not the names in the code. A change of a function name or of the inner logic often keeps the claim true.
 7. **The claim is still true: review the node.** Run `flint orbcode review <view-uuid> --node <id>...` with each node that you compared and found true. Do not review a node that you did not compare.

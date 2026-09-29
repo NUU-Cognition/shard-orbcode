@@ -19,20 +19,22 @@ A product task changes code. A view that names that code can then say a thing th
 
 # When to Run It
 
-`flint orbcode check` reads the code in the codebase path of the Project: the first line of `flint resolve codebase <name>`. It does not read a worktree. Run this skill when the commits of the task are in that checkout.
+`flint orbcode check` reads the code in the codebase path of the Project: the first line of `flint resolve codebase <name>`. With `--checkout <dir>`, it reads a worktree of the same repository in place of that checkout. Run the full skill when the commits of the task are in the checkout of the codebase path.
 
 - The task committed in the checkout of the codebase path: run the skill after the WIP commits, before the task goes to review.
-- The task committed on a worktree branch: the check sees the change only after the landing. Run the skill after the landing. When the session that ends the task does not land, it writes the line `OrbCode: run sk-orbc-check_after_task after the landing` in its result, and the session that lands runs the skill.
+- The task committed on a worktree branch: run steps 1 to 6 before the landing with `--checkout "<worktree path>"`, and name each finding that the work caused in the result. Do not review a node before the landing: the landing can give the commits new ids, and an anchor with an old id gives `anchor-unknown`. Run steps 7 to 9 after the landing, with no `--checkout`. When the session that ends the task does not land, it writes the line `OrbCode: run sk-orbc-check_after_task after the landing` in its result, and the session that lands runs the skill.
+- A link in the worktree that leaves the worktree: `--checkout` refuses with exit 2. Run the skill after the landing.
 - The Flint has no OrbCode project for the repository: `flint orbcode check` refuses with exit 2, or it prints `No view has a node whose code-refs match`. The skill is then done.
 
 # Actions
 
 1. **List the changed files.** For each repository of `git-repos`, resolve the codebase path: the first line of `flint resolve codebase <name>`. For each SHA of `wip-commits` of that repository, list its files: `git -C "<codebase path>" show --name-only --format= <sha>`. Remove the duplicates. When the task has no `wip-commits`, use the files that the work changed.
-2. **Make each path absolute.** Join the codebase path of step 1 and each file. Give absolute paths: the command then matches each path only with the views of its own codebase. Never give the path of a worktree: it matches no view.
+2. **Make each path absolute.** Join the codebase path of step 1 and each file. Give absolute paths: the command then matches each path only with the views of its own codebase. Give the path of a file in a worktree only together with `--checkout "<worktree path>"`: with no `--checkout`, it matches no view.
 3. **Run the check.**
 
    ```bash
    flint orbcode check --paths <absolute path>... --json
+   flint orbcode check --checkout "<worktree path>" --paths <absolute path in the worktree>... --json   # before the landing
    ```
 
    The output is one JSON line of the schema `orbcode-check/1`: each view with its `id`, its `view`, and its `findings`. Each finding has `code`, `level`, `node`, and `detail`. `flint orbcode list` gives the `lifetime` of each view. Exit 0: no error. Exit 1: a finding of the level error. Exit 2: a refusal; read the reason, and stop.

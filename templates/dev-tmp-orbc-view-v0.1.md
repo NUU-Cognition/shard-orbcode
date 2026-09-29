@@ -26,6 +26,9 @@ description: "A view of a product (format orbcode-view/1): the frontmatter, the 
   - derived-from: "" or the wikilink of the view that this view came from.
   - base_hash: null for a new view. For a reshape, the SHA-256 hex of the bytes of the view file,
     computed before you read it: shasum -a 256 "<view file>".
+  - orbh-sessions: the value of $ORBH_SESSION_ID (your Orbh session). Omit the field when the variable is not set.
+  - authors: the person for whom you work, as "[[@<Name>]]". The Name is the value of the line `Name` of flint whoami.
+    Omit the field when no Name is set.
   - The frontmatter has no reviewed field.
   - The H1 has none of the characters \ / : * ? " < > | # ^ [ ]. It is unique in the Mesh.
 */
@@ -62,8 +65,8 @@ authors:
 [One or two sentences: what the group holds and why it is a group.]
 
 /* A NODE: a heading, one to three sentences of prose, and one node block.
-   The id is the slug of the first title. It never changes, also when the title changes.
-   Each id matches [a-z0-9]+(-[a-z0-9]+)* and is unique in the view.
+   The id is the slug of the first title, or a shorter form of it ({#left-out} for "What this view leaves out").
+   It never changes, also when the title changes. Each id matches [a-z0-9]+(-[a-z0-9]+)* and is unique in the view.
    The depth of the heading is the containment: this H3 is inside the H2 above it. */
 
 ### [Title of the node: two to six words] {#node-id}
@@ -97,7 +100,8 @@ kind: "note"
 
 /*
   THE HEADING IDS
-  - Replace group-id and node-id with the slug of the first title of the section, for example {#set-up-the-machine}.
+  - Replace group-id and node-id with the slug of the first title of the section, for example {#set-up-the-machine},
+    or with a shorter form of that slug. After the first write, the id never changes.
 
   THE NODE BLOCK
   - Replace each UPPER CASE value. action and result are for a step only: omit them for other kinds.

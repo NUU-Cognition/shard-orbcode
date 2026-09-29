@@ -106,7 +106,7 @@ The frontmatter of a view has no `reviewed` field. A candidate of the old form h
 
 1. **One H1 title.** The H1 is the name of the view. The file name is `(View) <H1 title>.md`. Do not use the characters `\ / : * ? " < > | # ^ [ ]` in the H1.
 2. **The answer.** The prose after the H1 answers the question in one to three sentences.
-3. **An explicit id on each heading.** Each H2 to H6 heading ends with a stable id: `### Set up the machine {#setup}`. An id matches `[a-z0-9]+(-[a-z0-9]+)*` and is unique in the view. Two titles can be equal. Two ids cannot.
+3. **An explicit id on each heading.** Each H2 to H6 heading ends with a stable id: `### Set up the machine {#set-up-the-machine}`. Make the id from the first title: its slug, or a shorter form of the slug (`{#left-out}` for "What this view leaves out"). An id matches `[a-z0-9]+(-[a-z0-9]+)*` and is unique in the view. Two titles can be equal. Two ids cannot.
 4. **Depth is containment.** A section is inside the nearest heading above it that has a lower level. The prose of a section ends at the next heading.
 5. **At most one node block.** A section has zero or one fenced YAML mapping with the exact info string `node`. A section with a `node` block is a **node**. A section with no `node` block is a **group**. A heading inside a fence is not a heading.
 6. **A bad part does not hide the others.** A block that does not parse and a duplicate id are findings. The other nodes of the view still load.
@@ -118,7 +118,7 @@ The hierarchy rules of OrbCode 0.7 (one parent, the parent whitelist, and the ty
 
 ### The Name of a View
 
-The name is the H1 title: short, and in the words of the person ("Onboarding", "Architecture of Flint"). A name of the Mesh is unique, and the apply of a new view refuses a name that the Mesh has. Before you write a new view, search the whole Mesh for a file `(View) <Name>.md`. When the name exists, add ` of <Product>` ("Onboarding of Steel"). `flint orbcode diff` tells you before the apply (see The Candidate and the Apply).
+The name is the H1 title: short, and in the words of the person ("Onboarding", "Architecture of Flint"). A name of the Mesh is unique, and the apply of a new view refuses a name that the Mesh has. The match ignores the case of the letters. Before you write a new view, search the Mesh: `find Mesh -iname "(View) <Name>.md"` from the Flint root. When the name exists, add ` of <Product>` ("Onboarding of Steel"). `flint orbcode diff` tells you before the apply (see The Candidate and the Apply).
 
 ## The Node Block
 
@@ -185,6 +185,7 @@ A node of the kind `note` that names no story and no criterion has no proof stat
 - A path with no `@` is relative to the codebase of the project. Each path must exist.
 - `@<Codebase name>/<path>` names a path in another codebase of the Flint. The name after `@` is the `name` of its codebase marker (`flint reference list` shows the names), for example `@Steel/` or `@Plates/`. Use it when one step of the answer is in another repository.
 - A path that leaves the codebase (`../plates/...`, or an absolute path) gives the error `code-ref-missing`. Use `@<Codebase name>/<path>` in its place.
+- A symbol (`#Name`) is a name that the file declares: a function, a class, a type, or a constant. It need not be exported. The check only looks for the name as a whole word in the file, so a symbol is a weak anchor too: prefer the file when the whole file holds the claim.
 - For the match with the `components` of the specs, the command removes the symbol part and the line part. Only a path of the codebase of the project gives related cases. A path of another codebase gives none.
 - `flint orbcode review` anchors a node to the HEAD commit of the codebase of the project, and to the HEAD commit of each other codebase that its `code-refs` name.
 
@@ -196,7 +197,7 @@ Select the shape from the question. "Architecture" is not a shape: an architectu
 
 | Shape | It fits when | How to write it |
 |-------|--------------|-----------------|
-| `flow` | The question is "how does X happen?", and the answer is one sequence. | H2 nodes of `kind: step` in the order of the process, each with `next` to the step that follows. A `kind: decision` node has two or more `next`. |
+| `flow` | The question is "how does X happen?", and the answer is one sequence. | H2 nodes of `kind: step` in the order of the process, each with `next` to the step that follows. A `kind: decision` node has two or more `next`. A step that happens one time before the process (a setup) is a step at the start, with `next` to the first step of the process; say "one time" in its prose. Use `uses` only for a part that is not a step. |
 | `streams` | The answer has two or more sequences with separate purposes: "split the flow into streams", "what does each role do?". | One H2 for each stream: a group, or a node of `kind: stream`. H3 steps inside, with `next` in each stream. A `next` to a step of another stream shows a hand-over. |
 | `layers` | The question is "how is it built?": parts in levels from the person down to the storage. | One H2 group for each layer, the layer nearest to the person first. H3 nodes (`system`, `module`, `feature`, `data`) inside, with `uses` to the layers below. |
 | `tree` | The question is "what are the parts of X?", and each part has one owner. | The depth of the headings is the tree. A 0.7 project migrates to this shape. |
@@ -239,10 +240,10 @@ In an interactive session, apply a candidate only when the person agrees. In a h
 A headless workflow ends with one JSON value of the schema `orbcode-result/1`, and nothing else:
 
 ```json
-{"schema":"orbcode-result/1","view_id":"<uuid>","candidate_id":"<candidate-id>","base_hash":"<sha256 hex or null>","summary":"<one or two sentences for the person>"}
+{"schema":"orbcode-result/1","view_id":"<uuid>","candidate_id":"<candidate-id>","base_hash":"<sha256 hex or null>","summary":"<one to three short sentences for the person>"}
 ```
 
-`view_id` is the `view_id` of the candidate: the UUID of the view, not the `id` of the candidate file. When no candidate was written, `candidate_id` is `null`, `view_id` is the UUID of the view or `null`, and the summary starts with `No candidate:` and says why. See [[dev-hinit-orbc]].
+`view_id` is the `view_id` of the candidate: the UUID of the view, not the `id` of the candidate file. The `summary` has one to three short sentences. When no candidate was written, `candidate_id` is `null`, `view_id` is the UUID of the view or `null`, and the summary starts with `No candidate:` and says why. See [[dev-hinit-orbc]].
 
 ## The Review Anchor
 
@@ -319,15 +320,15 @@ When `flint orbcode` is not a command of your CLI (an older build), check a cand
 These rules are the most important part of OrbCode. The reader of a view is a person who does not read code. A view that breaks these rules does not help that person.
 
 1. **Answer first.** The prose after the H1 answers the question in one to three sentences.
-2. **Prose first.** Each node has one to three sentences of prose before its block. The prose is for the person. The block is for the tools. A person must understand the view from the prose alone.
+2. **Prose first.** Each node has one to three sentences of prose before its block. The sentence of a gap counts as one of them. The prose is for the person. The block is for the tools. A person must understand the view from the prose alone.
 3. **One idea for each node.** When the prose of a node needs two claims, make two nodes.
 4. **The words of the person, not of the code.** Use the words of the person and of the product. A command that the person types, such as `flint setup`, is a word of the person. A function, a file, a package, a type, or a variable of the code is not: put it in `code-refs` only.
-5. **Explain each product word at its first use.** A product word is a name that the product gives to a thing, such as "Flint", "shard", "lock", or "Orbh". At its first use in the view, say what it is in a few words: "A Flint is one folder for notes and for shards." After that, use the same word each time.
+5. **Explain each product word at its first use.** A product word is a name that the product gives to a thing, such as "Flint", "shard", "lock", or "Orbh". A word of an outside tool that the person sees, such as "origin" or "commit" of Git, is a product word too. At its first use in the view, say what it is in a few words: "A Flint is one folder for notes and for shards." After that, use the same word each time. When a word needs a long explanation and the answer does not need it, leave it out. A label that the CLI prints to the person, such as a line of a report, is a word of the person: quote it.
 6. **A short title.** Two to six words. A verb phrase for a step ("Set up the machine"). A noun phrase for a part ("The shard lock").
 7. **Select, do not dump.** Include only what answers the question. Five to fifteen nodes is a good size. Do not make one node for each file, each story, or each command. When a view needs more than 25 nodes, propose a split into two views.
 8. **Anchor each claim.** Each node that makes a claim about the product has `code-refs` or `stories`, and when you can, both. Name files, not large folders. Only a `kind: note` node and a group have neither.
 9. **Prefer stories to criteria.** Name `criteria` only when the node needs some criteria of a story, not all.
-10. **Tell the truth about gaps.** When a part of the answer has no story, say so in the prose of its node. Never invent a story id, a criterion address, or a path.
+10. **Tell the truth about gaps.** When a part of the answer has no story, say so in the prose of its node. Never invent a story id, a criterion address, or a path. A claim that the product does not do a thing is a claim too: anchor it to the code or to a story that says it. When no story says it, write "No story proves this." in the prose.
 11. **End with what the view leaves out.** The last section of a good view is one node of `kind: note`, for example `## What this view leaves out {#left-out}`. Its prose names the parts of the product that the view does not show, and why. The person then knows that the view is not the whole product.
 12. **Simplified Technical English.** Short sentences, active voice, and one term for one thing.
 

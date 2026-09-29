@@ -40,12 +40,12 @@ A headless product task uses the skill [[dev-sk-orbc-check_after_task]] at its e
    The payload is one line of JSON of the schema `orbcode-result/1`, with no other text:
 
    ```json
-   {"schema":"orbcode-result/1","view_id":"<uuid>","candidate_id":"<candidate-id>","base_hash":"<sha256 hex or null>","summary":"<one or two sentences for the person>"}
+   {"schema":"orbcode-result/1","view_id":"<uuid>","candidate_id":"<candidate-id>","base_hash":"<sha256 hex or null>","summary":"<one to three short sentences for the person>"}
    ```
 
    - `view_id` is the `view_id` in the frontmatter of the candidate: the UUID of the view. It is not the `id` of the candidate file.
    - `candidate_id` is the file stem of the candidate.
    - `base_hash` is the `base_hash` of the candidate: a text for a reshape, `null` for a new view.
-   - `summary` tells the person what the candidate shows, in Simplified Technical English. Write it with no `'` character and no line break, so that the shell quote stays correct.
+   - `summary` tells the person what the candidate shows, in one to three short sentences of Simplified Technical English. Name the most important reading or gap first; name the others in the note of the view. Write it with no `'` character and no line break, so that the shell quote stays correct.
 
 7. **Return a failure in the same schema.** When you cannot write a valid candidate (the product has no Project and no codebase marker, the view does not exist, or an error of the check stays), return `candidate_id: null`. Set `view_id` to the UUID of the view, or `null` for a new view. Set `base_hash` to `null`. The `summary` starts with `No candidate:` and gives the reason and the one thing that the person can do. When this session wrote a candidate that has an error, remove it first with `flint orbcode discard --candidate <candidate-id>`: this is the one discard that a headless session does.

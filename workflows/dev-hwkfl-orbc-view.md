@@ -21,20 +21,20 @@ Make one new candidate view that answers one question of a person, with no perso
 ## Stage 1: Understand the Question
 
 1. Run `flint orbh session set phase reading`.
-2. Say the question again in one sentence. When it can have two meanings, select the meaning that best helps the person, and keep it for the `summary`.
+2. Say the question again in one sentence. Search the story list and the commands of the product for each main word of the question: two commands can fit one question (for example two commands that move notes). When the question can have two meanings, select the meaning that best helps the person, and keep it for the `summary`.
 3. Find the Project: `Mesh/OrbCode/(OrbCode Project) <Product>/(OrbCode Project) <Product>.md`.
    - When the Project does not exist, make it with [[dev-tmp-orbc-project-v0.3]] and the folders `Views/` and `Candidates/`. Take the codebase marker from `Mesh/Metadata/References/Codebases/` and the product root from the Products table of `Mesh/(System) Flint Init.md`.
    - When no codebase marker exists for the product, return a failure (rule 7 of [[dev-hinit-orbc]]) with the next step `flint reference codebase "<Name>" <path>`, then `flint sync`. When the marker exists but the codebase path does not resolve, return a failure with the next step `flint fulfill codebase "<Name>" <path>`.
 4. Resolve the codebase path (the first line of `flint resolve codebase <name>`, where `<name>` is the frontmatter `name` of the marker) and the product root (the codebase path joined with `product-root`).
-5. Read the views that exist: `flint orbcode list --project "<Product>"`. When a view already answers the question, still write the new candidate, and name the view that exists in the `summary`.
+5. Read the views that exist: `flint orbcode list --project "<Product>"`. When a view already answers the question (its question has the same meaning, or its nodes hold your answer), still write the new candidate, and name the view that exists in the `summary`. A view on a related question is not an answer: name it in the note of what your view leaves out.
 6. Once you know the question, the codebase path, and the product root, progress to the next stage.
 
 ## Stage 2: Read the Contract, the Proof, and the Code
 
 1. Read the story list: `flint orbtest story list --root <product root>`. Read each story that can be a part of the answer: `flint orbtest story show <id> --root <product root>`.
-2. Run `flint orbtest behaviour list --root <product root> --json` to find the specs of each story. Read the `components` of each spec in `<product root>/orbtest/behaviour/specs/<spec-id>.md`.
+2. Find the code of each story. Run `flint orbtest behaviour list --root <product root> --story <story-id> --json` for each story. Each entry of `cases` has `spec` (the spec id, which is not always the story id) and `file` (the spec file, relative to the product root). Read the `components` in the frontmatter of each spec file.
 3. Read the code at those paths: enough to write each claim truly. Code is truth. When one part of the answer is in another codebase of the Flint, read it there, and name it with `@<Codebase name>/<path>`.
-4. Read the proof: `flint orbtest coverage --root <product root> --json`. Use it only to select nodes. Never write a state, a count, or a case into the view.
+4. Read the proof: `flint orbtest coverage --root <product root> --story <story-id> --json` for each story. With no `--story`, the JSON is large (all stories); a text report goes to stderr. Use it only to select nodes. Never write a state, a count, or a case into the view.
 5. Note each part of the answer that has no story.
 6. Note the product words that the answer needs, and one short explanation of each for a person who does not read code.
 7. Once you can answer the question in one to three sentences, progress to the next stage.
@@ -45,7 +45,7 @@ Make one new candidate view that answers one question of a person, with no perso
 2. Select the shape with the table The Six Shapes of [[dev-init-orbc]], or use the shape that the person asked for.
 3. Write an outline: the H1 name, the answer, the groups, and the nodes with titles, ids, kinds, and links. End the outline with one node of `kind: note` that names what the view leaves out.
 4. Select, do not dump: five to fifteen nodes is a good size. When the answer needs more than 25 nodes, write the first view only, and propose the second view in the `summary`.
-5. Select the name. Search the whole Mesh for a file `(View) <Name>.md`. When the name exists, add ` of <Product>`.
+5. Select the name. Search the Mesh: `find Mesh -iname "(View) <Name>.md"` from the Flint root (the match ignores the case of the letters). When the name exists, add ` of <Product>`.
 6. Once the outline answers the question, progress to the next stage.
 
 ## Stage 4: Write the Candidate
@@ -77,7 +77,7 @@ Make one new candidate view that answers one question of a person, with no perso
 ## Stage 6: Return the Result
 
 1. Run `flint orbh session set phase returning`.
-2. Write the `summary` in one or two sentences: the shape, the number of nodes, each gap without a story, and each reading that you selected. Use no `'` character.
+2. Write the `summary` in one to three short sentences: the shape, the number of nodes, the reading that you selected, and the most important gap. The note of the view names the other gaps. Use no `'` character.
 3. Do not apply and do not discard the candidate.
 4. End the turn with the result, and nothing else. `view_id` is the `view_id` of the candidate, not its `id`:
 

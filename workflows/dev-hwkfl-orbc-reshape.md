@@ -81,7 +81,7 @@ Change one view from a request in words, with no person in the session. The resu
 ## Stage 5: Return the Result
 
 1. Run `flint orbh session set phase returning`.
-2. Write the `summary` in one or two sentences: what changed (the shape, the added and the removed nodes), and each reading that you selected. When the view was `accepted`, say that the apply sets it back to `proposed`. Use no `'` character.
+2. Write the `summary` in one to three short sentences: what changed (the shape, the added and the removed nodes), and each reading that you selected. When the view was `accepted`, say that the apply sets it back to `proposed`. Use no `'` character.
 3. Do not apply and do not discard the candidate.
 4. End the turn with the result, and nothing else. `view_id` is the `view_id` of the candidate, not its `id`:
 

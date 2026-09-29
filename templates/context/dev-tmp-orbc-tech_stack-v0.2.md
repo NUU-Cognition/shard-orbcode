@@ -1,3 +1,7 @@
+---
+description: "Legacy (OrbCode 0.7): the Tech Stack document of a 0.7 project. Read only."
+---
+
 # Tech Stack
 
 /* Technology choices, versions, and key dependencies. */

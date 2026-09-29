@@ -1,3 +1,7 @@
+---
+description: "Legacy (OrbCode 0.7): an informal note of a 0.7 project. Read only."
+---
+
 # [Topic]
 
 /* General project-specific knowledge note — freeform documentation for concepts, */

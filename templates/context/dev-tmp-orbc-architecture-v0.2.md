@@ -1,3 +1,7 @@
+---
+description: "Legacy (OrbCode 0.7): the Architecture document of a 0.7 project. Read only; make a view of the shape layers in its place."
+---
+
 # Architecture
 
 /* Directory structure, logical architecture, patterns, and constraints. */

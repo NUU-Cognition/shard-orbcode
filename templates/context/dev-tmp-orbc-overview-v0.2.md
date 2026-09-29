@@ -1,3 +1,7 @@
+---
+description: "Legacy (OrbCode 0.7): the Overview document of a 0.7 project. Read only; make a view in its place."
+---
+
 # Overview
 
 /* High-level diagram-first view of a project's architecture. */

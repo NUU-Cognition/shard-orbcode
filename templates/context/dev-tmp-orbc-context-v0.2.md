@@ -1,3 +1,7 @@
+---
+description: "Legacy (OrbCode 0.7): the Context document (scope, concepts, glossary) of a 0.7 project. Read only."
+---
+
 # Context
 
 /* General project knowledge — scope, domain concepts, conventions, and key files. */

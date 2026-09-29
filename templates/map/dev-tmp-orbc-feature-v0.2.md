@@ -1,3 +1,7 @@
+---
+description: "Legacy (OrbCode 0.7): the Feature map artifact. Read only; in a view, feature is a kind of node."
+---
+
 # (Feature) [Name]
 
 /* A discrete capability the system provides. The workhorse of the Map. */

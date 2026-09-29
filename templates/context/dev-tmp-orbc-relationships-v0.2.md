@@ -1,3 +1,7 @@
+---
+description: "Legacy (OrbCode 0.7): the Relationships document of a 0.7 project. Read only."
+---
+
 # Relationships
 
 /* How this project relates to other projects — dependencies, consumers, boundaries. */

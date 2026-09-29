@@ -1,3 +1,7 @@
+---
+description: "Legacy (OrbCode 0.7): the Project file with a Map section. Use tmp-orbc-project-v0.3 for a new Project."
+---
+
 # (OrbCode Project) [Name]
 
 /* Entry point for a single codebase. */

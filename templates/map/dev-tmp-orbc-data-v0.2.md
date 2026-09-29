@@ -1,3 +1,7 @@
+---
+description: "Legacy (OrbCode 0.7): the Data map artifact. Read only; in a view, data is a kind of node."
+---
+
 # (Data) [Name]
 
 /* A core data structure, entity, or schema. */

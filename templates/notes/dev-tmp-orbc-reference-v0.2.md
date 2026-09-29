@@ -1,3 +1,7 @@
+---
+description: "Legacy (OrbCode 0.7): a reference note of a 0.7 project. Read only."
+---
+
 # (OrbCode Reference) [Topic]
 
 /* Structured entry point for project-specific concepts and external knowledge. */

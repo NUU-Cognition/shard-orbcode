@@ -1,3 +1,7 @@
+---
+description: "OrbCraft: the agent presence on the OrbCode plate (orbits, follow mode, focus artifacts, reduced motion)"
+---
+
 # Knowledge: OrbCraft Visualization
 
 OrbCraft is the visual agent presence system for the OrbCode Map Plate. It renders animated orbs on the graph canvas — each orb represents an active agent session orbiting the artifacts it's working on.

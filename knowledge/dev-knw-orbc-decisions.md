@@ -1,10 +1,28 @@
 ---
-description: "Architecture Decision Records for the OrbCode information model (spine, Module, contract hardening)"
+description: "Architecture Decision Records for the OrbCode information model (the view model, the spine, Module, the contract)"
 ---
 
 # OrbCode Decisions (ADRs)
 
 Lightweight, append-only records of the architecturally-significant decisions about OrbCode's own information model. Each entry: context, decision, consequences. Newest first.
+
+---
+
+## ADR-004 — The view model (OrbCode 1.0.0)
+
+**Context.** OrbCode 0.7 did not reach its goal. A person could not use the map to understand a product. The map had no link to proof, no check of drift, and no surface that a person opens each day. The scripts `tree` and `validate` did not run: they were `.ts` files, and the loader reads `.js` files. The model was rigid: one hierarchy for each codebase, one owner for each artifact, and one approval for each artifact. Orbtest now gives what OrbCode did not have: stories as contracts, criteria with states, anchors with commits, and the `components` paths of each spec. On 2026-09-29 the operator gave the direction: a map is not exhaustive and not mutually exclusive; it is the perspective from which a person wants to look at the product. The design is Design Revision 1 of Task 1086 in the Flint NUU Flint.
+
+**Decision.**
+- **A view replaces the map.** A view is one file that answers one question of a person. It is not exhaustive, not mutually exclusive, has a free shape (`flow`, `streams`, `layers`, `tree`, `table`, `free`), is made in a conversation, has a low cost, and is honest.
+- **One file for each view** (format `orbcode-view/1`), with one heading for each node, a stable id on each heading, and one fenced `node` block for the fields that a tool reads. Two views never share a node. A reshape is one edit.
+- **Three planes.** Views (the Mesh, written by an agent or a person), Contract (the stories of Orbtest), and Proof (the runs of Orbtest).
+- **A writer writes meaning, a command computes facts.** A view stores no proof state, no case, and no finding. `flint orbcode`, a part of the Flint CLI, computes them. The shard has no script.
+- **A candidate and a conditional apply.** A workflow writes a candidate. The apply replaces a view only when the hash of the view is the `base_hash` of the candidate.
+- **One review anchor for each node** (`reviewed`), written only by `flint orbcode review`. The finding `review-due` replaces the status `stale`.
+- **`curation` stays** (`proposed` or `accepted`), and `lifetime` (`draft` or `kept`) is new. The `status` values of 0.7 are not fields of a view.
+- **The 0.7 types become words of `kind`.** The type files and the templates of System, Module, Feature, and Data stay as the legacy form. The workflows `init_project` and `edit` and the skill `add_artifact` are removed: they made 0.7 artifacts. The workflows `view` and `reshape` replace them, each with a headless twin for Steel.
+
+**Consequences.** A person asks for a view, reads it, and changes its shape in a conversation. Each node shows the proof of Orbtest. A 0.7 project becomes one view of the shape `tree` through the migration `mig-orbc-0.7.3-to-1.0.0`. The plate must draw a view and read the join of `flint orbcode view`. The views need Orbtest stories for proof: a node with no story shows `no-contract`.
 
 ---
 
@@ -20,7 +38,7 @@ Lightweight, append-only records of the architecturally-significant decisions ab
 - **Reference fields split** — `artifact-refs` (Map types only), `spec-refs`, `task-refs`, `context-refs`.
 - **`code-refs` grammar** — `path/`, `path/file.ext`, `path/file.ext#symbol`, optional temporary `:Lx-Ly`.
 - **Boringly-valid template YAML** — placeholder values, no comments/option-lists inside frontmatter; explanatory comments live above the fenced block.
-- **`orbc validate`** — a script that fails loudly where the plate degrades silently.
+- **`orbc validate`** — a script that fails loudly where the plate degrades silently. (Removed in 1.0.0: the script did not run. `flint orbcode check` replaces it. See ADR-004.)
 - **Plate scaling promoted to requirements** (collapse, semantic zoom, sticky layout, saved views, reduced-motion presence) since the size cap was removed.
 
 **Consequences.** The contract is now enforceable by tooling, not just prose. The plate needs to read `curation` and the split ref fields. Existing deployed artifacts (none yet) would need a migration. Folded into 0.7.0 — no version bump.

@@ -1,3 +1,7 @@
+---
+description: "Legacy (OrbCode 0.7): the System map artifact. Read only; in a view, system is a kind of node."
+---
+
 # (System) [Name]
 
 /* Bounded context or architectural seam — the root of the Map. */

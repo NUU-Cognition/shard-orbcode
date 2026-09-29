@@ -1,3 +1,7 @@
+---
+description: "Legacy (OrbCode 0.7): the Module map artifact. Read only; in a view, module is a kind of node."
+---
+
 # (Module) [Name]
 
 /* A cohesive implementation area that groups related Features behind a stable internal interface. */

@@ -1,10 +1,26 @@
 ---
-description: "Architecture Decision Records for the OrbCode information model (the candidate and the history, the view model, the spine, Module, the contract)"
+description: "Architecture Decision Records for the OrbCode information model (the two layers and the anchor, the candidate and the history, the view model, the spine, Module, the contract)"
 ---
 
 # OrbCode Decisions (ADRs)
 
 Lightweight, append-only records of the architecturally-significant decisions about OrbCode's own information model. Each entry: context, decision, consequences. Newest first.
+
+---
+
+## ADR-006 — The two layers and the anchor (OrbCode 1.0.0)
+
+**Context.** ADR-004 made a view replace the map. The operator tested OrbCode 1.0 on 2026-09-29: the map of 0.7 (System, Module, Feature, Data) is the best drawing of a product, because each part has one place. A view of the shape `flow` or `streams` had no link to that map, so a process could not show where it runs. Report 090 of the Flint NUU Flint ("How to Represent a Codebase Conceptually") compared the methods and the tools of the field and measured the map of Flint: 72 artifacts, and 6 of the 10 steps of the view "Onboarding" with no part on the map.
+
+**Decision.**
+- **Two layers.** The static map (`Map/`, one file for each part, the types System, Module, Feature, and Data) is the main drawing and the static description of a product. A process is a view of the shape `flow` or `streams`, and it runs on top of the map. The shapes `layers`, `tree`, `table`, and `free` stay valid views. A process is not a new type of the map, and a step is not a file.
+- **The anchor.** A node names its static part with `part`: the full name of one artifact of `Map/`, a wikilink to it, or a short name that only one artifact has. A node names who acts with `actor`. The part owns the description of the capability. The step says only what occurs at this moment.
+- **Computed, not written.** `flint orbcode view` gives each node `parts` and `parts_total`: the named part, or at most 5 parts proposed from the match of the `code-refs`, the nearest first. A proposal is not a claim: a writer reads the artifact and selects the part. `flint orbcode parts` gives each part with the processes whose nodes name it and the count of its dead code-refs. Only a named part counts as a process of a part.
+- **Two findings.** `part-missing` (error): a `part` names no artifact of the map. `no-part` (note): a step or a decision names no part. The `no-part` notes of the processes are the list of the gaps of the static map.
+- **The hashes.** `part` is a reference, in the `contract_hash`. `actor` is a field of the claim, in the `meaning_hash`. A node with neither field keeps its hashes, so each review anchor stays valid.
+- **No workflow changes the map.** The workflows `view` and `reshape` take each part from `flint orbcode parts` and never invent one. A step with no part stays with no part, and the result of the workflow names the gap. No workflow writes a file of `Map/` until a rule says who approves a change of the static map.
+
+**Consequences.** The OrbCode plate opens on the map, lists the processes, lights the parts of a selected process with the numbers of its steps, and shows the steps in a strip below the map. The type files and the templates of System, Module, Feature, and Data describe the static map, not only a legacy form. Not in this decision: the type Actor; the fields `reads` and `writes` of a step; the fields `process-kind`, `trigger`, and `result` of a process; a change set of many files of the map (Report 090, sections D.4 and F.2).
 
 ---
 

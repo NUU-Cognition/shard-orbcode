@@ -14,18 +14,21 @@ Change one view from a request in words, with no person in the session. The resu
 
 - The view: its UUID or its name
 - The change that the person asks for, in words
+- (Optional) A scope: the parts of the view that the change is for (a focus of the map), with their stable ids
 
 # Actions
 
 ## Stage 1: Read the View and the Request
 
 1. Run `flint orbh session set phase reading`.
-2. Find the view file: `flint orbcode list` gives the name, the UUID, and the project of each view. The file is `Mesh/OrbCode/(OrbCode Project) <Product>/Views/(View) <Name>.md`. When the view does not exist, return a failure (rule 7 of [[dev-hinit-orbc]]).
+2. Find the view file: `flint orbcode list` gives the name, the UUID, and the project of each view. The file is `Mesh/OrbCode/(OrbCode Project) <Product>/Views/(View) <Name>.md`. When the view does not exist, return a failure (rule 8 of [[dev-hinit-orbc]]).
 3. Compute the base hash **before** you read the view: `shasum -a 256 "<view file>"`. Keep the first word.
 4. Read the view: the frontmatter, the answer, each heading with its id, and each block. Read the Project file, and resolve the codebase path and the product root as in [[dev-hwkfl-orbc-view]].
-5. Say the request again in one sentence. When it can have two meanings, select the meaning that best helps the person, and keep it for the `summary`.
-6. When the request asks for a second view ("keep this one and make ..."), write a new view: a new `view_id`, a new `id`, `base_hash: null`, a new name, and `derived-from` with the wikilink of this view. Else change this view.
-7. Once you know the request and the base hash, progress to the next stage.
+5. **For a process, read the static map.** When the view has the shape `flow` or `streams`, or the request asks for the parts of the steps, run `flint orbcode parts --project "<Product>" --json`. Keep the list of the parts: the `name`, the `type`, the `parent`, and the `file` of each. You take each `part` from this list, and from no other place.
+6. **For a scope.** When the prompt gives a scope, change only these parts of the view. Keep the other nodes, their ids, and their fields as they are.
+7. Say the request again in one sentence. When it can have two meanings, select the meaning that best helps the person, and keep it for the `summary`.
+8. When the request asks for a second view ("keep this one and make ..."), write a new view: a new `view_id`, a new `id`, `base_hash: null`, a new name, and `derived-from` with the wikilink of this view. Else change this view.
+9. Once you know the request and the base hash, progress to the next stage.
 
 ## Stage 2: Plan the Change
 
@@ -39,6 +42,7 @@ Change one view from a request in words, with no person in the session. The resu
    | A zoom ("more detail for the sync") | The stories, the specs, and the code of that part (Stage 2 of [[dev-hwkfl-orbc-view]]) | One node becomes a group with new nodes, or new nodes come in |
    | A comparison ("compare with Steel") | The stories and the code of the other product | New nodes of the other product, often the shape `table`. Name the code of the other product with `@<Codebase name>/<path>`. |
    | A change of words ("simpler words") | Only the view | The prose. Each node with new prose loses its `reviewed` anchor. |
+   | An anchor ("name the parts of the steps", "put this process on the map") | `flint orbcode view <view-uuid> --json` for the proposed parts of each step, and the file of each part that can hold a step | The fields `part` and `actor` of the steps. The ids, the prose, and the other fields stay. |
    | A return ("go back to the form before") | `flint orbcode history <view-uuid>` | The whole view: an earlier form comes back. Go to step 5. |
 
 3. Make a node map. For each node of the view, select one line:
@@ -50,6 +54,10 @@ Change one view from a request in words, with no person in the session. The resu
    | Change: the prose, a field, or a reference changes | Keep | Remove it |
    | Remove: it does not help the new answer | Gone. Never give it to another node. | Gone |
    | New: a node that the view did not have | A new id | None |
+
+   A new or a changed `part` or `actor` is a change: `part` is a reference, and `actor` is a field of the claim. A process keeps its anchors: give each new step its `part` and `actor`, and keep the `part` of each step that stays in the same part of the map.
+
+   **For an anchor:** for each step, read its proposed parts in `flint orbcode view <view-uuid> --json` and the list of the parts of Stage 1. Read the file of each part that can hold the step. Name a part only when its description says what the step does (The Anchor of a Step of [[dev-init-orbc]]). A proposal that describes another capability is not the part. When no part of the map describes the step, leave `part` out, and keep the step and the part that the map needs for the `summary`. Write `actor` only when the prose says who acts, with one name for one actor. Change nothing else: the difference shows only the new fields.
 
 4. Keep the quality rules. When the change makes more than 25 nodes, write the view with the most important part only, and propose a split in the `summary`. Keep the last note of what the view leaves out, and change its prose when the view now leaves out other parts.
 5. **For a return:** select the newest form of `flint orbcode history <view-uuid>`, unless the request names another form. Run `flint orbcode restore <view-uuid> --from <history-id>`. It makes the candidate `restore-<history-id>` with the `base_hash` of the view now, and it changes no view. Go to Stage 4 with that candidate, and say in the `summary` which form comes back.
@@ -71,17 +79,17 @@ Change one view from a request in words, with no person in the session. The resu
 ## Stage 4: Verify the Candidate
 
 1. Run `flint orbh session set phase checking`.
-2. Run `flint orbcode check --candidate <candidate-id>`. Repair each error, and run it again until it exits 0.
-3. Run `flint orbcode view --candidate <candidate-id>`. Read the proof state and the related cases of each new or changed node. When a node shows more than 100 related cases, name a file in place of its broad code-ref, and check again.
+2. Run `flint orbcode check --candidate <candidate-id>`. Repair each error, and run it again until it exits 0. A `part-missing` error means that a `part` is not a name of the map: copy the name from the list of Stage 1, or leave `part` out. Each `no-part` note is a step with no part: it is a gap of the map for the `summary`.
+3. Run `flint orbcode view --candidate <candidate-id>`. Read the proof state and the related cases of each new or changed node. For a process, read the `parts` of each step in `--json`: a step with `part` has one `named` item. When a node shows more than 100 related cases, name a file in place of its broad code-ref, and check again.
 4. Run `flint orbcode diff <view-uuid> --candidate <candidate-id>`. It must say `an apply now writes the view`. Compare the difference with the node map. Repair the candidate when a node moved or changed that the map keeps. When it says `an apply now is a conflict`, the view changed after Stage 1: discard your candidate and start again at Stage 1.
 5. When `flint orbcode` is not a command of the CLI, check by reading (Stage 5 of [[dev-hwkfl-orbc-view]]), and say so in the `summary`.
-6. When an error stays and you cannot repair it, discard your candidate and return a failure (rule 7 of [[dev-hinit-orbc]]).
+6. When an error stays and you cannot repair it, discard your candidate and return a failure (rule 8 of [[dev-hinit-orbc]]).
 7. Once the check exits 0 and the diff agrees with the node map, progress to the next stage.
 
 ## Stage 5: Return the Result
 
 1. Run `flint orbh session set phase returning`.
-2. Write the `summary` in one to three short sentences: what changed (the shape, the added and the removed nodes), and each reading that you selected. When the view was `accepted`, say that the apply sets it back to `proposed`. Use no `'` character.
+2. Write the `summary` in one to three short sentences: what changed (the shape, the added and the removed nodes), and each reading that you selected. For a process, give the count of the steps with no part on the map, and the parts that the map needs for them. When the view was `accepted`, say that the apply sets it back to `proposed`. Use no `'` character.
 3. Do not apply and do not discard the candidate.
 4. End the turn with the result, and nothing else. `view_id` is the `view_id` of the candidate, not its `id`:
 

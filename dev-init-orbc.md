@@ -5,13 +5,27 @@ required-reading:
 
 # OrbCode
 
-OrbCode gives a person **views** of a software product. A view answers one question of a person, in words that a person who does not read code can read. Each node of a view links to the code and to the stories of Orbtest. The command `flint orbcode` uses these links to show the proof of each node and to tell when a view is no longer true.
+OrbCode gives a person **views** of a software product, on top of the **static map** of the product (see The Two Layers). A view answers one question of a person, in words that a person who does not read code can read. Each node of a view links to the code and to the stories of Orbtest. The command `flint orbcode` uses these links to show the proof of each node and to tell when a view is no longer true.
 
 Example: a person asks "Show me the flow of the onboarding." An agent writes a view. The person reads it and asks "Split it into streams." The agent writes the view again in the new shape. The person sees which steps have proof and opens the report of one case.
 
+## The Two Layers
+
+A product in OrbCode has two layers. The OrbCode plate draws them on one map.
+
+| Layer | What it is | Files | Its question |
+|-------|------------|-------|--------------|
+| The static map | The main drawing and the static description of the product. Each part has one place and one parent. The types are System, Module, Feature, and Data. | One file for each part in `Map/`: `(OrbCode Project) <Product> . (<Type>) <Name>.md` | What are the parts of the product? |
+| Processes | An ordered set of steps with one start and one result. A process is a view of the shape `flow` or `streams`. It runs on top of the static map. | One view file for each process in `Views/` | How does X happen? |
+
+- **The static map is the main drawing.** The plate opens on it. A System is a major boundary of the product, a Module is an area that groups features, a Feature is one capability, and a Data is a shape of state that the product keeps.
+- **A process runs on top of the map.** Each step of a process names the static part where it runs, with the node field `part` (see The Anchor of a Step). When a person selects a process, the plate lights its parts with the numbers of the steps, and shows the steps in a strip below the map.
+- **The other shapes stay valid.** A view of the shape `layers`, `tree`, `table`, or `free` is a free perspective, as before. Its nodes can name their parts with `part` too.
+- **No workflow changes the static map.** A change of the static map needs a rule of approval that OrbCode 1.0 does not have yet. So no workflow of this shard writes, changes, or removes a file of `Map/`. When the map has no part for a step, the step shows the gap (the finding `no-part`), and the workflow names the gap in its result.
+
 ## What a View Is
 
-A view is one perspective on one product, made for one question of a person. OrbCode 0.7 had one complete map for each codebase. OrbCode 1.0 has many free views. Six rules define a view:
+A view is one perspective on one product, made for one question of a person. OrbCode 0.7 had one complete map for each codebase. OrbCode 1.0 keeps that map as the static map, and adds many free views. Six rules define a view:
 
 | Rule | Meaning |
 |------|---------|
@@ -49,6 +63,8 @@ A view holds **meaning**: the titles, the prose, the groups, the links between t
 Mesh/OrbCode/
 └── (OrbCode Project) <Product>/
     ├── (OrbCode Project) <Product>.md          # The Project file
+    ├── Map/
+    │   └── (OrbCode Project) <Product> . (<Type>) <Name>.md   # The static map: one file for each part
     ├── Views/
     │   └── (View) <Name>.md                    # One file for each view
     ├── Candidates/
@@ -57,11 +73,12 @@ Mesh/OrbCode/
         └── <view-slug>-<yyyymmdd-hhmmss>.md    # A replaced or removed form of a view
 ```
 
+- `Map/` holds the static map. `flint orbcode` reads each Markdown file below `Map/`, also in its subfolders; a subfolder is for display only. The name of a part is its file name with no extension. No workflow writes in `Map/`.
 - `Views/` holds the views. `flint orbcode apply` writes a view there. You never write a file in `Views/` yourself.
 - `Candidates/` holds the candidates. A workflow writes its candidate there.
 - `History/` holds the forms of a view that an apply replaced or that `flint orbcode remove` removed. The command keeps the newest 5 forms of each view and removes the older forms. Only `flint orbcode` writes in `History/`. Never write, edit, or move a file there.
 
-A project of OrbCode 0.7 also has the folders `Context/`, `Map/`, `Notes/`, and sometimes `Testing/`. They are the legacy form (see Legacy Form).
+A project of OrbCode 0.7 also has the folders `Context/`, `Notes/`, and sometimes `Testing/`. They are the legacy form (see The Static Map and the Legacy Form).
 
 ## The Project File
 
@@ -152,6 +169,8 @@ criteria: [setup.steps#0, setup.steps#3]
 | `inside` | id | The id of the parent heading. Optional. |
 | `action` | text | For a step: what the person does |
 | `result` | text | For a step: what the person then sees |
+| `part` | text | The static part where the node runs: the full name of one artifact of `Map/`. See The Anchor of a Step. |
+| `actor` | text | Who acts at this moment of a process, as a short name that a person reads. See The Anchor of a Step. |
 | `reviewed` | mapping | The review anchor. Only `flint orbcode review` writes it (see The Review Anchor). |
 
 ### The Vocabulary of `kind`
@@ -191,14 +210,45 @@ A node of the kind `note` that names no story and no criterion has no proof stat
 
 **Name files, not large folders.** A code-ref matches each spec whose `components` path is equal to it, inside it, or a parent of it. A broad code-ref (a large folder such as `packages/flint/src/`) matches many specs and gives the person hundreds of related cases that tell nothing. After a review, each change of a file in that folder also gives the finding `review-due`. Name the one file or the small folder that holds the claim of the node.
 
+## The Anchor of a Step
+
+A step of a process names the static part where it runs, with the field `part`. It names who acts with the field `actor`. The anchor joins the two layers: the plate lights the part of each step on the map, and the panel of a part lists the processes that pass through it.
+
+````markdown
+### Create the first Flint {#create-the-first-flint}
+
+A Flint is one folder for notes and for shards. The person runs one command with a name for the Flint.
+
+```node
+kind: step
+actor: "Person"
+part: "(OrbCode Project) Flint . (Feature) Flint Init"
+action: 'flint create "<name>"'
+next: [check-the-inputs]
+criteria: [setup.steps#2]
+```
+````
+
+The rules of the anchor:
+
+1. **The value of `part`** is the full name of one artifact of `Map/` of the same project: its file name with no extension, for example `(OrbCode Project) Flint . (Feature) Flint Init`. A wikilink to that name also works, and so does the short name after the last ` . ` (`(Feature) Flint Init`) when only one artifact of the map has it. In a workflow, write the full name, in quotes.
+2. **The part owns the description of the capability.** The step says only what occurs at this moment of the process. Do not copy the rules and the edge cases of the part into the step.
+3. **Name the part that holds the whole step.** Usually this is a Feature. A coarse step can name a Module or a System. A step that only keeps state can name a Data.
+4. **Select the part by its text, not only by its code.** `flint orbcode view <view> --json` gives each node with no `part` its proposed parts: the artifacts whose `code-refs` match a code-ref of the node (see The Commands). A proposal is not a claim. Read the file of the artifact. Name it only when its description says what the step does. A proposed part that describes another capability is not the part of the step.
+5. **Never invent a part.** Take each name from `flint orbcode parts --project <Product> --json`. When the map has no part for a step, leave `part` out. The step then gets the finding `no-part` (a note), which shows a gap of the static map. Name the gap in your result. Never write a new file in `Map/` for it.
+6. **Only a part of the four types.** A 0.7 map can hold an artifact of another type word, for example `(Process) Sync Pipeline`. It is not a static part, because a process is a view. Do not name it in `part`.
+7. **The part owns the wide anchor to the code.** A step keeps its own `code-refs` when its claim is narrower than the part: one file or one symbol.
+8. **`actor`** is who acts at this moment, as a short name that a person reads: `Person` when the person acts, the name of the product (`Flint`) when the product acts, or the name of another actor (`Agent`, `Git`). Write it when the prose says who acts. Use one name for one actor in the whole view: the plate draws one lane for each name.
+9. **Both fields are in the review anchor.** `part` is a reference: it is in the `contract_hash`, as `code-refs`, `stories`, and `criteria` are. `actor` is a field of the claim: it is in the `meaning_hash`. When a candidate adds or changes one of them, the node changes: remove its `reviewed` mapping. A node with neither field keeps the hashes that it had before.
+
 ## The Six Shapes
 
 Select the shape from the question. "Architecture" is not a shape: an architecture is `layers` or `tree`.
 
 | Shape | It fits when | How to write it |
 |-------|--------------|-----------------|
-| `flow` | The question is "how does X happen?", and the answer is one sequence. | H2 nodes of `kind: step` in the order of the process, each with `next` to the step that follows. A `kind: decision` node has two or more `next`. A step that happens one time before the process (a setup) is a step at the start, with `next` to the first step of the process; say "one time" in its prose. Use `uses` only for a part that is not a step. |
-| `streams` | The answer has two or more sequences with separate purposes: "split the flow into streams", "what does each role do?". | One H2 for each stream: a group, or a node of `kind: stream`. H3 steps inside, with `next` in each stream. A `next` to a step of another stream shows a hand-over. |
+| `flow` | The question is "how does X happen?", and the answer is one sequence. It is a process. | H2 nodes of `kind: step` in the order of the process, each with `next` to the step that follows, and with its `part` and `actor` (see The Anchor of a Step). A `kind: decision` node has two or more `next`. A step that happens one time before the process (a setup) is a step at the start, with `next` to the first step of the process; say "one time" in its prose. Use `uses` only for a part that is not a step. |
+| `streams` | The answer has two or more sequences with separate purposes: "split the flow into streams", "what does each role do?". It is a process. | One H2 for each stream: a group, or a node of `kind: stream`. H3 steps inside, with `next` in each stream, and with their `part` and `actor`. A `next` to a step of another stream shows a hand-over. |
 | `layers` | The question is "how is it built?": parts in levels from the person down to the storage. | One H2 group for each layer, the layer nearest to the person first. H3 nodes (`system`, `module`, `feature`, `data`) inside, with `uses` to the layers below. |
 | `tree` | The question is "what are the parts of X?", and each part has one owner. | The depth of the headings is the tree. A 0.7 project migrates to this shape. |
 | `table` | The question compares items on the same properties: "list each command with its proof", "compare the setup of Flint and Steel". | One H2 node for each item, with the same fields in each block and the same order of sentences in each prose. |
@@ -260,15 +310,17 @@ Each finding is about what a view says. No finding is about what a view leaves o
 
 | Finding | Level | Meaning |
 |---------|-------|---------|
-| `format` | error | The frontmatter or a `node` block does not parse, an id is missing or used two times, a link names a node that the view does not have, or `inside` is not the parent heading |
+| `format` | error | The frontmatter or a `node` block does not parse, an id is missing or used two times, a link names a node that the view does not have, or `inside` is not the parent heading. Also a file of `Map/` that does not parse, and two files of `Map/` with one name. |
 | `format` | warning | A candidate has the old form (no `view_id`) |
 | `code-ref-missing` | error | A `code-refs` path or symbol does not exist, a path leaves its codebase, or the codebase after `@` does not resolve |
 | `story-missing` | error | A story id or a criterion address does not exist in Orbtest |
+| `part-missing` | error | The `part` of a node names no artifact of `Map/` of the project: the name is wrong, two artifacts have that short name, the file of the artifact does not load, or the project has no `Map/` |
 | `project` | error or warning | The codebase of the Project does not resolve, the product root is outside the codebase or has no Orbtest definitions, or the proof of the project is not complete |
 | `review-due` | warning | The claim, the referenced code, or the referenced stories changed after the `reviewed` anchor |
 | `anchor-unknown` | warning | The commit of an anchor is not in the Git history, or the codebase does not resolve |
 | `never-reviewed` | warning | A node of a kept view has no `reviewed` anchor |
 | `no-contract` | note | A node names no story and no criterion, and it is not of the kind `note` |
+| `no-part` | note | A node of the kind `step` or `decision` names no part, and the project has a `Map/`. The detail gives the nearest proposed part, or says that the map has no part for it. It shows a gap of the static map, or a step that waits for its part. |
 
 ## The Proof of a Node
 
@@ -294,7 +346,7 @@ A match by code gives **related cases**: the cases of each spec whose `component
 | Command | Result | Writes |
 |---------|--------|--------|
 | `flint orbcode list` | The views with the question, the UUID, the shape, the lifetime, the curation, the proof counts, the finding counts, and the number of candidates. `--json` also lists each candidate with its `view_id`. | Nothing |
-| `flint orbcode view <view>` | The join of one view (schema `orbcode-view/1`): each node with its proof state, its criteria, its cases, its related cases, and its findings | Nothing |
+| `flint orbcode view <view>` | The join of one view (schema `orbcode-view/1`): each node with its proof state, its criteria, its cases, its related cases, its static parts, and its findings | Nothing |
 | `flint orbcode view --candidate <id>` | The join of one candidate, as the view will show it after the apply | Nothing |
 | `flint orbcode check [<view>]` | The findings of one view, or of each view | Nothing |
 | `flint orbcode check --candidate <id>` | The findings of one candidate | Nothing |
@@ -302,12 +354,18 @@ A match by code gives **related cases**: the cases of each spec whose `component
 | `flint orbcode diff <view> --candidate <id>` | The added, the removed, the moved, and the changed nodes, and whether an apply now is a conflict. For a new view, `<view>` is the `view_id` of the candidate. | Nothing |
 | `flint orbcode diff --candidate <id> --against-candidate <id>` | The difference of two candidates of one view | Nothing |
 | `flint orbcode history <view>` | The forms of the view in `History/`, the newest first | Nothing |
+| `flint orbcode parts` | The static parts of each project (the artifacts of `Map/`): the type, the parent, the processes that pass through each part, and the count of its code-refs that name no file. `--json` gives the schema `orbcode-parts/1`. | Nothing |
 | `flint orbcode review <view> [--node <id>...] [--commit <sha>]` | Writes the `reviewed` anchors | The node blocks of the view |
 | `flint orbcode apply <view> --candidate <id>` | Replaces the view when its hash is equal to `base_hash` | The view, one file of `History/`; it removes the candidate |
 | `flint orbcode discard --candidate <id>` | Removes the candidate | Removes one candidate |
 | `flint orbcode restore <view> --from <history-id>` | Makes a candidate from one form of `History/` | One candidate |
 | `flint orbcode set <view> [--lifetime <draft\|kept>] [--curation <proposed\|accepted>]` | The decision of a person | The two keys of the view |
 | `flint orbcode remove <view>` | Removes a draft view and its candidates. It refuses a kept view. | One file of `History/`; it removes the view and its candidates |
+
+**The parts of the static map.** Two commands give the parts. Both write nothing.
+
+- `flint orbcode parts --project <Product> --json` gives `projects` (each with `name`, `map`, the folder `Map/` or `null` when the project has none, `codebase`, and `parts`, the count of its parts) and `parts`: each artifact of `Map/` with `id`, `project`, `name` (the full name), `title`, `type`, `parent` (the full name of its parent, or `null`), `code_refs`, `stories`, `file`, `processes`, and `dead_code_refs`. `processes` lists each view of the shape `flow` or `streams` with the ids of its nodes that name the part in `part`. A proposal does not count. It also gives the `findings` of the static map.
+- `flint orbcode view <view> --json` gives each node the fields `part` and `actor` as written, and the computed fields `parts` and `parts_total`. Each item of `parts` has `id`, `name`, `title`, `type`, and `source`. The `source` is `named` when the node names the artifact with `part`, and `proposed` when the node has no `part` and a code-ref of the artifact matches a code-ref of the node. A node with `part` has one `named` item, or none when the map does not have that part. A node with no `part` has at most 5 `proposed` items, the nearest first, and `parts_total` counts each match. A code-ref of the root of the codebase proposes nothing. A group and a node of the kind `note` have no parts.
 
 The exit codes: 0 done; 1 a finding of the level error (`check`), or a conflict of an apply; 2 a refusal (an unknown view or candidate, a name that two views have, a kept view for `remove`, or no view to check), and nothing was written. Each write runs inside one lock of the Flint. Steel uses the same code through the routes `/api/orbcode/*` of the Flint server.
 
@@ -327,10 +385,11 @@ These rules are the most important part of OrbCode. The reader of a view is a pe
 6. **A short title.** Two to six words. A verb phrase for a step ("Set up the machine"). A noun phrase for a part ("The shard lock").
 7. **Select, do not dump.** Include only what answers the question. Five to fifteen nodes is a good size. Do not make one node for each file, each story, or each command. When a view needs more than 25 nodes, propose a split into two views.
 8. **Anchor each claim.** Each node that makes a claim about the product has `code-refs` or `stories`, and when you can, both. Name files, not large folders. Only a `kind: note` node and a group have neither.
-9. **Prefer stories to criteria.** Name `criteria` only when the node needs some criteria of a story, not all.
-10. **Tell the truth about gaps.** When a part of the answer has no story, say so in the prose of its node. Never invent a story id, a criterion address, or a path. A claim that the product does not do a thing is a claim too: anchor it to the code or to a story that says it. When no story says it, write "No story proves this." in the prose.
-11. **End with what the view leaves out.** The last section of a good view is one node of `kind: note`, for example `## What this view leaves out {#left-out}`. Its prose names the parts of the product that the view does not show, and why. The person then knows that the view is not the whole product.
-12. **Simplified Technical English.** Short sentences, active voice, and one term for one thing.
+9. **Anchor each step of a process to the map.** In a view of the shape `flow` or `streams`, give each step the `part` where it runs, and the `actor` when the prose says who acts. Take each part from the static map. When the map has no part for a step, leave `part` out and name the gap (see The Anchor of a Step).
+10. **Prefer stories to criteria.** Name `criteria` only when the node needs some criteria of a story, not all.
+11. **Tell the truth about gaps.** When a part of the answer has no story, say so in the prose of its node. Never invent a story id, a criterion address, or a path. A claim that the product does not do a thing is a claim too: anchor it to the code or to a story that says it. When no story says it, write "No story proves this." in the prose.
+12. **End with what the view leaves out.** The last section of a good view is one node of `kind: note`, for example `## What this view leaves out {#left-out}`. Its prose names the parts of the product that the view does not show, and why. The person then knows that the view is not the whole product.
+13. **Simplified Technical English.** Short sentences, active voice, and one term for one thing.
 
 ## The Loop with the Code
 
@@ -338,22 +397,22 @@ These rules are the most important part of OrbCode. The reader of a view is a pe
 2. **A new story.** The Orbtest workflows do not make a view. A view is made when a person asks.
 3. **A release.** `flint orbcode check` is not a part of a release gate. A view is an aid for a person, not a contract of the product.
 
-## Legacy Form (OrbCode 0.7)
+## The Static Map and the Legacy Form (OrbCode 0.7)
 
-A 0.7 project is one map of a codebase. Its files are `(OrbCode Project) <Project> . (<Type>) <Name>.md` in `Map/`, with the types System, Module, Feature, and Data, and with the documents of `Context/` and `Notes/`. The shard keeps the four type files and the templates `tmp-orbc-system-v0.2`, `tmp-orbc-module-v0.2`, `tmp-orbc-feature-v0.2`, `tmp-orbc-data-v0.2`, `tmp-orbc-project-v0.2`, and the context and note templates, so an agent and the plate can read a 0.7 project.
+The static map is the map of OrbCode 0.7: the files `(OrbCode Project) <Project> . (<Type>) <Name>.md` in `Map/`, with the types System, Module, Feature, and Data. OrbCode 1.0 keeps it as the main drawing (see The Two Layers). The documents of `Context/` and `Notes/` stay the legacy form. The shard keeps the four type files and the templates `tmp-orbc-system-v0.2`, `tmp-orbc-module-v0.2`, `tmp-orbc-feature-v0.2`, `tmp-orbc-data-v0.2`, `tmp-orbc-project-v0.2`, and the context and note templates, so an agent and the plate can read a project.
 
-- Do not make a new 0.7 artifact. Make a view.
-- The rules of 0.7 (one `parent`, the parent whitelist, the typed `artifact-refs`, and the status values `draft`, `active`, `stale`, `deprecated`, `untested`, `verified`) apply only to the 0.7 files and to their migration.
+- No workflow of this shard writes, changes, or removes a file of `Map/`. A gap of the map goes into the result of the workflow, for the person.
+- The rules of 0.7 (one `parent`, the parent whitelist, the typed `artifact-refs`, and the status values `draft`, `active`, `stale`, `deprecated`, `untested`, `verified`) apply only to the files of `Map/` and to their migration. They are not rules of a view.
 - The migration [[dev-mig-orbc-0.7.3-to-1.0.0]] makes one view of the shape `tree` from each 0.7 project. It moves and deletes no 0.7 file.
 
 ## Skills and Workflows
 
 | File | Use it when |
 |------|-------------|
-| [[dev-wkfl-orbc-view]] | A person asks a question about a product, and no view answers it |
-| [[dev-wkfl-orbc-reshape]] | A person asks for a change of a view in words |
+| [[dev-wkfl-orbc-view]] | A person asks a question about a product, and no view answers it. Also a new process, with the parts of a focus of the map. |
+| [[dev-wkfl-orbc-reshape]] | A person asks for a change of a view in words. Also "name the parts of the steps" of a process. |
 | [[dev-sk-orbc-check_after_task]] | A product task ends: check the views against the changed code |
 
 ## The Plate and the Decisions
 
-The OrbCode plate in Steel draws a view of the shape `tree` or `layers` as a graph, with the proof badge and the finding badge. It shows where agents work now: see [[dev-knw-orbc-orbcraft]]. The decisions of the model are in [[dev-knw-orbc-decisions]].
+The OrbCode plate in Steel opens on the static map of a product. The list "Processes" beside the tree of the parts gives each view of the shape `flow` or `streams`. When a person selects a process, the map lights its parts with the numbers of the steps, and a strip below the map shows the steps in lanes by actor or by system. A step with no part shows "no part on the map". In a focus of the map, "Make a process of this" starts the workflow `view` with the full names of the parts of the focus, and "Change this process" starts the workflow `reshape`. The plate also draws each shape of a view, with the proof badge and the finding badge, and shows where agents work now: see [[dev-knw-orbc-orbcraft]]. The decisions of the model are in [[dev-knw-orbc-decisions]].

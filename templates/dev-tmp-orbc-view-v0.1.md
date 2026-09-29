@@ -75,6 +75,8 @@ authors:
 
 ```node
 kind: "step"
+actor: "WHO ACTS"
+part: "(OrbCode Project) PRODUCT . (Feature) NAME OF THE PART"
 action: "WHAT THE PERSON DOES"
 result: "WHAT THE PERSON THEN SEES"
 next: [NEXT-NODE-ID]
@@ -105,6 +107,13 @@ kind: "note"
 
   THE NODE BLOCK
   - Replace each UPPER CASE value. action and result are for a step only: omit them for other kinds.
+  - part: for a step or a decision of a process (shape flow or streams), the static part where it runs: the full name
+    of one artifact of Map/ (its file name with no extension), from flint orbcode parts --project <Product> --json.
+    Select it by the description of the artifact, not only by its code-refs. Never invent a name. When the map has no
+    part for the step, omit part (the note no-part shows the gap) and name the gap in your result.
+    Never write a file of Map/. Never name an artifact of another type word, such as (Process).
+  - actor: who acts at this moment: Person, the name of the product (Flint) when the product acts, or another actor
+    (Agent, Git). Write it when the prose says who acts. One name for one actor in the whole view.
   - next: the ids of the nodes where the process continues. uses: the ids of the nodes that this node depends on.
   - code-refs: path/, path/file.ext, or path/file.ext#symbol, relative to the codebase of the project.
     @<Codebase name>/<path> for a path of another codebase of the Flint (the name of its codebase marker).
@@ -129,8 +138,8 @@ kind: "note"
 
 | Shape | Headings |
 |-------|----------|
-| `flow` | H2 nodes of `kind: step` in order, each with `next`. A `kind: decision` node has two or more `next`. |
-| `streams` | One H2 for each stream (a group, or a node of `kind: stream`), H3 steps inside |
+| `flow` | H2 nodes of `kind: step` in order, each with `next`, `part`, and `actor`. A `kind: decision` node has two or more `next`. |
+| `streams` | One H2 for each stream (a group, or a node of `kind: stream`), H3 steps inside, each with `part` and `actor` |
 | `layers` | One H2 group for each layer, the layer nearest to the person first, H3 nodes inside with `uses` downward |
 | `tree` | The depth of the headings is the tree of the parts |
 | `table` | One H2 node for each item, with the same fields in each block |
@@ -183,6 +192,7 @@ A Flint command stops with an error. When the cause is the state of the machine 
 
 ```node
 kind: step
+actor: "Flint"
 result: "The output gives a next command, then the line Or: flint fix."
 next: [keep-the-record]
 code-refs:
@@ -208,6 +218,7 @@ The person can run the next command of the output, check the whole machine, or a
 
 ```node
 kind: decision
+actor: "Person"
 next: [check-the-machine, start-a-repair-session]
 criteria: [setup.fix#0]
 ```
@@ -218,6 +229,7 @@ criteria: [setup.fix#0]
 
 ```node
 kind: step
+actor: "Person"
 action: "flint doctor"
 result: "Each failed check has a mark and one next command that runs."
 next: [start-a-repair-session]
@@ -232,6 +244,7 @@ stories: [setup.doctor]
 
 ```node
 kind: step
+actor: "Person"
 action: "flint fix"
 result: "An agent session starts with the failure record and writes one repair note."
 code-refs:
@@ -254,6 +267,7 @@ What the example does:
 - Each node has one idea, a short title, and prose before its block.
 - Each node that makes a claim has `code-refs` and a story or criteria. It names `criteria` because it needs only some criteria of `setup.fix`. The node "Check the machine" needs the whole story, so it names `stories`.
 - The decision node has two `next`. The view holds no proof state: `flint orbcode view` computes it.
+- Each step and the decision name who acts with `actor`. They have no `part`, because the static map of Flint has no part for the failure record and the repair. Each of them gets the note `no-part`, and the result of the workflow names that gap. The section The Anchor of a Step of [[dev-init-orbc]] shows a step with a `part`.
 - The candidate has its own `id`, and `view_id` names the view. The apply gives the view the id of `view_id`.
 - The product word "repair session" is explained at its first use.
 - The last node is a note that says what the view leaves out. It needs no reference, and it gets no proof state.

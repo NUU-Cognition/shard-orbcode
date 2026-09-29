@@ -1,428 +1,312 @@
+---
+required-reading:
+  - "[[dev-tmp-orbc-view-v0.1]]"
+---
+
 # OrbCode
 
-A **hand-curated semantic map** of a codebase. OrbCode gives developers and agents a structured, human-readable understanding of what a codebase does — and a surface to plan what it should do next.
+OrbCode gives a person **views** of a software product. A view answers one question of a person, in words that a person who does not read code can read. Each node of a view links to the code and to the stories of Orbtest. The command `flint orbcode` uses these links to show the proof of each node and to tell when a view is no longer true.
 
----
+Example: a person asks "Show me the flow of the onboarding." An agent writes a view. The person reads it and asks "Split it into streams." The agent writes the view again in the new shape. The person sees which steps have proof and opens the report of one case.
 
-## What OrbCode Is
+## What a View Is
 
-OrbCode is a **hand-curated semantic map**: a human decides what belongs on it. The codebase is the source of truth; the Map mirrors what exists *and* plans what's next; the **plate** (the visual canvas) is the cockpit the human steers from.
+A view is one perspective on one product, made for one question of a person. OrbCode 0.7 had one complete map for each codebase. OrbCode 1.0 has many free views. Six rules define a view:
 
-- **Any stage.** OrbCode is not gated to post-MVP code. You can map intended architecture as `draft` before a line is written, or mirror a mature system. It is a thinking tool from day one.
-- **As big as it needs to be.** Curation means *intentional selection*, not a size cap. A small service might be 8 artifacts; a large system might be 150. Both are fine **if a human chose every node.** What OrbCode never does is auto-dump the whole graph.
-- **Cognitive load is managed by structure, not size.** A big map stays legible because it collapses — System → Module → Feature → Data — and because the plate offers semantic zoom, saved views, and stable spatial layout. The hierarchy is the load-management tool.
+| Rule | Meaning |
+|------|---------|
+| Not exhaustive | A view holds only what answers its question. No check counts what a view leaves out. |
+| Not mutually exclusive | The same code and the same story can be in many views, with other names and in other groups. |
+| Free shape | A view has the shape that its question needs (see The Six Shapes). |
+| Made in a conversation | A person asks, an agent writes, the person asks for a change, and the agent writes again. |
+| Low cost | A view is one file. A person can discard it with no loss, because the code and the stories are the truth. |
+| Honest | Each node that makes a claim about the product links to code or to stories. Thus a command can tell when the view is no longer true. |
 
-### The Invariants
+## The Three Planes
 
-These hold regardless of project, size, or stage. Everything else is a tool in service of them.
+| Plane | Question | Home | Writer |
+|-------|----------|------|--------|
+| Views | How does a person want to see the product? | The Mesh: `Mesh/OrbCode/` | An agent or a person |
+| Contract | What must the product do? | The repository: `orbtest/stories/` | An agent, through `flint orbtest story` |
+| Proof | Does the product do it? | The repository: `orbtest/behaviour/`, `orbtest/ui/`, and `orbtest/.local/runs/` | The Orbtest CLI |
 
-1. **Hand-curated.** Every artifact enters the map by human intent. The agent may *draft*, but the human chooses what belongs. OrbCode is curation, not auto-generation.
-2. **Code is truth, the Map reflects it.** The Map is downstream of the codebase. When code changes, the Map catches up; where they disagree, code wins.
-3. **Any stage.** Usable before, during, or after the code exists. `draft` bridges planning and reflection.
-4. **Navigable by structure.** Legibility comes from hierarchy + semantic zoom, not from staying small.
-5. **Human-guided.** The agent *proposes and maintains*; the human *disposes* (accepts, curates, commits status) — in the plate.
-6. **Drift-detected.** Curated maps rot unless kept honest. Artifacts anchor to code via `code-refs`, `stale` is a first-class status, and `orbc validate` checks the contract.
+OrbCode writes only in the Views plane. It reads the Contract plane and the Proof plane. An OrbCode workflow never writes a story, a spec, or a case. When a view needs a story that does not exist, write the gap in the prose of the node and tell the person. The Orbtest shard adds stories.
 
-### What Makes OrbCode Different
+## A Writer Writes Meaning, a Command Computes Facts
 
-Against the field of codebase-mapping tools (Backstage, C4, CodeSee, Sourcetrail…), OrbCode's edge is three things — protect them:
+A view holds **meaning**: the titles, the prose, the groups, the links between the nodes, and the references to the code and to the stories. A view never holds a **fact** that a command can compute:
 
-- **Curation over completeness.** Auto-tools chase "show everything" and then fight the resulting hairball. OrbCode shows only what a human selected as worth understanding.
-- **Live human↔agent presence.** The plate shows where agents are working *right now*. No prior tool surfaces this on a human-facing map.
-- **Map-as-planning-surface.** Not an inventory of what exists — a surface you reason and plan changes on.
+- No proof state, no count of criteria, no list of cases, no run id, and no report path.
+- No finding: no drift, no missing path, and no missing story.
+- No list of the views of a project. `flint orbcode list` computes it.
+- No `reviewed` anchor that you write yourself. Only `flint orbcode review` writes an anchor.
 
----
+`flint orbcode` computes the facts each time that it reads a view. It computes the proof of each node from the coverage of Orbtest, the related cases from the `components` of the specs, and the findings from the code, the stories, and the anchors. You can show these facts to a person in a conversation. Do not write them into a view.
 
-## Operating Stance
-
-**The agent proposes; the human disposes.** OrbCode is human-guided by default.
-
-- The agent's job: **draft** new artifacts (as `curation: proposed`), **maintain** existing ones against code, and **flag drift** (`stale`). Always prefer one artifact done well over ten done fast. Small, high-confidence diffs with a human checkpoint — never a 40-artifact sweep.
-- The human's job: decide **what** goes on the map, **accept** proposals (`curation: accepted`), curate wording and structure, and **commit status transitions** in the plate.
-- **Status transitions are the human's.** The agent writes an honest *current-reality* status (e.g. `active`/`untested`) but always with `curation: proposed`; it never marks an artifact `verified` or flips `curation` to `accepted` itself.
-
-This stance is why the resolution guideline, the curation field, the manual status model, and the checkpointed workflows all exist — they are one philosophy, not separate rules.
-
----
-
-## Naming Convention
-
-All artifacts are **namespaced under their project** using dot notation.
-
-```
-(OrbCode Project) [Name] . (Type) [Artifact Name].md
-```
-
-```
-(OrbCode Project) Mesh Core . (System) Parser Pipeline.md
-(OrbCode Project) Mesh Core . (Module) Auth.md
-(OrbCode Project) Mesh Core . (Feature) Document Parsing.md
-(OrbCode Project) Mesh Core . (Data) Document Schema.md
-```
-
-> **Plate contract:** the plate detects an artifact's **type from the filename** — the `(Type)` token after the ` . ` separator. The filename pattern is not cosmetic; it is how the canvas knows what each node is. Never drop or rename the `(Type)` token.
-
-**Wikilinks in frontmatter are FULLY QUALIFIED** — `[[(OrbCode Project) Mesh Core . (Module) Auth]]`, never the short `[[(Module) Auth]]`. The plate resolver and the tree script key on the full basename; short links silently fail to resolve. Body prose may use aliases for readability: `[[(OrbCode Project) Mesh Core . (Module) Auth|Auth]]`.
-
----
-
-## The Core Spine — Four Types
-
-OrbCode ships a deliberately small, load-bearing core. The Map is built from four types:
-
-| Type | The one question | `parent` (exactly one) | `artifact-refs` (Map types) | Status model |
-|------|------------------|------------------------|-----------------------------|--------------|
-| **System** | What are the major architectural boundaries? | System, or empty for a root | System, Module, Feature, Data | structural |
-| **Module** | What cohesive area groups these capabilities? | System | Module, Feature, Data | structural |
-| **Feature** | What single capability exists? | Module \| System \| Feature | Feature, Data | actionable |
-| **Data** | What shape is the core state? | System \| Module \| Feature \| Data | Data (non-parent relations) | structural |
-
-**Module** is the chunking layer that keeps a large map legible (precedented: C4 System→Container→Component, Backstage System→Component). It is **optional** — a small project can go System → Feature directly. Define a Module as *a cohesive implementation area that groups related Features behind a stable internal interface — often a package, folder, namespace, or service component.* A Module is **System-like in responsibility, but not a bounded architectural seam** (that is what separates it from a System). A folder/package is **evidence** for a Module, not proof — the unit is the responsibility/interface, not the filesystem object.
-
-**Data has a real place in the hierarchy.** Its `parent` is its primary conceptual **owner** — the System, Module, or Feature it belongs to (or another Data for a sub-schema). This is what makes Data collapse under its owner on the plate. For shared data, pick the primary owner as `parent` and let every other user link it via `artifact-refs`.
-
-**Project kinds.** Every project declares `project-type`: `application` (code that runs — libraries, apps, services, CLIs) or `cognitive` (markdown-as-code — shards, prompt programs). The kind shapes how a project is verified (automated tests vs coherence checks) — and is the field the Testing layer will key off when it is reintroduced.
-
-Map artifacts should be **rich and conceptual** — a human who doesn't read code should understand them. Use mermaid diagrams for state machines, data relationships, and system boundaries.
-
----
-
-## Reference Model (Core Spine)
-
-OrbCode enforces a **type-constrained reference graph**. `artifact-refs` carries **OrbCode Map types only**:
-
-| Type | `artifact-refs` may contain | Gets referenced by |
-|------|-----------------------------|--------------------|
-| **System** | System, Module, Feature, Data | System |
-| **Module** | Module, Feature, Data | System, Module |
-| **Feature** | Feature, Data | System, Module, Feature |
-| **Data** | Data | System, Module, Feature, Data |
-
-**Rules:**
-
-1. **Systems are the root.** Entry point of the Map graph.
-2. **Modules group capabilities.** System-like in responsibility but not a bounded seam: reference Features, Data, and sub-Modules. Never reference Systems upward.
-3. **Features are capabilities.** Reference sub-Features and Data. Never reference Systems or Modules upward.
-4. **Data is shape.** References sub-Data only (non-parent schema relations).
-5. **Reference direction is one-way.** Never link both ways. Use backlinks for reverse lookups.
-
-### Reference fields are split by target
-
-`artifact-refs` is for the Map graph **only**. Other relationships get their own field so the plate can render the core graph without swallowing specs, tasks, and context docs into the same edge soup:
-
-| Field | Targets | Purpose |
-|-------|---------|---------|
-| `artifact-refs` | OrbCode Map types (type-constrained, above) | Graph edges on the plate canvas |
-| `spec-refs` | Specifications shard artifacts | Critical-interface contracts |
-| `task-refs` | Tasks (Projects shard) | Implementation work |
-| `context-refs` | Context-layer docs | Background reading (optional) |
-
-### Hierarchy vs. References
-
-`parent:` and `artifact-refs:` have **separate jobs** — do not conflate them.
-
-| Field | Purpose | Shape | Used by |
-|-------|---------|-------|---------|
-| `parent:` | The single hierarchy signal — the one owner of this artifact | **Exactly one** wikilink, or `""` for a root | Sidebar tree, depth layout, collapse cascade |
-| `artifact-refs:` | "Related to" links, type-constrained to Map types | List of wikilinks | Graph edges on the plate canvas |
-
-- **`parent` is singular.** Exactly one owner, or empty for a root. It is **never a list** — secondary relationships go in `artifact-refs`. (This is a hard contract change from earlier drafts that allowed multiple parents.)
-- **Hierarchy is exclusively `parent:`.** The renderer never infers parent-child from `artifact-refs`.
-- **Parent whitelist:** System ← System; Module ← System; Feature ← Module | System | Feature; Data ← System | Module | Feature | Data.
-
----
-
-## Frontmatter Contract
-
-The templates are the source of truth for shape; this is the summary the validator enforces. **Generate boringly-valid YAML** — replace placeholder *values*, keep the shapes. Never put `/* */` comments or `[a|b|c]` option-lists inside frontmatter; those degrade parsing.
-
-```yaml
-id: "GENERATE-UUID4"
-tags:
-  - "#orbc/<type>"          # system | module | feature | data
-status: "active"            # see Status Models
-curation: "proposed"        # proposed (agent draft) | accepted (human-committed)
-parent: "[[(OrbCode Project) Proj . (System) Name]]"   # exactly one, fully qualified, or ""
-code-refs:
-  - "src/area/"
-artifact-refs:
-  - "[[(OrbCode Project) Proj . (Feature) Name]]"
-spec-refs: []
-template: "[[dev-tmp-orbc-<type>-v0.2]]"
-orbh-sessions:
-  - "[[session-uuid]]"
-authors:
-  - "[[@author]]"
-```
-
-### `code-refs` grammar
-
-`code-refs` is the staleness anchor, so it has a small grammar the future drift checker keys on. Paths are relative to the project's resolved `codebase`:
-
-```
-"src/auth/"                       # a directory
-"src/auth/session.ts"             # a file
-"src/auth/session.ts#SessionManager"   # a symbol within a file
-"src/auth/session.ts:L20-L80"     # a line range — TEMPORARY, weak anchor; avoid for stable refs
-```
-
-Prefer `path/`, `path/file.ext`, and `path/file.ext#symbol`. The validator checks path existence first, then symbol existence where a parser exists.
-
----
-
-## Plate Contract
-
-The plate **is** the payoff — it encodes meaning spatially, shows status at a glance, renders the reference graph, and surfaces live agent presence. It reads OrbCode artifacts mechanically, so these conventions are a hard contract:
-
-| Signal | Source | Must be |
-|--------|--------|---------|
-| **Type** | filename `(Type)` token after ` . ` | exactly `(System)` / `(Module)` / `(Feature)` / `(Data)` |
-| **Status** | `status:` | a valid enum for that type's tier (below) |
-| **Curation** | `curation:` | `proposed` or `accepted` |
-| **Edges** | `artifact-refs:` | fully-qualified wikilinks, Map-type-valid per the Reference Model |
-| **Hierarchy** | `parent:` | exactly one fully-qualified wikilink to a whitelisted parent |
-| **Code badge** | `code-refs:` | list of grammar-valid anchor strings |
-| **Spec edges** | `spec-refs:` | Specifications wikilinks (rendered distinctly, not as Map edges) |
-| **Project kind** | `project-type:` on the Project | `application` or `cognitive` |
-| **Codebase** | `codebase:` on the Project | a `[[rf-cb-*]]` reference marker (never a raw path) |
-
-> **The plate may degrade silently, but `orbc validate` must fail loudly.** A status typo or short wikilink just drops the signal on the canvas — so the validator is the safety net that turns silent degradation into a reported error.
-
-### Plate Requirements
-
-Because the size cap is gone, the plate's scaling features are **requirements, not polish**. The minimum behaviours:
-
-1. **Collapse** by System and Module.
-2. **Semantic zoom**: project → systems → modules → features/data.
-3. **Deterministic layered layout** by type rank (not force-directed).
-4. **Sticky coordinates** per artifact (move only when the artifact itself moves).
-5. **Full-wikilink resolver** (short alias only as a fallback).
-6. **Status + curation badges** (proposed artifacts render distinctly from accepted).
-7. **Drift badge** from `code-ref` validation.
-8. **Saved views / focus slices** for large maps (see below).
-9. **Reduced-motion** agent presence (see [[dev-knw-orbc-orbcraft]]).
-10. **Validation panel** surfacing broken contract signals.
-
-**Saved views** let the user keep multiple stable windows onto one big graph. They are plate-local metadata (e.g. on the Project index or plate state), **not** a new OrbCode type:
-
-```yaml
-views:
-  - name: "Auth slice"
-    roots: ["[[(OrbCode Project) Mesh Core . (Module) Auth]]"]
-    depth: 2
-    show: [systems, modules, features, data]
-```
-
----
-
-## Status Models
-
-`status` describes **code reality**; `curation` describes **human acceptance**. They are orthogonal — an agent writes an honest `status` with `curation: proposed`; the human flips `curation` to `accepted` (and promotes status) in the plate. All status transitions are committed by the human.
-
-### Structural entities — System, Module, Data
-
-| Status | Meaning |
-|--------|---------|
-| `draft` | Planned — not yet in the codebase |
-| `active` | Current and accurate |
-| `stale` | Out of date with code |
-| `deprecated` | No longer relevant |
-
-```
-draft → active → deprecated
-    active → stale → active
-```
-
-### Actionable entities — Feature
-
-| Status | Meaning |
-|--------|---------|
-| `draft` | Planned — no code yet |
-| `untested` | Code exists, not yet human-verified |
-| `stale` | Was verified, now out of date with code |
-| `verified` | Human confirmed the artifact matches code |
-
-```
-draft → untested → verified
-    any state → stale → untested → verified
-```
-
----
-
-## Staleness & Drift
-
-A hand-curated map rots unless kept honest. OrbCode's stance ("code is truth, the Map reflects it") is a **reflexion model**: the Map states a structure, and reality (the code) either *converges*, *diverges*, or is *absent*.
-
-The minimum defense:
-
-1. **`code-refs` anchoring** (with the grammar above). Every Feature and Data artifact — ideally every System/Module — lists the anchors it describes. This is the link between an artifact and the reality it mirrors.
-2. **`stale` is first-class.** When code drifts from an artifact, the human sets `stale`. Stale is an honest signal that re-curation is due, not a failure.
-3. **Agent flags, human re-curates.** When the agent notices an artifact no longer matches its `code-refs`, it suggests `stale`; the human decides the fix.
-4. **`orbc validate`** checks the contract (and, where a parser exists, code-ref symbol existence) — the bridge to automated drift detection.
-
-**Fast-follow:** auto-flag `stale` when a `code-ref` moves or vanishes (on PR), and conformance checks that fail when the real import graph diverges from the asserted `artifact-refs`.
-
----
-
-## Spatial Model (Plate Rendering)
-
-For now the Map is the **Core band** only — a single top-to-bottom depth flow:
-
-```
-System  →  Module  →  Feature  →  Data
-```
-
-laid out with deterministic layered positioning and sticky coordinates. The fuller band model (Infrastructure / Downstream / Cross-system) returns when the deferred types (Environment, Dependency, Consumer, E2E) are reintroduced.
-
----
-
-## Structure
+## Folder Layout
 
 ```
 Mesh/OrbCode/
-└── (OrbCode Project) [Name]/
-    ├── (OrbCode Project) [Name].md                  # Project index
-    ├── Context/                                     # Untyped project knowledge (optional)
-    │   ├── ... . Overview.md                        # Diagram-first "start here"
-    │   ├── ... . Context.md                         # Scope, concepts, conventions, glossary
-    │   ├── ... . Architecture.md                    # Directory structure, patterns, constraints
-    │   ├── ... . Tech Stack.md                      # Language, build, test, key dependencies
-    │   └── ... . Relationships.md                   # Inter-project connections
-    ├── Map/                                         # Typed map artifacts (the core spine)
-    │   ├── ... . (System) Name.md
-    │   ├── ... . (Module) Name.md
-    │   ├── ... . (Feature) Name.md
-    │   └── ... . (Data) Name.md
-    └── Notes/
-        ├── (OrbCode Reference) [Topic].md
-        └── ... . [Topic].md
+└── (OrbCode Project) <Product>/
+    ├── (OrbCode Project) <Product>.md   # The Project file
+    ├── Views/
+    │   └── (View) <Name>.md             # One file for each view
+    └── Candidates/
+        └── <candidate-id>.md            # A complete view file that waits for the apply
 ```
 
-**Context layer** documents are untyped (no `(Type)` prefix) and optional. Keep their boundaries crisp: **Overview** is the one-screen visual entry point; **Architecture** is how the code is organized; **Context** is the conceptual glossary and conventions.
+A project of OrbCode 0.7 also has the folders `Context/`, `Map/`, `Notes/`, and sometimes `Testing/`. They are the legacy form (see Legacy Form).
 
----
+## The Project File
 
-## Deferred Types
+One Project file for each product: `Mesh/OrbCode/(OrbCode Project) <Product>/(OrbCode Project) <Product>.md`. Make it with [[dev-tmp-orbc-project-v0.3]].
 
-Several types from earlier OrbCode are intentionally parked. Their templates have been removed to keep the shard focused; re-author a template (and restore its row in the Reference Model + band in the Spatial Model) when a type earns its keep:
+| Field | Meaning |
+|-------|---------|
+| `codebase` | A wikilink to a codebase reference marker: `"[[rf-cb-<slug>]]"`. Never a raw path. The markers are in `Mesh/Metadata/References/Codebases/`. The frontmatter `name` of the marker is the codebase name, and `flint resolve codebase <name>` gives its path on this machine. Each `code-refs` path of a view is relative to this path. |
+| `product-root` | The Orbtest product root, relative to the codebase: the folder that holds `orbtest/`. The value is `"."` when it is the codebase root. The `--root` of each `flint orbtest` command is the codebase path joined with `product-root`. Omit the field when the product has no `orbtest/` folder. |
+| `project-type` | `application` (code that runs) or `cognitive` (Markdown as code: shards and prompt programs) |
+| `status` | `active` or `archived` |
 
-| Deferred type | Reintroduce when | Brings back |
-|---------------|------------------|-------------|
-| **UI** | there's a user/CLI/API surface worth mapping | surface mapping under Features |
-| **Dependency** | you want to show what the project consumes | Infrastructure band (inputs) |
-| **Environment** | you map where things run (CI, local, Docker) | Infrastructure band |
-| **Consumer** | you map what depends on this project | Downstream band |
-| **Test Suite / Test / E2E** | the Testing layer earns its keep | verification layer + the `cognitive`-project "coherence check" story |
+The Products table of the Orbtest section of `Mesh/(System) Flint Init.md` gives the product root of each product that Orbtest tests.
 
-Nothing is lost — this is sequencing.
+## The View File
 
----
+A view is one Markdown file: `Views/(View) <Name>.md`. The file has the form of an Orbtest spec: prose for a person, one heading for each node, and one fenced block with the fields that a tool reads. One file for each view makes a change of shape one edit. The template is [[dev-tmp-orbc-view-v0.1]]. It has one complete example.
 
-## Relationship to Specifications
+### The Frontmatter
 
-OrbCode **composes with** the Specifications shard (it does not hard-depend on it). The relationship is one-way and conceptual:
+| Field | Required | Value |
+|-------|----------|-------|
+| `format` | Yes | `orbcode-view/1` |
+| `id` | Yes | A UUID v4. It never changes. A command finds a view by this UUID or by its name. |
+| `project` | Yes | A wikilink to the Project: `"[[(OrbCode Project) <Product>]]"` |
+| `question` | Yes | The question of the person, as one sentence |
+| `shape` | Yes | `flow`, `streams`, `layers`, `tree`, `table`, or `free` |
+| `lifetime` | Yes | `draft` or `kept` |
+| `curation` | Yes | `proposed` or `accepted` |
+| `derived-from` | No | A wikilink to the view that this view came from, or `""` |
+| `base_hash` | Candidate only | The SHA-256 hex of the bytes of the view file when the candidate was made, or `null` for a new view. The apply removes it. |
+| `tags` | Yes | `"#orbc/view"` |
+| `template`, `authors`, `orbh-sessions` | Flint | The Flint conventions |
 
-| | Specifications | OrbCode |
-|--|---------------|---------|
-| **Direction** | Prescriptive — what code *should* do | Descriptive — what code *does* |
-| **Relative to code** | Upstream | Downstream / reflective |
+The frontmatter of a view has no `reviewed` field. A command refuses a name that two views have, so give each view a name that is unique in the Mesh (see The Name of a View).
 
-Map artifacts reference Specs via the dedicated **`spec-refs`** field (not `artifact-refs`) for critical interfaces. This is a composition, not a manifest dependency — `shard.yaml` does not list Specifications under `dependencies`.
+### The Body
 
----
+1. **One H1 title.** The H1 is the name of the view. The file name is `(View) <H1 title>.md`.
+2. **The answer.** The prose after the H1 answers the question in one to three sentences.
+3. **An explicit id on each heading.** Each H2 to H6 heading ends with a stable id: `### Set up the machine {#setup}`. An id matches `[a-z0-9]+(-[a-z0-9]+)*` and is unique in the view. Two titles can be equal. Two ids cannot.
+4. **Depth is containment.** A section is inside the nearest heading above it that has a lower level. The prose of a section ends at the next heading.
+5. **At most one node block.** A section has zero or one fenced YAML mapping with the exact info string `node`. A section with a `node` block is a **node**. A section with no `node` block is a **group**. A heading inside a fence is not a heading.
+6. **A bad part does not hide the others.** A block that does not parse and a duplicate id are findings. The other nodes of the view still load.
+7. **Links.** `next: [id]` means that the process can continue there. `uses: [id]` means a dependency. `inside: id`, when it is given, must be equal to the id of the parent heading. The containment has no cycle. `next` and `uses` can have a cycle.
+8. **Stable ids.** A node keeps its id when it moves and when its title changes. A new node gets a new id. Never give the id of a removed node to a node with another claim.
+9. **No limit of nodes.** For a large view, the surface collapses the groups. Propose a split to the person when a view gets too large to read (see Quality Rules).
 
-## Validation
+The hierarchy rules of OrbCode 0.7 (one parent, the parent whitelist, and the typed references) are not rules of a view. They are rules of the migration of a 0.7 project only.
 
-`orbc validate` is the safety net that makes the plate contract enforceable instead of fatalistic:
+### The Name of a View
 
-```bash
-flint shard orbc validate "(OrbCode Project) Mesh Core"
+The name is the H1 title: short, and in the words of the person ("Onboarding", "Architecture of Flint"). Mesh names are unique. Before you write a new view, search the Mesh for `(View) <Name>.md`. When the name exists, add ` of <Product>` ("Onboarding of Steel").
+
+## The Node Block
+
+Each field is optional. A block must be a YAML mapping, so write one field or more. Write `kind` in each block.
+
+````markdown
+### Set up the machine {#set-up-the-machine}
+
+The person runs one command. It asks for a Name and makes the home of the machine.
+
+```node
+kind: step
+action: flint setup
+result: The home of the machine exists, and the CLI names the next command.
+next: [make-the-first-flint]
+code-refs:
+  - apps/flint-cli/src/commands/setup/setup.ts
+stories: [setup.steps]
+criteria: [setup.steps#0, setup.steps#3]
 ```
+````
 
-It checks: the Project has a resolvable `codebase: [[rf-cb-*]]`; every Map file follows dot-notation naming; the filename `(Type)` token matches the `tag`; required fields exist; `status` is valid for the type; `curation` is valid; `parent` is singular, resolves, and is whitelisted; `artifact-refs` resolve and obey the Reference Model; `code-refs` are grammar-valid and their paths exist relative to the resolved codebase (symbol existence where a parser exists); no deferred types appear; no short wikilinks appear in frontmatter; and the YAML parses cleanly.
-
----
-
-## Processes
-
-OrbCode work is incremental and human-guided. The default loop is: *human points at something → agent drafts or updates **one** artifact (as `proposed`) → human accepts and commits status in the plate.*
-
-These map onto the capabilities: **Init Project** seeds a new project; **OrbCode Edit** handles planning, reflecting, and drift; the **Add Artifact** skill is the create-one-artifact primitive both workflows call.
-
-### 1. Seeding a project
-Create the `(OrbCode Project)` index, add a few Context docs (Overview first), and seed the anchor Systems + top Modules/Features. Seed, don't sweep.
-
-### 2. Planning a change
-Create a `draft` artifact, link relevant artifacts via `artifact-refs`, link the implementation Task via `task-refs`. Human promotes status as work lands.
-
-### 3. Reflecting a change (after coding)
-Read the changed code and the artifact, update description/diagrams/`code-refs`. If you didn't start from the map, suggest `stale` first, then re-curate.
-
-### 4. Drift audit (occasional)
-Run `orbc validate`, compare each artifact against its `code-refs`, and flag divergence for the human.
-
----
-
-## Skills
-
-| Skill | File | Purpose |
+| Field | Type | Meaning |
 |-------|------|---------|
-| Add Artifact | `dev-sk-orbc-add_artifact.md` | Create a single Map artifact (System / Module / Feature / Data) following the template + contract |
+| `kind` | word | A word of the vocabulary below. A view can use another word; the surface then draws a plain node. |
+| `code-refs` | list of text | Paths in the grammar below, relative to the codebase of the project |
+| `stories` | list of ids | Orbtest story ids, for example `setup.steps` |
+| `criteria` | list of addresses | Criterion addresses `<story-id>#<index>`, 0-based. Use it only when the node needs some criteria of a story. An explicit list, also an empty list, replaces the criteria of the `stories`. An address gives its story, so the story need not be in `stories`. |
+| `next` | list of ids | The nodes where the process can continue |
+| `uses` | list of ids | The nodes that this node depends on |
+| `inside` | id | The id of the parent heading. Optional. |
+| `action` | text | For a step: what the person does |
+| `result` | text | For a step: what the person then sees |
+| `reviewed` | mapping | The review anchor. Only `flint orbcode review` writes it (see The Review Anchor). |
 
-## Workflows
+### The Vocabulary of `kind`
 
-| Workflow | File | Purpose |
-|----------|------|---------|
-| Init Project | `dev-wkfl-orbc-init_project.md` | Stand up a new project — resolve the codebase, gather context, seed anchor artifacts (human-checkpointed) |
-| OrbCode Edit | `dev-wkfl-orbc-edit.md` | The general workflow — create/update artifacts, plan changes as `draft`, and flag drift |
+| Kind | Use it for |
+|------|------------|
+| `step` | One action of a person or of the product in a process |
+| `stream` | A lane: a sequence of steps with one purpose |
+| `system` | A major boundary of the product |
+| `module` | A cohesive area of code that groups features |
+| `feature` | One capability of the product |
+| `data` | A shape of state that the product keeps |
+| `actor` | A person or an outside system that acts on the product |
+| `decision` | A point where a process continues on one of two or more paths |
+| `note` | A remark that makes no claim about the product. It needs no reference. |
 
----
+System, Module, Feature, and Data are the four types of OrbCode 0.7. In 1.0 they are words of `kind`.
 
-## Templates
+### The Grammar of `code-refs`
 
-**Core (map):** `dev-tmp-orbc-{system,module,feature,data}-v0.2.md`
-**Container:** `dev-tmp-orbc-project-v0.2.md`
-**Context:** `dev-tmp-orbc-{overview,context,architecture,tech_stack,relationships}-v0.2.md`
-**Notes:** `dev-tmp-orbc-{reference,note}-v0.2.md`
-
-The deferred types (UI, Dependency, Consumer, Environment, Test Suite, Test, E2E) have **no templates** — re-author one when a type is reintroduced.
-
----
-
-## Scripts
-
-| Script | Purpose |
-|--------|---------|
-| `tree` | Compact hierarchical view of OrbCode projects |
-| `validate` | Check a project against the plate/frontmatter contract |
-
-```bash
-flint shard orbc tree "(OrbCode Project) Flint" --verbose    # Status + code-refs
-flint shard orbc validate "(OrbCode Project) Flint"          # Contract check
+```
+"src/auth/"                            # a directory
+"src/auth/session.ts"                  # a file
+"src/auth/session.ts#SessionManager"   # a symbol in a file
+"src/auth/session.ts:L20-L80"          # a line range: a weak anchor, do not use it in a kept view
 ```
 
----
+Each path is relative to the codebase of the project. Each path must exist. For the match with the `components` of the specs, the command removes the symbol part and the line part.
 
-## Knowledge
+## The Six Shapes
 
-| File | Purpose |
-|------|---------|
-| `dev-knw-orbc-decisions.md` | ADRs — the spine, Module, and contract decisions |
-| `dev-knw-orbc-orbcraft.md` | OrbCraft — agent presence on the OrbCode plate (incl. reduced-motion rules) |
-| `dev-knw-orbc-vitest.md` | Optional support — Vitest setup, used when verifying `application` projects |
-| `dev-knw-orbc-pytest.md` | Optional support — pytest setup, used when verifying `application` projects |
+Select the shape from the question. "Architecture" is not a shape: an architecture is `layers` or `tree`.
 
----
+| Shape | It fits when | How to write it |
+|-------|--------------|-----------------|
+| `flow` | The question is "how does X happen?", and the answer is one sequence. | H2 nodes of `kind: step` in the order of the process, each with `next` to the step that follows. A `kind: decision` node has two or more `next`. |
+| `streams` | The answer has two or more sequences with separate purposes: "split the flow into streams", "what does each role do?". | One H2 for each stream: a group, or a node of `kind: stream`. H3 steps inside, with `next` in each stream. A `next` to a step of another stream shows a hand-over. |
+| `layers` | The question is "how is it built?": parts in levels from the person down to the storage. | One H2 group for each layer, the layer nearest to the person first. H3 nodes (`system`, `module`, `feature`, `data`) inside, with `uses` to the layers below. |
+| `tree` | The question is "what are the parts of X?", and each part has one owner. | The depth of the headings is the tree. A 0.7 project migrates to this shape. |
+| `table` | The question compares items on the same properties: "list each command with its proof", "compare the setup of Flint and Steel". | One H2 node for each item, with the same fields in each block and the same order of sentences in each prose. |
+| `free` | No other shape fits. | Any headings and links. Say in the answer after the H1 how to read the view. |
 
-## Agent Instructions
+## Lifetime and Curation
 
-### Reading an OrbCode project
-1. Run `flint shard orbc tree "(OrbCode Project) [Name]"` to see the structure.
-2. Read Context/ docs as needed, then the specific Map/ artifacts for your task.
+| Field | Values | Rule |
+|-------|--------|------|
+| `lifetime` | `draft`, `kept` | A new view is `draft`. A reshape keeps the value of the view. Only a person sets `kept`. `kept` means that the person wants to keep the view true. |
+| `curation` | `proposed`, `accepted` | An agent always writes `proposed`. Only a person sets `accepted`. The acceptance blocks nothing. Each change by an agent sets the view back to `proposed`. |
 
-### Proposing / maintaining the Map
-1. Read the relevant code first — code is truth. Resolve the codebase from the Project's `[[rf-cb-*]]` marker.
-2. Draft or update the artifact: description, diagrams, grammar-valid `code-refs`.
-3. **Propose, don't dispose.** Write an honest `status` but always `curation: proposed`; if an artifact no longer matches its `code-refs`, suggest `stale`. Never set `verified` or flip `curation: accepted`.
-4. Keep diffs small and high-confidence. One artifact done well beats ten done fast.
-5. Preserve the contract: exact `(Type)` filename token, **fully-qualified** wikilinks in frontmatter, singular whitelisted `parent`, Map-type-valid `artifact-refs`, valid `status`/`curation`. Run `orbc validate` when done.
+A draft that no person opened for 30 days is a candidate for removal. Only a person removes a view, with `flint helper delete "(View) <Name>"`. An agent never removes a view.
+
+## The Candidate and the Apply
+
+A workflow never writes a file in `Views/`. It writes a **candidate**: a complete view file in `Candidates/<candidate-id>.md`. Then a person or Steel applies it.
+
+1. **The candidate id** is `<view-slug>-<UTC time as yyyymmdd-hhmmss>`, for example `onboarding-20260929-013000`. The view slug is the H1 title in lower case, with each run of other characters than `a-z` and `0-9` replaced by one `-`. The id is the file stem.
+2. **A new view** gets a new UUID in `id` and `base_hash: null`.
+3. **A reshape** keeps the `id` of the view. Its `base_hash` is the SHA-256 hex of the bytes of the view file. Compute it before you read the view: `shasum -a 256 "<view file>"` (the first word).
+4. **The check:** `flint orbcode check --candidate <candidate-id>` prints the findings of the candidate. Repair each error.
+5. **The difference:** `flint orbcode diff <view> --candidate <candidate-id>` prints the added, the removed, the moved, and the changed nodes by id.
+6. **The apply:** `flint orbcode apply <view> --candidate <candidate-id>` replaces the view only when the hash of the current view file is equal to `base_hash`. `<view>` is the name or the UUID of the view; for a new view, give the UUID of the candidate. The apply removes `base_hash`, writes `Views/(View) <H1 title>.md`, and removes the candidate. A conflict writes nothing and keeps the candidate. Steel does the same with `POST /api/orbcode/views/:id/apply`. The apply is not the acceptance of the curation.
+7. **The discard:** `flint orbcode discard --candidate <candidate-id>` removes a candidate.
+
+When the apply gives a conflict, the view changed after the candidate was made. Read the view again, and write a new candidate from the current view.
+
+In an interactive session, apply a candidate only when the person agrees. In a headless session, never apply and never discard: Steel or the person does it.
+
+### The Result of a Headless Workflow
+
+A headless workflow ends with one JSON value of the schema `orbcode-result/1`, and nothing else:
+
+```json
+{"schema":"orbcode-result/1","view_id":"<uuid>","candidate_id":"<candidate-id>","base_hash":"<sha256 hex or null>","summary":"<one or two sentences for the person>"}
+```
+
+When no candidate was written, `candidate_id` is `null`, `view_id` is the UUID of the view or `null`, and the summary says why. See [[dev-hinit-orbc]].
+
+## The Review Anchor
+
+Each node can store `reviewed: { commit, at, meaning_hash, contract_hash }` in its block.
+
+- `meaning_hash` is the hash of the claim of the node: its prose and its fields that are not references. `contract_hash` is the hash of its references: `code-refs`, `stories`, and `criteria`. The place of the node in the view is in no hash, so a move keeps the anchor.
+- Only `flint orbcode review <view> [--node <id>...]` writes anchors. With no `--node`, it writes the anchor of each node.
+- In a candidate, copy the `reviewed` mapping of a node unchanged when its claim and its references do not change. When the claim or the references change, remove the `reviewed` mapping of that node. Never write or edit a value of `reviewed`.
+- The check compares the referenced code (also the changes of the working tree) and the content of the referenced stories with the anchor. The finding `review-due` means "a review is necessary". It does not mean "the claim is false".
+
+## Findings
+
+Each finding is about what a view says. No finding is about what a view leaves out.
+
+| Finding | Level | Meaning |
+|---------|-------|---------|
+| `format` | error | The frontmatter or a `node` block does not parse, an id is missing or used two times, a link names a node that the view does not have, or `inside` is not the parent heading |
+| `code-ref-missing` | error | A `code-refs` path or symbol does not exist |
+| `story-missing` | error | A story id or a criterion address does not exist in Orbtest |
+| `review-due` | warning | The claim, the referenced code, or the referenced stories changed after the `reviewed` anchor |
+| `anchor-unknown` | warning | The commit of an anchor is not in the Git history |
+| `never-reviewed` | warning | A kept view has no `reviewed` anchor |
+| `no-contract` | note | A node names no story and no criterion |
+
+## The Proof of a Node
+
+The command computes the proof. Do not write it. The criteria of a node are its `criteria`, else each criterion of its `stories`. Orbtest gives each criterion one of six states: `proven`, `failing`, `stale`, `gap`, `not-run`, `waived`. The summary of a node or of a group comes from the set of its unique criterion addresses:
+
+| State | Rule |
+|-------|------|
+| `no-contract` | The node has no criterion |
+| `failing` | Else a criterion is `failing` |
+| `stale` | Else a criterion is `stale` |
+| `proven` | Else each criterion is `proven` |
+| `partial` | Else one criterion or more is `proven` |
+| `unproven` | Else no criterion is `proven` |
+
+A match by code gives **related cases**: the cases of each spec whose `components` path is equal to a `code-refs` path, or inside it, or a parent of it. Related cases never prove the claim of a node. Only the contract link (node, story, criterion, case) gives proof.
+
+## The Commands
+
+`flint orbcode` is a part of the Flint CLI. It is not a shard script.
+
+| Command | Result | Writes |
+|---------|--------|--------|
+| `flint orbcode list [--project <name>] [--json]` | The views: name, question, shape, lifetime, curation, proof counts, findings | No |
+| `flint orbcode view <view> [--json]` | The join of one view, schema `orbcode-view/1` | No |
+| `flint orbcode check [<view>] [--paths <path...>] [--json]` | The findings. Exit 0 with no error, 1 with an error, 2 when nothing loads. | No |
+| `flint orbcode check --candidate <candidate-id> [--json]` | The findings of a candidate, with the same exit codes | No |
+| `flint orbcode diff <view> --candidate <candidate-id> [--json]` | The added, the removed, the moved, and the changed nodes | No |
+| `flint orbcode review <view> [--node <id>...] [--commit <sha>]` | Writes the `reviewed` anchors | Yes |
+| `flint orbcode apply <view> --candidate <candidate-id> [--project <name>]` | Replaces the view when the hash is equal to `base_hash` | Yes |
+| `flint orbcode discard --candidate <candidate-id> [--project <name>]` | Removes the candidate | Yes |
+
+`<view>` is the UUID or the name of a view. In a workflow, give the UUID.
+
+The Orbtest commands that the workflows read (each with `--root <product root>`): `flint orbtest story list`, `flint orbtest story show <id>`, `flint orbtest coverage --json`, and `flint orbtest behaviour list --json`. The `components` of a spec are in the frontmatter of `orbtest/behaviour/specs/<spec-id>.md`.
+
+When `flint orbcode` is not a command of your CLI (an older build), check a candidate by reading it against the rules of this file, and say so in your result. Do not move a candidate into `Views/` by hand.
+
+## Quality Rules of a View
+
+These rules are the most important part of OrbCode. A view that breaks them does not help the person.
+
+1. **Write for a person who does not read code.** Use the words of the person and of the product, not the names of functions, files, or packages. Code names go in `code-refs` only.
+2. **One idea for each node.** When the prose of a node needs two claims, make two nodes.
+3. **A short title.** Two to six words. A verb phrase for a step ("Set up the machine"). A noun phrase for a part ("The shard lock").
+4. **Prose first.** Each node has one to three sentences of prose before its block. The prose is for the person. The block is for the tools.
+5. **Select, do not dump.** Include only what answers the question. Five to fifteen nodes is a good size. Do not make one node for each file, each story, or each command. When a view needs more than 25 nodes, propose a split into two views.
+6. **Anchor each claim.** Each node that makes a claim about the product has `code-refs` or `stories`, and when you can, both. Only a `kind: note` node and a group have neither.
+7. **Prefer stories to criteria.** Name `criteria` only when the node needs some criteria of a story, not all.
+8. **Answer first.** The prose after the H1 answers the question in one to three sentences.
+9. **Simplified Technical English.** Short sentences, active voice, and one term for one thing.
+10. **Tell the truth about gaps.** When a part of the answer has no story, say so in the prose of its node. Never invent a story id, a criterion address, or a path.
+
+## The Loop with the Code
+
+1. **A product task.** At the end of a product task, run `flint orbcode check --paths <changed paths>`. Each `review-due` finding names a view. Compare the view with the code. When the view is wrong, change it with the workflow `reshape`. When it is correct, run `flint orbcode review <view> --node <id>` for the nodes that you compared.
+2. **A new story.** The Orbtest workflows do not make a view. A view is made when a person asks.
+3. **A release.** `flint orbcode check` is not a part of a release gate. A view is an aid for a person, not a contract of the product.
+
+## Legacy Form (OrbCode 0.7)
+
+A 0.7 project is one map of a codebase. Its files are `(OrbCode Project) <Project> . (<Type>) <Name>.md` in `Map/`, with the types System, Module, Feature, and Data, and with the documents of `Context/` and `Notes/`. The shard keeps the four type files and the templates `tmp-orbc-system-v0.2`, `tmp-orbc-module-v0.2`, `tmp-orbc-feature-v0.2`, `tmp-orbc-data-v0.2`, `tmp-orbc-project-v0.2`, and the context and note templates, so an agent and the plate can read a 0.7 project.
+
+- Do not make a new 0.7 artifact. Make a view.
+- The rules of 0.7 (one `parent`, the parent whitelist, the typed `artifact-refs`, and the status values `draft`, `active`, `stale`, `deprecated`, `untested`, `verified`) apply only to the 0.7 files and to their migration.
+- The migration [[dev-mig-orbc-0.7.3-to-1.0.0]] makes one view of the shape `tree` from each 0.7 project. It moves and deletes no 0.7 file.
+
+## The Plate and the Decisions
+
+The OrbCode plate in Steel draws a view of the shape `tree` or `layers` as a graph, with the proof badge and the finding badge. It shows where agents work now: see [[dev-knw-orbc-orbcraft]]. The decisions of the model are in [[dev-knw-orbc-decisions]].

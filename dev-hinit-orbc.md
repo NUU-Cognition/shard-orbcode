@@ -29,7 +29,7 @@ A headless product task uses the skill [[dev-sk-orbc-check_after_task]] at its e
 
 1. **Write one candidate.** Write the result as one candidate file in `Candidates/`. Never write a file in `Views/` or in `History/`.
 2. **Never apply, and never discard the candidate that you return.** Steel or the person reads the candidate, sees the difference, and applies or discards it. Never touch a candidate of another session. Never run `flint orbcode set`, `remove`, or `review` in a view or reshape workflow: they are the decisions of a person.
-3. **Never change the static map.** Never write, change, or remove a file of `Map/`. Take each `part` from `flint orbcode parts --project <Product> --json`, and never invent one. When the map has no part for a step, leave `part` out, and name the gap in the `summary`.
+3. **Never change the static map directly.** The static map is the main map of the software framework, and it changes only through a map change that a person applies (the `map-*` jobs of the ITE). Never write, change, or remove a file of `Map/`, and never write in `Changes/`. Take each `part` from `flint orbcode parts --project <Product> --json`, and never invent one. When the map has no part for a step, leave `part` out, and name the gap in the `summary`.
 4. **Ask no question.** When the question or the request is not clear, select the reading that best helps the person, and write that reading in the `summary`.
 5. **Verify your candidate before the result.** The person sees your candidate only through Steel, so verify it with the three commands that write nothing:
    - `flint orbcode check --candidate <candidate-id>`: repair each error until it exits 0. A warning or a note can stay; name it in the `summary` when it matters to the person.

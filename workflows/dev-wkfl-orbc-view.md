@@ -86,7 +86,7 @@ Make one new view of a product that answers one question of a person. The result
    - the name, the shape, and the answer;
    - the outline: each group and node with its title, and its proof state from `flint orbcode view --candidate` (in the conversation only);
    - each gap and each warning;
-   - for a process, each step with no part on the map, and the part that the map needs for it. Do not write that part: no workflow changes the static map.
+   - for a process, each step with no part on the map, and the part that the map needs for it. Do not write that part: the static map changes only through a map change that a person applies (the job `map-cover` or `map-expand` of the ITE proposes it).
 2. Ask the person: apply, change, or discard.
    - **Apply**: run `flint orbcode apply <view_id> --candidate <candidate-id>`. Then run `flint orbcode check <view_id>` and `flint orbcode view <view_id>`, and show the proof of each node. Tell the person that the view is a `draft` and `proposed`: the person can keep it with `flint orbcode set <view_id> --lifetime kept` and accept it with `flint orbcode set <view_id> --curation accepted`.
    - **Change**: write a new candidate with the same `view_id`, a new `id`, and `base_hash: null` that makes the change. Verify it (Stage 5), and discard the old one with `flint orbcode discard --candidate <old-candidate-id>`. Then ask again.

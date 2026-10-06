@@ -87,7 +87,7 @@ Change the shape or the content of one view when the person asks for it in words
 ## Stage 5: Show the Difference and Apply It
 
 1. Show the person the difference of `flint orbcode diff`: the added, the removed, the moved, and the changed nodes, with their titles. When the command is not available, show the node map of Stage 2.
-2. Show the new outline and each warning. For a process, show each step with no part on the map, and the part that the map needs for it. Do not write that part: no workflow changes the static map.
+2. Show the new outline and each warning. For a process, show each step with no part on the map, and the part that the map needs for it. Do not write that part: the static map changes only through a map change that a person applies (the job `map-cover` or `map-expand` of the ITE proposes it).
 3. Ask the person: apply, change, or discard.
    - **Apply**: run `flint orbcode apply <view-uuid> --candidate <candidate-id>`. The apply keeps the form before in `History/`. When the view was `accepted`, the apply sets it back to `proposed`: tell the person. When the apply gives a conflict, the view changed after Stage 1: tell the person, and go back to Stage 1 with the current view. After a good apply, run `flint orbcode view <view-uuid>` and show the proof of each node.
    - **Change**: write a new candidate from the same base (Stage 3), verify it, and discard the old candidate with `flint orbcode discard --candidate <old-candidate-id>`. Then ask again.

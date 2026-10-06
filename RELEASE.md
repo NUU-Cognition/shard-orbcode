@@ -1,3 +1,7 @@
+# 1.0.1
+
+- The dependency on the Flint shard accepts any version (`"@nuucognition/flint": ""`), so the shard works with Flint 0.3.x and with Flint 0.4.0 (NUU Flint Task 1129).
+
 # 1.0.0
 
 - The view model replaces the one complete map: a view answers one question of a person, is not exhaustive, and is not mutually exclusive.

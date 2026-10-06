@@ -1,3 +1,7 @@
+# 1.0.2
+
+- Two no-op script migrations (`1.0.0 → 1.0.1` and `1.0.1 → 1.0.2`) complete the migration chain from 1.0.0. Release 1.0.1 did not have them, so a Flint at 1.0.0 could not build it.
+
 # 1.0.1
 
 - The dependency on the Flint shard accepts any version (`"@nuucognition/flint": ""`), so the shard works with Flint 0.3.x and with Flint 0.4.0 (NUU Flint Task 1129).

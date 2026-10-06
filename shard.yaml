@@ -3,7 +3,7 @@ shard: "@nuucognition/orbcode"
 id: 46f3c604-ce3f-4ca8-b851-fc32027ceb41
 source:
   id: 11ce0f63-3aff-476b-a3f3-2e8888cb7c80
-version: "1.0.1"
+version: "1.0.2"
 name: OrbCode
 shorthand: orbc
 description: Views of a software product for a person who does not read code, each node with the proof of Orbtest

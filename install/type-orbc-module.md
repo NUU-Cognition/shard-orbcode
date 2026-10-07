@@ -11,6 +11,22 @@ A cohesive implementation area that groups related Features behind a stable inte
 
 > Heuristic: a folder/package is *evidence* for a Module, not proof — the unit is the responsibility/interface. If it's a bounded context / architectural seam, it's a System.
 
+## Steel type
+
+The type of a part of a program in Steel (Task 1235): its fields, its capabilities, its connections, and its look.
+
+```type
+format: steel-type/1
+id: module
+name: Module
+plural: Modules
+description: "A part of a system that has one job, such as the parser of a file."
+fields: {}
+capabilities: [covers-files, has-claims, container]
+connections: {next: [], uses: [], depends-on: [], owner: [], informs: []}
+look: { hue: teal, icon: boxes, layer: structure }
+```
+
 ## Properties
 
 | Property | Value |

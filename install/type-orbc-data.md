@@ -9,6 +9,22 @@ tags:
 
 A core data structure, entity, or schema. Data answers "What shape is the core state?" Focus on semantics and invariants, not just field lists. Data's `parent` is its conceptual owner — a System, Module, Feature, or another Data (for sub-schemas) — so it collapses under its owner on the plate.
 
+## Steel type
+
+The type of a part of a program in Steel (Task 1235): its fields, its capabilities, its connections, and its look.
+
+```type
+format: steel-type/1
+id: data
+name: Data
+plural: Data
+description: "A file, a record, or a store that the product reads or writes."
+fields: {}
+capabilities: [covers-files, has-claims]
+connections: {next: [], uses: [], depends-on: [], owner: [], informs: []}
+look: { hue: earth, icon: database, layer: structure }
+```
+
 ## Properties
 
 | Property | Value |

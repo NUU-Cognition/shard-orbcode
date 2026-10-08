@@ -1,3 +1,7 @@
+# Deprecated (no release)
+
+- OrbCode is now the ITE (NUU Flint Task 1241): a software product is a program of the template `software` of the ITE shard. This source is a shell: it has no skill, workflow, template, knowledge, migration, or type. A Flint that installs the published 1.1.1 keeps it.
+
 # 1.0.2
 
 - Two no-op script migrations (`1.0.0 → 1.0.1` and `1.0.1 → 1.0.2`) complete the migration chain from 1.0.0. Release 1.0.1 did not have them, so a Flint at 1.0.0 could not build it.
@@ -17,9 +21,6 @@
 - A code-ref of another codebase of the Flint: `@<Codebase name>/<path>`. A node of the kind `note` has no proof state, and a good view ends with a note of what it leaves out.
 - The workflows verify their own candidate with `check --candidate`, `view --candidate`, and `diff`. The quality rules name the words of the person and the explanation of each product word.
 - The skill `check_after_task`: at the end of a product task, check the views that name the changed files, and review each node or change the view through a candidate.
-- The migration 0.7.3 → 1.0.0: each 0.7 project gets one view of the shape `tree`.
-- Removed: the scripts `tree` and `validate` (they did not run), the workflows `init_project` and `edit`, the skill `add_artifact`, and the knowledge files of Vitest and pytest.
-- Legacy: the type files and the templates of System, Module, Feature, and Data stay, so a 0.7 project stays readable.
 
 # 0.1.0
 

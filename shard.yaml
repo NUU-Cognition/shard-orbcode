@@ -6,16 +6,6 @@ source:
 version: "1.1.1"
 name: OrbCode
 shorthand: orbc
-description: Views of a software product for a person who does not read code, each node with the proof of Orbtest
+description: "Deprecated. OrbCode is now the ITE: load flint shard start ite."
 dependencies:
   "@nuucognition/flint": ""
-
-types:
-  - View
-  - System
-  - Module
-  - Feature
-  - Data
-
-folders:
-  - Mesh/OrbCode/

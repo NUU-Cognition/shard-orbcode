@@ -20,7 +20,7 @@ name: Feature
 plural: Features
 description: "One thing that a person can do with the product."
 fields: {}
-capabilities: [covers-files, has-claims]
+capabilities: [covers-files]
 connections: {next: [], uses: [], depends-on: [], owner: [], informs: []}
 look: { hue: sun, icon: sparkles, layer: structure }
 ```

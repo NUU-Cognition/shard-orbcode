@@ -20,7 +20,7 @@ name: Data
 plural: Data
 description: "A file, a record, or a store that the product reads or writes."
 fields: {}
-capabilities: [covers-files, has-claims]
+capabilities: [covers-files]
 connections: {next: [], uses: [], depends-on: [], owner: [], informs: []}
 look: { hue: earth, icon: database, layer: structure }
 ```

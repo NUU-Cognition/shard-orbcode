@@ -22,7 +22,7 @@ name: Module
 plural: Modules
 description: "A part of a system that has one job, such as the parser of a file."
 fields: {}
-capabilities: [covers-files, has-claims, container]
+capabilities: [covers-files, container]
 connections: {next: [], uses: [], depends-on: [], owner: [], informs: []}
 look: { hue: teal, icon: boxes, layer: structure }
 ```

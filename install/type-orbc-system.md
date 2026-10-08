@@ -20,7 +20,7 @@ name: System
 plural: Systems
 description: "A large part of the product that a person can name, such as the command line or the server."
 fields: {}
-capabilities: [covers-files, covers-boundary, has-claims, container]
+capabilities: [covers-files, covers-boundary, container]
 connections: {next: [], uses: [], depends-on: [], owner: [], informs: [], blocks: []}
 look: { hue: water, icon: server, layer: structure }
 ```

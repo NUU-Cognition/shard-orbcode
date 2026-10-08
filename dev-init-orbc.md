@@ -21,7 +21,7 @@ A product in OrbCode has two layers. The OrbCode plate draws them on one map.
 - **The static map is the main drawing.** The plate opens on it. A System is a major boundary of the product, a Module is an area that groups features, a Feature is one capability, and a Data is a shape of state that the product keeps.
 - **A process runs on top of the map.** Each step of a process names the static part where it runs, with the node field `part` (see The Anchor of a Step). When a person selects a process, the plate lights its parts with the numbers of the steps, and shows the steps in a strip below the map.
 - **The other shapes stay valid.** A view of the shape `layers`, `tree`, `table`, or `free` is a free perspective, as before. Its nodes can name their parts with `part` too.
-- **The static map is the main map of the software framework, and it changes only through a map change that a person applies.** The ITE reads an OrbCode project as a program of the framework `software`, and its static map is its main map (Task 1127; see The Main Map in the ITE shard, `flint shard start ite`). An agent proposes a map change with `flint ite map change propose` (the jobs `map-create`, `map-expand`, `map-refactor`, `map-cover`, and `map-update` of the ITE). Only a person applies it, in Steel or with `flint ite map change apply`, and a revert gives the exact old bytes back. No workflow of this shard writes, changes, or removes a file of `Map/` directly. When the map has no part for a step, the step shows the gap (the finding `no-part`), and the workflow names the gap in its result.
+- **The static map is the main map of the template `software`, and it changes only through a map change that a person applies.** The ITE reads an OrbCode project as a program of the template `software`, and its static map is its main map (Task 1127; see The Main Map in the ITE shard, `flint shard start ite`). An agent proposes a map change with `flint ite map change propose` (the jobs `map-create`, `map-expand`, `map-refactor`, `map-cover`, and `map-update` of the ITE). Only a person applies it, in Steel or with `flint ite map change apply`, and a revert gives the exact old bytes back. No workflow of this shard writes, changes, or removes a file of `Map/` directly. When the map has no part for a step, the step shows the gap (the finding `no-part`), and the workflow names the gap in its result.
 
 ## What a View Is
 
@@ -69,8 +69,6 @@ Mesh/OrbCode/
     │   └── (View) <Name>.md                    # One file for each view
     ├── Candidates/
     │   └── <candidate-id>.md                   # A complete view file that waits for the apply
-    ├── Changes/
-    │   └── <change-id>.md                      # A map change of the static map (only the change engine of the ITE writes here)
     └── History/
         └── <view-slug>-<yyyymmdd-hhmmss>.md    # A replaced or removed form of a view
 ```
@@ -78,7 +76,7 @@ Mesh/OrbCode/
 - `Map/` holds the static map. `flint orbcode` reads each Markdown file below `Map/`, also in its subfolders; a subfolder is for display only. The name of a part is its file name with no extension. Only a map change that a person applies writes in `Map/`.
 - `Views/` holds the views. `flint orbcode apply` writes a view there. You never write a file in `Views/` yourself.
 - `Candidates/` holds the candidates. A workflow writes its candidate there.
-- `Changes/` holds the map changes of the static map (`ite-map-change/1`): one file for each change, with its operations, the base hash of each file, the preview of the tree before and after, and the record of the apply. Only the change engine of the ITE (`flint ite map change ...`, and the routes of Steel) writes there. Never write, edit, or move a file there.
+- The map changes of the static map (`steel-map-change/1`) are not in the project: they are in `Steel/Programs/<Product>/Proposals/` of the Flint. Each is one file, with its operations, the base hash of each file, the preview of the tree before and after, and the record of the apply. Only the change engine of the ITE (`flint ite map change ...`, and the routes of Steel) writes there. Never write, edit, or move a file there.
 - `History/` holds the forms of a view that an apply replaced or that `flint orbcode remove` removed. The command keeps the newest 5 forms of each view and removes the older forms. Only `flint orbcode` writes in `History/`. Never write, edit, or move a file there.
 
 A project of OrbCode 0.7 also has the folders `Context/`, `Notes/`, and sometimes `Testing/`. They are the legacy form (see The Static Map and the Legacy Form).
